@@ -1,7 +1,7 @@
 # API Keys and Configuration
 # js/config.js
 .env
-config.js
+# config.js
 
 # Environment files
 .env.local
