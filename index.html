@@ -182,6 +182,15 @@
     }
     </script>
 
+    <!-- Add this BEFORE loading config.js -->
+    <script>
+        window.ENV = {
+            PAYSTACK_PUBLIC_KEY: '{{PAYSTACK_PUBLIC_KEY}}',
+            APPS_SCRIPT_URL: '{{APPS_SCRIPT_URL}}'
+        };
+        console.log('✅ Environment variables injected');
+    </script>
+
     <!-- Load JavaScript - Order is important! -->
     <script src="js/config.js"></script>
     <script src="js/api.js"></script>
