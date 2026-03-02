@@ -165,8 +165,8 @@
     <!-- First: Environment variables -->
     <script>
         window.ENV = {
-            PAYSTACK_PUBLIC_KEY: '{{PAYSTACK_PUBLIC_KEY}}',
-            PAYSTACK_MODE: '{{PAYSTACK_MODE}}'
+        PAYSTACK_PUBLIC_KEY: '{{ .Env.PAYSTACK_PUBLIC_KEY }}',
+        APPS_SCRIPT_URL: '{{ .Env.APPS_SCRIPT_URL }}'
         };
         console.log('✅ Environment variables injected');
     </script>
@@ -178,43 +178,5 @@
     <script src="js/api.js"></script>
     <script src="js/payment.js"></script>
     <script src="js/main.js"></script>
-
-    <!-- Finally: Test button script (AFTER config is loaded) -->
-    <button onclick="testPaystack()" style="position:fixed; bottom:20px; right:20px; z-index:9999; background:gold; padding:15px; border-radius:5px; font-weight:bold;">TEST PAYSTACK</button>
-
-    <script>
-        // Wait for everything to load
-        window.addEventListener('load', function() {
-            console.log('✅ Page loaded, CONFIG exists:', typeof CONFIG !== 'undefined');
-        });
-
-        function testPaystack() {
-            if (typeof CONFIG === 'undefined') {
-                alert('Error: Configuration not loaded yet. Please wait a moment and try again.');
-                return;
-            }
-            
-            console.log('Testing with key:', CONFIG.PAYSTACK.PUBLIC_KEY);
-            
-            try {
-                const handler = PaystackPop.setup({
-                    key: CONFIG.PAYSTACK.PUBLIC_KEY,
-                    email: 'test@example.com',
-                    amount: 5000, // ₦50
-                    currency: 'NGN',
-                    callback: function(response) {
-                        alert('Payment successful! Reference: ' + response.reference);
-                    },
-                    onClose: function() {
-                        alert('Payment cancelled');
-                    }
-                });
-                handler.openIframe();
-            } catch (error) {
-                console.error('Paystack error:', error);
-                alert('Error: ' + error.message);
-            }
-        }
-    </script>
 </body>
 </html>
