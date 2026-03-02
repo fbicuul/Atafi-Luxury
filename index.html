@@ -162,17 +162,18 @@
     <!-- Notification Toast -->
     <div id="notificationToast" class="notification-toast" style="display: none;"></div>
 
-    <button onclick="testPaystack()" style="position:fixed; bottom:10px; right:10px; z-index:9999; background:gold; padding:10px;">Test Paystack</button>
+    <button onclick="testPaystack()" style="position:fixed; bottom:20px; right:20px; z-index:9999; background:gold; padding:15px; border-radius:5px; font-weight:bold;">TEST PAYSTACK</button>
 
     <script>
     function testPaystack() {
+        console.log('Testing with key:', CONFIG.PAYSTACK.PUBLIC_KEY);
         const handler = PaystackPop.setup({
             key: CONFIG.PAYSTACK.PUBLIC_KEY,
             email: 'test@example.com',
-            amount: 10000, // ₦100
+            amount: 5000, // ₦50
             currency: 'NGN',
             callback: function(response) {
-                alert('Payment complete! Reference: ' + response.reference);
+                alert('Payment successful! Reference: ' + response.reference);
             },
             onClose: function() {
                 alert('Payment cancelled');
@@ -185,9 +186,9 @@
     <!-- Add this BEFORE loading config.js -->
     <script>
         window.ENV = {
-            PAYSTACK_PUBLIC_KEY: '{{PAYSTACK_PUBLIC_KEY}}',
-            APPS_SCRIPT_URL: '{{APPS_SCRIPT_URL}}'
-        };
+        PAYSTACK_PUBLIC_KEY: '{{PAYSTACK_PUBLIC_KEY}}',
+        PAYSTACK_MODE: '{{PAYSTACK_MODE}}'
+    };
         console.log('✅ Environment variables injected');
     </script>
 
