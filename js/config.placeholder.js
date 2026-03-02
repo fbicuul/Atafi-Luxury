@@ -1,13 +1,11 @@
-// config.placeholder.js - THIS FILE IS SAFE TO COMMIT
-// It shows the structure but uses environment variables
-
+// js/config.js - Use your actual working keys
 const CONFIG = {
     APPS_SCRIPT: {
-        WEB_APP_URL: window.ENV?.APPS_SCRIPT_URL || 'https://script.google.com/macros/s/your-url/exec'
+        WEB_APP_URL: 'https://script.google.com/macros/s/YOUR_ACTUAL_SCRIPT_ID/exec' // Replace with your real URL
     },
     
     PAYSTACK: {
-        PUBLIC_KEY: window.ENV?.PAYSTACK_PUBLIC_KEY || 'pk_test_yourkey'
+        PUBLIC_KEY: 'pk_test_key' // Your test key that worked locally
     },
     
     BUSINESS: {
@@ -19,4 +17,4 @@ const CONFIG = {
 };
 
 window.CONFIG = CONFIG;
-console.log('✅ Config loaded from environment');
+console.log('✅ Config loaded with key:', CONFIG.PAYSTACK.PUBLIC_KEY);

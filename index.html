@@ -178,5 +178,27 @@
     <script src="js/api.js"></script>
     <script src="js/payment.js"></script>
     <script src="js/main.js"></script>
+
+        <script>
+        // Temporary test - remove after fixing
+        document.getElementById('startJourneyBtn').addEventListener('click', function() {
+            console.log('Button clicked!');
+            console.log('CONFIG exists:', typeof CONFIG !== 'undefined');
+            if (CONFIG) {
+                console.log('Paystack key:', CONFIG.PAYSTACK.PUBLIC_KEY);
+                // Try direct Paystack popup
+                const handler = PaystackPop.setup({
+                    key: CONFIG.PAYSTACK.PUBLIC_KEY,
+                    email: 'test@example.com',
+                    amount: 290000, // ₦2,900
+                    currency: 'NGN',
+                    callback: function(response) {
+                        alert('Payment successful!');
+                    }
+                });
+                handler.openIframe();
+            }
+        });
+    </script>
 </body>
 </html>
