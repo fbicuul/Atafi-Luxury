@@ -1,0 +1,5 @@
+# _headers - Put this in your root folder
+/*
+  Content-Security-Policy: default-src * 'unsafe-inline' 'unsafe-eval' data: blob: https:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob: https://js.paystack.co https://*.paystack.com https://*.paystack.co; style-src * 'unsafe-inline' https://*.paystack.com; frame-src * https://checkout.paystack.com; connect-src *;
+  X-Frame-Options: ALLOWALL
+  Access-Control-Allow-Origin: *
