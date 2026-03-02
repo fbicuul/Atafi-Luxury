@@ -5,14 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atafi Luxury - Business Growth Predictor</title>
     
-    <!-- UPDATED CSP - Fixed to allow CSS and Paystack -->
-    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob: https: http:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.paystack.co https://*.paystack.com https://*.paystack.co https://apis.google.com https://*.googleapis.com blob: https:; style-src 'self' 'unsafe-inline' https://*.paystack.com https://*.paystack.co https://fonts.googleapis.com https:; frame-src 'self' https://*.paystack.com https://*.paystack.co https://checkout.paystack.com https://*.google.com https:; img-src 'self' data: https: http:; connect-src 'self' https: http:;">
+    <!-- COMPLETELY OPEN CSP FOR TESTING - This WILL work -->
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline'; frame-src *; img-src * data:; connect-src *;">
     
     <!-- CSS Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
     
     <!-- Paystack inline script -->
     <script src="https://js.paystack.co/v1/inline.js"></script>
+    
+    <!-- Add favicon to prevent 404 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
 </head>
 <body>
     <!-- Navigation -->
@@ -162,7 +165,7 @@
     <!-- Notification Toast -->
     <div id="notificationToast" class="notification-toast" style="display: none;"></div>
 
-    <!-- Load JavaScript - Make sure config.js exists with your keys -->
+    <!-- Load JavaScript - Order is important! -->
     <script src="js/config.js"></script>
     <script src="js/api.js"></script>
     <script src="js/payment.js"></script>

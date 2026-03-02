@@ -1,0 +1,17 @@
+# render.yaml - Tell Render how to serve files
+services:
+  - type: web
+    name: atafi-luxury
+    env: static
+    buildCommand: echo "Static site, no build needed"
+    staticPublishPath: .
+    headers:
+      - path: /*
+        name: Content-Type
+        value: application/javascript
+      - path: /*.js
+        name: Content-Type
+        value: application/javascript
+      - path: /*.css
+        name: Content-Type
+        value: text/css
