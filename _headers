@@ -1,6 +1,17 @@
-# _headers - Put this in your root folder (same place as index.html)
+# Atafi Luxury - Complete Headers Configuration
+# This file ensures proper security and functionality
+
+# Default headers for all files
 /*
-  Content-Security-Policy: default-src * data: blob: https: http: ws: wss: 'unsafe-inline' 'unsafe-eval'; script-src * data: blob: https: http: 'unsafe-inline' 'unsafe-eval' https://js.paystack.co https://checkout.paystack.com https://*.paystack.com; style-src * 'unsafe-inline' https://*.paystack.com; frame-src * https://checkout.paystack.com; connect-src * https: http:;
+  Content-Security-Policy: default-src * data: blob: https: http: ws: wss: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval' data: blob: https: http: https://js.paystack.co https://checkout.paystack.com https://*.paystack.com https://*.paystack.co https://www.google.com https://www.google-analytics.com; style-src * 'unsafe-inline' https://*.paystack.com; frame-src * https://checkout.paystack.com https://www.google.com; connect-src * https: http:; img-src * data: https:;
   X-Frame-Options: ALLOWALL
   Access-Control-Allow-Origin: *
   Access-Control-Allow-Methods: GET, POST, OPTIONS
+
+# Fix MIME types for JavaScript files
+/js/*.js
+  Content-Type: application/javascript
+
+# Ensure CSS is served correctly
+/css/*.css
+  Content-Type: text/css
