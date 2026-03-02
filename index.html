@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atafi Luxury - Business Growth Predictor</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Security headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://js.paystack.co https://apis.google.com; style-src 'self' 'unsafe-inline';">
+    <!-- Paystack inline script -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">Atafi Luxury</div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#predictor">Predictor</a></li>
+            <li><a href="#community">Community</a></li>
+            <li><a href="#login" class="btn-login">Login</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Predict Your Business Growth with Atafi Luxury</h1>
+            <p>Join successful businesses that increased their cash flow by 200%+</p>
+            <a href="#predictor" class="cta-button">Get Your Free Prediction</a>
+        </div>
+    </section>
+
+    <!-- Predictor Section -->
+    <section id="predictor" class="predictor-section">
+        <div class="container">
+            <h2>Business Growth Predictor</h2>
+            <p class="section-subtitle">See what your business could achieve in just 30 days</p>
+            
+            <form id="predictionForm" class="prediction-form">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" required placeholder="John Doe">
+                </div>
+
+                <div class="form-group">
+                    <label for="businessName">Business Name</label>
+                    <input type="text" id="businessName" required placeholder="e.g., Atafi Luxury">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required placeholder="you@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" required placeholder="+2348012345678">
+                </div>
+
+                <div class="form-group">
+                    <label for="industry">Industry</label>
+                    <select id="industry" required>
+                        <option value="">Select Industry</option>
+                        <option value="retail">Retail</option>
+                        <option value="services">Services</option>
+                        <option value="technology">Technology</option>
+                        <option value="manufacturing">Manufacturing</option>
+                        <option value="hospitality">Hospitality</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="monthlyRevenue">Current Monthly Revenue (₦)</label>
+                    <input type="number" id="monthlyRevenue" required min="0" step="100" placeholder="500000">
+                </div>
+
+                <div class="form-group">
+                    <label for="customerCount">Current Customer Count</label>
+                    <input type="number" id="customerCount" required min="0" placeholder="50">
+                </div>
+
+                <div class="form-group">
+                    <label for="marketingBudget">Current Monthly Marketing Budget (₦)</label>
+                    <input type="number" id="marketingBudget" required min="0" placeholder="100000">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required minlength="8" placeholder="Create a password">
+                </div>
+
+                <button type="submit" class="btn-predict">Get My Free Prediction</button>
+            </form>
+
+            <!-- Results Container (Hidden Initially) -->
+            <div id="predictionResults" class="prediction-results" style="display: none;">
+                <h3>Your 30-Day Growth Projection</h3>
+                <div class="results-card">
+                    <div class="growth-meter">
+                        <div class="growth-value" id="growthPercentage">0%</div>
+                        <p>Projected Growth</p>
+                    </div>
+                    
+                    <div class="detailed-prediction">
+                        <h4>With Atafi Luxury Branding, you could achieve:</h4>
+                        <ul id="predictionDetails">
+                            <li>Projected Revenue: ₦<span id="projectedRevenue">0</span></li>
+                            <li>New Customers: <span id="projectedCustomers">0</span></li>
+                            <li>ROI on Branding: <span id="projectedROI">0</span>%</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="testimonial-preview">
+                        <p>"Atafi Luxury helped us increase our revenue by 150% in just 2 months!"</p>
+                        <cite>- Sarah's Boutique</cite>
+                    </div>
+                    
+                    <button class="btn-start-journey" id="startJourneyBtn">Start Your Growth Journey - ₦2,900/month</button>
+                    <p class="disclaimer">*This is a predictive estimate based on similar businesses</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Preview Section -->
+    <section id="community" class="community-section">
+        <div class="container">
+            <h2>Join Our Growing Community</h2>
+            <div class="community-stats">
+                <div class="stat">
+                    <span class="stat-number" id="memberCount">500+</span>
+                    <span class="stat-label">Happy Clients</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">200%</span>
+                    <span class="stat-label">Average Growth</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" id="referralCount">1000+</span>
+                    <span class="stat-label">Referrals</span>
+                </div>
+            </div>
+            
+            <div class="success-stories" id="successStories">
+                <!-- Success stories will load dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Processing...</p>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notificationToast" class="notification-toast" style="display: none;"></div>
+
+    <!-- Load JavaScript -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/payment.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
