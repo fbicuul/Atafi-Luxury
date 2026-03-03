@@ -8,6 +8,18 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+    // Verify environment variables are loaded
+    if (!window.ENV || !window.ENV.PAYSTACK_PUBLIC_KEY) {
+        console.error('❌ Environment variables not loaded!');
+        UI.showNotification('Site configuration error. Please refresh.', 'error');
+    } else {
+        console.log('✅ Environment variables verified');
+    }
+    
+    initializeApp();
+});
+
 function initializeApp() {
     // Get form element
     const predictionForm = document.getElementById('predictionForm');

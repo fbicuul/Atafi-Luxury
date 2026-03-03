@@ -1,35 +1,34 @@
 /**
  * ATAFI LUXURY - PAYSTACK PAYMENT INTEGRATION
- * Handles all payment-related functionality
  */
 
 const Payment = {
-    /**
-     * Initialize Paystack payment
-     */
     initialize(amount, email, userId, metadata = {}) {
         return new Promise((resolve, reject) => {
-            // Amount must be in kobo (multiply by 100)
             const amountInKobo = Math.round(amount * 100);
-            
-            // Generate unique reference
             const reference = 'ATAFI_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8).toUpperCase();
+            
+            // Check if environment variables exist
+            if (!window.ENV || !window.ENV.PAYSTACK_PUBLIC_KEY) {
+                UI.showNotification('Payment configuration error', 'error');
+                reject(new Error('Paystack key not found'));
+                return;
+            }
             
             try {
                 const handler = PaystackPop.setup({
-                    key: CONFIG.PAYSTACK.PUBLIC_KEY,
+                    key: window.ENV.PAYSTACK_PUBLIC_KEY,  // Read from ENV directly
                     email: email,
                     amount: amountInKobo,
-                    currency: CONFIG.BUSINESS.CURRENCY,
+                    currency: 'NGN',  // Hardcode or get from BUSINESS object
                     ref: reference,
                     metadata: {
                         userId: userId,
-                        businessId: CONFIG.BUSINESS.ID,
-                        businessName: CONFIG.BUSINESS.NAME,
+                        businessId: 'atafi_luxury',
+                        businessName: 'Atafi Luxury',
                         ...metadata
                     },
                     callback: function(response) {
-                        // Payment successful
                         UI.showNotification('Payment successful! Redirecting...', 'success');
                         resolve({
                             success: true,
@@ -38,7 +37,6 @@ const Payment = {
                         });
                     },
                     onClose: function() {
-                        // User closed payment window
                         UI.showNotification('Payment cancelled', 'info');
                         reject(new Error('Payment cancelled by user'));
                     }
@@ -54,22 +52,17 @@ const Payment = {
         });
     },
 
-    /**
-     * Process subscription payment after signup
-     */
     async processSignupPayment(userData) {
         UI.showLoading(true);
         
         try {
-            // Step 1: Register user with backend
+            // Register user with backend
             await API.registerUser(userData);
             
-            // Step 2: Initialize payment (we'll generate a temp userId for now)
-            // In production, you'd get the real userId from the registration response
             const tempUserId = 'user_' + Date.now();
             
             const result = await this.initialize(
-                CONFIG.BUSINESS.PRICE,
+                2900,  // Price
                 userData.email,
                 tempUserId,
                 {
@@ -79,14 +72,11 @@ const Payment = {
             );
             
             if (result.success) {
-                // Store user data in session storage for after payment
                 sessionStorage.setItem('pendingUser', JSON.stringify({
                     ...userData,
                     paymentReference: result.reference
                 }));
                 
-                // In a real implementation, you'd redirect to a success page
-                // or wait for webhook confirmation
                 setTimeout(() => {
                     window.location.href = '/payment-success.html';
                 }, 2000);
@@ -100,17 +90,11 @@ const Payment = {
         }
     },
 
-    /**
-     * Verify payment status (can be called from success page)
-     */
     async checkPaymentStatus(reference) {
         UI.showLoading(true);
         try {
-            // This would typically call your backend to verify
-            // For now, we'll simulate
             await new Promise(resolve => setTimeout(resolve, 2000));
             
-            // Get pending user data
             const pendingUser = sessionStorage.getItem('pendingUser');
             if (pendingUser) {
                 const userData = JSON.parse(pendingUser);
@@ -128,15 +112,3 @@ const Payment = {
         }
     }
 };
-
-// Payment success page handler (create payment-success.html separately)
-if (window.location.pathname.includes('payment-success')) {
-    document.addEventListener('DOMContentLoaded', async () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const reference = urlParams.get('reference');
-        
-        if (reference) {
-            await Payment.checkPaymentStatus(reference);
-        }
-    });
-}

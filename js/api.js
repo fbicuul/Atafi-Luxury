@@ -1,30 +1,28 @@
 /**
  * ATAFI LUXURY - GOOGLE APPS SCRIPT API HANDLER
- * Handles all communication with the backend
  */
 
 const API = {
-    /**
-     * Send request to Google Apps Script backend
-     */
     async request(action, data = {}) {
         try {
-            const response = await fetch(CONFIG.APPS_SCRIPT.WEB_APP_URL, {
+            if (!window.ENV || !window.ENV.APPS_SCRIPT_URL) {
+                throw new Error('Apps Script URL not configured');
+            }
+
+            const response = await fetch(window.ENV.APPS_SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Required for Apps Script
+                mode: 'no-cors',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     action: action,
                     ...data,
-                    businessId: CONFIG.BUSINESS.ID,
+                    businessId: 'atafi_luxury',
                     timestamp: new Date().toISOString()
                 })
             });
 
-            // With no-cors, we don't get a readable response
-            // So we'll assume success if no error thrown
             return { success: true };
             
         } catch (error) {
@@ -33,9 +31,6 @@ const API = {
         }
     },
 
-    /**
-     * Register new user and save business details
-     */
     async registerUser(userData) {
         return this.request('register', {
             fullName: userData.fullName,
@@ -50,9 +45,6 @@ const API = {
         });
     },
 
-    /**
-     * Save referral
-     */
     async createReferral(referrerId, referredEmail) {
         return this.request('createReferral', {
             referrerId: referrerId,
@@ -60,18 +52,10 @@ const API = {
         });
     },
 
-    /**
-     * Get referral statistics
-     */
     async getReferralStats(userId) {
-        // Note: This requires a GET request, which needs a different approach
-        // For now, we'll simulate via POST
         return this.request('getReferralStats', { userId });
     },
 
-    /**
-     * Verify payment with Paystack (called from webhook)
-     */
     async verifyPayment(reference, userId) {
         return this.request('verifyPaystackPayment', {
             reference: reference,
