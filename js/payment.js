@@ -16,6 +16,11 @@ const Payment = {
             }
             
             try {
+                // Add this right before const handler = PaystackPop.setup({
+                console.log('🔍 Key being sent to Paystack:', window.ENV.PAYSTACK_PUBLIC_KEY);
+                console.log('🔍 Key length:', window.ENV.PAYSTACK_PUBLIC_KEY.length);
+                console.log('🔍 First 7 chars:', window.ENV.PAYSTACK_PUBLIC_KEY.substring(0, 7));
+
                 const handler = PaystackPop.setup({
                     key: window.ENV.PAYSTACK_PUBLIC_KEY,  // Read from ENV directly
                     email: email,
