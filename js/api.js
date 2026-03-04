@@ -1,16 +1,17 @@
 /**
- * ATAFI LUXURY - GOOGLE APPS SCRIPT API HANDLER
- * PRODUCTION VERSION
+ * ATAFI LUXURY - COMPLETE API CLIENT
+ * Handles all communication with Apps Script backend
  */
 
 const API = {
+    // Base request method
     async request(action, data = {}) {
         try {
             if (!window.ENV?.APPS_SCRIPT_URL) {
                 throw new Error('Apps Script URL not configured');
             }
 
-            await fetch(window.ENV.APPS_SCRIPT_URL, {
+            const response = await fetch(window.ENV.APPS_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
@@ -25,17 +26,21 @@ const API = {
             return { success: true };
             
         } catch (error) {
-            console.error(`API Error:`, error);
+            console.error(`API Error (${action}):`, error);
             throw error;
         }
     },
 
+    // ============================================
+    // USER MANAGEMENT
+    // ============================================
+    
     async registerUser(userData) {
         return this.request('register', {
-            fullName: userData.fullName,
             email: userData.email,
-            phone: userData.phone,
             password: userData.password,
+            fullName: userData.fullName,
+            phone: userData.phone,
             businessName: userData.businessName,
             industry: userData.industry,
             monthlyRevenue: userData.monthlyRevenue,
@@ -44,21 +49,87 @@ const API = {
         });
     },
 
-    // Add these methods to your existing API object
+    async login(email, password) {
+        return this.request('login', { email, password });
+    },
 
-    async sendEmail(emailData) {
-        return this.request('sendEmail', emailData);
+    async getUserProfile(userId) {
+        return this.request('getUserProfile', { userId });
+    },
+
+    async updateUserProfile(userId, profileData) {
+        return this.request('updateUserProfile', { userId, ...profileData });
+    },
+
+    async changePassword(userId, currentPassword, newPassword) {
+        return this.request('changePassword', { userId, currentPassword, newPassword });
+    },
+
+    // ============================================
+    // SUBSCRIPTION MANAGEMENT
+    // ============================================
+
+    async getSubscription(userId) {
+        return this.request('getSubscription', { userId });
+    },
+
+    async changePlan(userId, plan) {
+        return this.request('changePlan', { userId, plan });
+    },
+
+    async cancelSubscription(userId) {
+        return this.request('cancelSubscription', { userId });
+    },
+
+    async getBillingHistory(email) {
+        return this.request('getBillingHistory', { email });
+    },
+
+    // ============================================
+    // REFERRAL SYSTEM
+    // ============================================
+
+    async createReferral(referrerId, referredEmail) {
+        return this.request('createReferral', { referrerId, referredEmail });
+    },
+
+    async getReferrals(referrerId) {
+        return this.request('getReferrals', { referrerId });
+    },
+
+    async getReferralStats(referrerId) {
+        return this.request('getReferralStats', { referrerId });
+    },
+
+    // ============================================
+    // ANALYTICS
+    // ============================================
+
+    async trackAnalytics(event, eventData = {}) {
+        return this.request('trackAnalytics', { event, eventData });
+    },
+
+    async getAnalytics(timeframe = 30) {
+        return this.request('getAnalytics', { timeframe });
     },
 
     async getUserGrowth(userId) {
         return this.request('getUserGrowth', { userId });
     },
 
-    async trackAnalytics(event) {
-        return this.request('trackAnalytics', event);
+    // ============================================
+    // EMAIL
+    // ============================================
+
+    async sendEmail(to, template, data = {}) {
+        return this.request('sendEmail', { to, template, data });
     },
 
-    async getAnalytics(params) {
-        return this.request('getAnalytics', params);
+    // ============================================
+    // PAYMENT VERIFICATION
+    // ============================================
+
+    async verifyPayment(reference, userId) {
+        return this.request('verifyPaystackPayment', { reference, userId });
     }
 };

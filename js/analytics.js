@@ -1,99 +1,96 @@
 /**
- * ATAFI LUXURY - ANALYTICS DASHBOARD
- * Tracks user behavior and business metrics
+ * ATAFI LUXURY - ANALYTICS SYSTEM
  */
 
 const Analytics = {
     // Initialize analytics
     init() {
-        this.events = [];
         this.userId = localStorage.getItem('userId');
         this.sessionId = this.generateSessionId();
+        this.startTime = Date.now();
         
         // Track page view
-        this.trackPageView();
+        this.trackEvent('page_view', {
+            path: window.location.pathname,
+            referrer: document.referrer
+        });
         
         // Track time on page
-        this.trackTimeOnPage();
-    },
-
-    // Track page view
-    trackPageView() {
-        const event = {
-            type: 'page_view',
-            userId: this.userId,
-            sessionId: this.sessionId,
-            page: window.location.pathname,
-            timestamp: new Date().toISOString(),
-            referrer: document.referrer,
-            userAgent: navigator.userAgent
-        };
-        
-        this.events.push(event);
-        this.sendEvent(event);
-    },
-
-    // Track time on page
-    trackTimeOnPage() {
-        const startTime = Date.now();
-        
         window.addEventListener('beforeunload', () => {
-            const timeSpent = Math.round((Date.now() - startTime) / 1000);
-            
-            const event = {
-                type: 'time_on_page',
-                userId: this.userId,
-                sessionId: this.sessionId,
-                page: window.location.pathname,
-                seconds: timeSpent,
-                timestamp: new Date().toISOString()
-            };
-            
-            this.sendEvent(event);
+            const timeSpent = Math.round((Date.now() - this.startTime) / 1000);
+            this.trackEvent('time_on_page', {
+                path: window.location.pathname,
+                seconds: timeSpent
+            });
         });
     },
 
-    // Track user action
-    trackAction(actionName, actionData = {}) {
+    // Track custom event
+    trackEvent(eventName, eventData = {}) {
         const event = {
-            type: 'user_action',
-            userId: this.userId,
+            event: eventName,
+            userId: this.userId || 'anonymous',
             sessionId: this.sessionId,
-            action: actionName,
-            data: actionData,
-            timestamp: new Date().toISOString()
+            data: eventData,
+            timestamp: new Date().toISOString(),
+            url: window.location.href,
+            userAgent: navigator.userAgent
         };
         
-        this.events.push(event);
+        // Store in memory
+        this.queue = this.queue || [];
+        this.queue.push(event);
+        
+        // Send to backend
         this.sendEvent(event);
         
-        console.log(`📊 Tracked action: ${actionName}`, actionData);
-    },
-
-    // Track conversion
-    trackConversion(conversionType, value = 0) {
-        const event = {
-            type: 'conversion',
-            userId: this.userId,
-            sessionId: this.sessionId,
-            conversionType: conversionType,
-            value: value,
-            timestamp: new Date().toISOString()
-        };
-        
-        this.events.push(event);
-        this.sendEvent(event);
-        
-        console.log(`💰 Conversion tracked: ${conversionType}`, { value });
+        // Log in development
+        if (window.ENV?.ENV !== 'production') {
+            console.log('📊 Analytics:', eventName, eventData);
+        }
     },
 
     // Send event to backend
     async sendEvent(event) {
         try {
-            await API.trackAnalytics(event);
+            await API.trackAnalytics(event.event, {
+                ...event.data,
+                sessionId: event.sessionId,
+                url: event.url
+            });
         } catch (error) {
             console.error('Failed to send analytics:', error);
+            // Store failed events for retry
+            this.storeFailedEvent(event);
         }
+    },
+
+    // Store failed events in localStorage
+    storeFailedEvent(event) {
+        const failed = JSON.parse(localStorage.getItem('analytics_failed') || '[]');
+        failed.push(event);
+        localStorage.setItem('analytics_failed', JSON.stringify(failed.slice(-50))); // Keep last 50
+    },
+
+    // Retry failed events
+    async retryFailedEvents() {
+        const failed = JSON.parse(localStorage.getItem('analytics_failed') || '[]');
+        if (failed.length === 0) return;
+        
+        const successful = [];
+        
+        for (const event of failed) {
+            try {
+                await API.trackAnalytics(event.event, event.data);
+                successful.push(event);
+            } catch (error) {
+                console.error('Retry failed:', event.event);
+            }
+        }
+        
+        // Remove successful events
+        const remaining = failed.filter(e => !successful.includes(e));
+        localStorage.setItem('analytics_failed', JSON.stringify(remaining));
     },
 
     // Generate session ID
@@ -101,14 +98,10 @@ const Analytics = {
         return 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     },
 
-    // Get analytics for dashboard
-    async getAnalytics(timeframe = '30d') {
+    // Get analytics summary
+    async getSummary(timeframe = 30) {
         try {
-            const response = await API.getAnalytics({
-                userId: this.userId,
-                timeframe: timeframe
-            });
-            
+            const response = await API.getAnalytics(timeframe);
             return response.data;
         } catch (error) {
             console.error('Failed to get analytics:', error);
@@ -116,69 +109,34 @@ const Analytics = {
         }
     },
 
-    // Calculate growth metrics
-    calculateMetrics(analyticsData) {
-        const metrics = {
-            pageViews: analyticsData?.pageViews || 0,
-            uniqueVisitors: analyticsData?.uniqueVisitors || 0,
-            bounceRate: analyticsData?.bounceRate || 0,
-            avgSessionDuration: analyticsData?.avgSessionDuration || 0,
-            conversionRate: analyticsData?.conversionRate || 0,
-            totalRevenue: analyticsData?.totalRevenue || 0
-        };
-        
-        return metrics;
+    // Track user action
+    trackAction(action, details = {}) {
+        this.trackEvent('user_action', { action, ...details });
     },
 
-    // Generate report
-    generateReport(metrics) {
-        return {
-            summary: {
-                totalVisits: metrics.pageViews,
-                uniqueUsers: metrics.uniqueVisitors,
-                revenuePerVisitor: metrics.pageViews > 0 ? metrics.totalRevenue / metrics.pageViews : 0,
-                conversionPercentage: metrics.conversionRate + '%'
-            },
-            trends: {
-                weekly: this.calculateTrend(metrics, 'weekly'),
-                monthly: this.calculateTrend(metrics, 'monthly')
-            },
-            recommendations: this.generateRecommendations(metrics)
-        };
+    // Track conversion
+    trackConversion(type, value = 0) {
+        this.trackEvent('conversion', { type, value });
     },
 
-    // Calculate trend
-    calculateTrend(metrics, period) {
-        // Implement trend calculation logic
-        return {
-            direction: 'up',
-            percentage: 15
-        };
-    },
-
-    // Generate recommendations
-    generateRecommendations(metrics) {
-        const recommendations = [];
-        
-        if (metrics.bounceRate > 60) {
-            recommendations.push('High bounce rate detected. Consider improving your landing page.');
-        }
-        
-        if (metrics.conversionRate < 2) {
-            recommendations.push('Low conversion rate. Try optimizing your call-to-action.');
-        }
-        
-        if (metrics.avgSessionDuration < 60) {
-            recommendations.push('Short session duration. Add more engaging content.');
-        }
-        
-        return recommendations;
+    // Track error
+    trackError(error, context = {}) {
+        this.trackEvent('error', {
+            message: error.message,
+            stack: error.stack,
+            ...context
+        });
     }
 };
 
 // Initialize analytics on page load
 document.addEventListener('DOMContentLoaded', () => {
-    if (window.ENV?.ANALYTICS?.ENABLED) {
+    if (window.ENV?.ANALYTICS?.ENABLED !== false) {
         Analytics.init();
+        
+        // Retry failed events every 5 minutes
+        setInterval(() => {
+            Analytics.retryFailedEvents();
+        }, 300000);
     }
 });

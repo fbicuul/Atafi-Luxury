@@ -1,6 +1,6 @@
 /**
- * ATAFI LUXURY - MAIN APPLICATION LOGIC
- * PRODUCTION VERSION
+ * ATAFI LUXURY - MAIN APPLICATION
+ * Complete version with all features
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -8,15 +8,50 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeApp() {
-    const predictionForm = document.getElementById('predictionForm');
-    const startJourneyBtn = document.getElementById('startJourneyBtn');
+    // Initialize components
+    if (window.Analytics) Analytics.init();
     
+    // Load user session
+    loadUserSession();
+    
+    // Setup form handlers
+    const predictionForm = document.getElementById('predictionForm');
     if (predictionForm) {
         predictionForm.addEventListener('submit', handlePredictionSubmit);
     }
     
+    // Setup payment button
+    const startJourneyBtn = document.getElementById('startJourneyBtn');
+    if (startJourneyBtn) {
+        startJourneyBtn.addEventListener('click', handleStartJourney);
+    }
+    
+    // Load community data
     loadCommunityStats();
     loadSuccessStories();
+    
+    // Track page view
+    if (window.Analytics) {
+        Analytics.trackEvent('page_load', {
+            path: window.location.pathname
+        });
+    }
+}
+
+function loadUserSession() {
+    const userId = localStorage.getItem('userId');
+    const userEmail = localStorage.getItem('userEmail');
+    
+    if (userId && userEmail) {
+        document.body.classList.add('logged-in');
+        
+        // Update UI for logged in user
+        const loginLink = document.querySelector('.btn-login');
+        if (loginLink) {
+            loginLink.textContent = 'Dashboard';
+            loginLink.href = 'dashboard.html';
+        }
+    }
 }
 
 async function handlePredictionSubmit(e) {
@@ -39,6 +74,14 @@ async function handlePredictionSubmit(e) {
             password: document.getElementById('password').value
         };
         
+        // Track prediction attempt
+        if (window.Analytics) {
+            Analytics.trackEvent('prediction_request', {
+                industry: formData.industry,
+                revenue: formData.monthlyRevenue
+            });
+        }
+        
         const prediction = calculatePrediction(formData);
         displayPredictionResults(prediction);
         
@@ -47,13 +90,87 @@ async function handlePredictionSubmit(e) {
             prediction: prediction
         }));
         
-        UI.showNotification('Prediction calculated! Scroll down to see results.', 'success');
+        UI.showNotification('Prediction calculated!', 'success');
         
     } catch (error) {
         console.error('Prediction error:', error);
+        if (window.Analytics) Analytics.trackError(error, { action: 'prediction' });
         UI.showNotification('Error calculating prediction', 'error');
     } finally {
         UI.showLoading(false);
+    }
+}
+
+async function handleStartJourney() {
+    const pendingData = sessionStorage.getItem('pendingPrediction');
+    
+    if (!pendingData) {
+        UI.showNotification('Please get a prediction first', 'info');
+        document.getElementById('predictor').scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+    
+    try {
+        const { formData } = JSON.parse(pendingData);
+        const selectedPlan = document.getElementById('plan')?.value || 'PRO';
+        
+        // Get plan details
+        const plan = window.ENV?.PLANS?.[selectedPlan] || {
+            id: selectedPlan,
+            name: selectedPlan === 'BASIC' ? 'Basic' : selectedPlan === 'PRO' ? 'Professional' : 'Enterprise',
+            price: selectedPlan === 'BASIC' ? 2900 : selectedPlan === 'PRO' ? 4900 : 9900
+        };
+        
+        // Process payment and signup
+        if (window.Payment) {
+            await Payment.processSignup(formData, plan);
+        } else {
+            // Fallback direct payment
+            handleDirectPayment(formData, plan);
+        }
+        
+    } catch (error) {
+        console.error('Journey error:', error);
+        if (window.Analytics) Analytics.trackError(error, { action: 'journey' });
+        UI.showNotification('Error starting your journey', 'error');
+    }
+}
+
+// Fallback payment handler
+function handleDirectPayment(formData, plan) {
+    const email = formData.email;
+    
+    if (!email) {
+        UI.showNotification('Please enter your email', 'error');
+        return;
+    }
+    
+    try {
+        const handler = PaystackPop.setup({
+            key: window.PAYSTACK_PUBLIC_KEY,
+            email: email,
+            amount: plan.price * 100,
+            currency: 'NGN',
+            ref: 'ATAFI_' + Date.now(),
+            metadata: {
+                full_name: formData.fullName,
+                phone: formData.phone,
+                plan: plan.id
+            },
+            callback: function(response) {
+                UI.showNotification('Payment successful!', 'success');
+                setTimeout(() => {
+                    window.location.href = '/payment-success.html?reference=' + response.reference + '&plan=' + plan.id;
+                }, 2000);
+            },
+            onClose: function() {
+                UI.showNotification('Payment cancelled', 'info');
+            }
+        });
+        handler.openIframe();
+    } catch (error) {
+        console.error('Payment error:', error);
+        UI.showNotification('Error starting payment', 'error');
     }
 }
 
@@ -81,6 +198,8 @@ function calculatePrediction(data) {
 
 function displayPredictionResults(prediction) {
     const resultsDiv = document.getElementById('predictionResults');
+    if (!resultsDiv) return;
+    
     document.getElementById('growthPercentage').textContent = prediction.growthPercentage + '%';
     document.getElementById('projectedRevenue').textContent = prediction.projectedRevenue.toLocaleString();
     document.getElementById('projectedCustomers').textContent = prediction.projectedCustomers;
@@ -96,42 +215,54 @@ function validateForm() {
     
     requiredFields.forEach(fieldId => {
         const field = document.getElementById(fieldId);
-        if (!field.value.trim()) {
+        if (field && !field.value.trim()) {
             field.classList.add('invalid');
             isValid = false;
-        } else {
+        } else if (field) {
             field.classList.remove('invalid');
         }
     });
+    
+    // Email validation
+    const email = document.getElementById('email');
+    if (email && email.value && !email.value.includes('@')) {
+        email.classList.add('invalid');
+        isValid = false;
+    }
     
     return isValid;
 }
 
 function loadCommunityStats() {
     setTimeout(() => {
-        document.getElementById('memberCount').textContent = '547';
-        document.getElementById('referralCount').textContent = '1,234';
+        const memberCount = document.getElementById('memberCount');
+        const referralCount = document.getElementById('referralCount');
+        
+        if (memberCount) memberCount.textContent = '547';
+        if (referralCount) referralCount.textContent = '1,234';
     }, 1000);
 }
 
 function loadSuccessStories() {
+    const storiesContainer = document.getElementById('successStories');
+    if (!storiesContainer) return;
+    
     const stories = [
         { name: "Blessing's Fashion House", story: "Revenue doubled in 3 months!", growth: "+120%" },
         { name: "Chidi's Tech Solutions", story: "Grew exactly as projected", growth: "+85%" },
         { name: "Amara Beauty", story: "Community support is amazing!", growth: "+200%" }
     ];
     
-    const storiesHTML = stories.map(story => `
+    storiesContainer.innerHTML = stories.map(s => `
         <div class="story-card">
-            <h4>${story.name}</h4>
-            <p>"${story.story}"</p>
-            <span class="growth-badge">${story.growth}</span>
+            <h4>${s.name}</h4>
+            <p>"${s.story}"</p>
+            <span class="growth-badge">${s.growth}</span>
         </div>
     `).join('');
-    
-    document.getElementById('successStories').innerHTML = storiesHTML;
 }
 
+// UI Helper Functions
 const UI = {
     showLoading(show) {
         const overlay = document.getElementById('loadingOverlay');
