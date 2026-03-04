@@ -14,7 +14,7 @@
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
     
-    <!-- Environment configuration - Fixed -->
+    <!-- Environment configuration -->
     <script>
         // Safely initialize window.ENV
         window.ENV = window.ENV || {};
@@ -179,7 +179,7 @@
 
     <!-- Simplified payment handler -->
     <script>
-        // UI Helper Functions (ensure they exist)
+        // UI Helper Functions
         const UI = {
             showLoading: function(show) {
                 const overlay = document.getElementById('loadingOverlay');
@@ -268,17 +268,20 @@
             }, 1000);
             
             // Load success stories
-            document.getElementById('successStories').innerHTML = [
-                { name: "Blessing's Fashion House", story: "Revenue doubled in 3 months!", growth: "+120%" },
-                { name: "Chidi's Tech Solutions", story: "Grew exactly as projected", growth: "+85%" },
-                { name: "Amara Beauty", story: "Community support is amazing!", growth: "+200%" }
-            ].map(s => `
-                <div class="story-card">
-                    <h4>${s.name}</h4>
-                    <p>"${s.story}"</p>
-                    <span class="growth-badge">${s.growth}</span>
-                </div>
-            `).join('');
+            const storiesContainer = document.getElementById('successStories');
+            if (storiesContainer) {
+                storiesContainer.innerHTML = [
+                    { name: "Blessing's Fashion House", story: "Revenue doubled in 3 months!", growth: "+120%" },
+                    { name: "Chidi's Tech Solutions", story: "Grew exactly as projected", growth: "+85%" },
+                    { name: "Amara Beauty", story: "Community support is amazing!", growth: "+200%" }
+                ].map(s => `
+                    <div class="story-card">
+                        <h4>${s.name}</h4>
+                        <p>"${s.story}"</p>
+                        <span class="growth-badge">${s.growth}</span>
+                    </div>
+                `).join('');
+            }
         });
     </script>
 </body>
