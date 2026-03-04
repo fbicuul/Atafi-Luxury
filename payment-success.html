@@ -18,20 +18,14 @@
         </div>
     </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/payment.js"></script>
     <script>
-        // Get reference from URL
         const urlParams = new URLSearchParams(window.location.search);
         const reference = urlParams.get('reference');
         if (reference) {
             document.getElementById('reference').textContent = reference;
         }
         
-        // Auto redirect after 5 seconds
-        setTimeout(() => {
-            window.location.href = '/dashboard.html';
-        }, 5000);
+        setTimeout(() => window.location.href = '/', 5000);
     </script>
 </body>
 </html>

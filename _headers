@@ -1,9 +1,9 @@
-# Atafi Luxury - Complete Headers
+# Atafi Luxury - Security Headers
 /*
-  Content-Security-Policy: default-src * data: blob: https: http: ws: wss: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval' data: blob: https: http: https://js.paystack.co https://checkout.paystack.com https://*.paystack.com; style-src * 'unsafe-inline'; frame-src * https://checkout.paystack.com; connect-src * https: http:;
+  Content-Security-Policy: default-src * data: blob: https: http: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval' data: blob: https: http: https://js.paystack.co https://checkout.paystack.com; style-src * 'unsafe-inline'; frame-src * https://checkout.paystack.com; connect-src * https: http:;
   X-Frame-Options: ALLOWALL
   Access-Control-Allow-Origin: *
 
-# Fix JavaScript MIME types
+# JavaScript MIME types
 /js/*.js
   Content-Type: application/javascript

@@ -11,8 +11,17 @@
     <!-- Paystack inline script -->
     <script src="https://js.paystack.co/v1/inline.js"></script>
     
-    <!-- Add favicon to prevent 404 -->
+    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    
+    <!-- SECURE: Environment variables from Render (no keys exposed) -->
+    <script>
+        window.ENV = {
+            PAYSTACK_PUBLIC_KEY: '{{ .Env.PAYSTACK_PUBLIC_KEY }}',
+            APPS_SCRIPT_URL: '{{ .Env.APPS_SCRIPT_URL }}'
+        };
+        console.log('✅ Environment variables loaded from Render');
+    </script>
 </head>
 <body>
     <!-- Navigation -->
@@ -162,17 +171,7 @@
     <!-- Notification Toast -->
     <div id="notificationToast" class="notification-toast" style="display: none;"></div>
 
-    <!-- First: Environment variables -->
-    <script>
-        window.ENV = {
-        PAYSTACK_PUBLIC_KEY: '{{ .Env.PAYSTACK_PUBLIC_KEY }}',
-        APPS_SCRIPT_URL: '{{ .Env.APPS_SCRIPT_URL }}'
-        };
-        console.log('✅ Environment variables injected');
-        console.log('📋 Public key loaded?', window.ENV.PAYSTACK_PUBLIC_KEY ? 'YES' : 'NO');
-    </script>
-
-    <!-- Then: Load other scripts -->
+    <!-- Load JavaScript files -->
     <script src="js/api.js"></script>
     <script src="js/payment.js"></script>
     <script src="js/main.js"></script>

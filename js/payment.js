@@ -1,31 +1,37 @@
 /**
  * ATAFI LUXURY - PAYSTACK PAYMENT INTEGRATION
+ * SECURE VERSION - No hardcoded keys
  */
 
 const Payment = {
     initialize(amount, email, userId, metadata = {}) {
         return new Promise((resolve, reject) => {
-            const amountInKobo = Math.round(amount * 100);
-            const reference = 'ATAFI_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8).toUpperCase();
-            
             // Check if environment variables exist
             if (!window.ENV || !window.ENV.PAYSTACK_PUBLIC_KEY) {
-                UI.showNotification('Payment configuration error', 'error');
+                console.error('❌ Paystack key missing - check Render environment variables');
+                UI.showNotification('Payment configuration error. Please contact support.', 'error');
                 reject(new Error('Paystack key not found'));
                 return;
             }
-            
-            try {
-                // Add this right before const handler = PaystackPop.setup({
-                console.log('🔍 Key being sent to Paystack:', window.ENV.PAYSTACK_PUBLIC_KEY);
-                console.log('🔍 Key length:', window.ENV.PAYSTACK_PUBLIC_KEY.length);
-                console.log('🔍 First 7 chars:', window.ENV.PAYSTACK_PUBLIC_KEY.substring(0, 7));
 
+            if (typeof PaystackPop === 'undefined') {
+                console.error('❌ Paystack library not loaded');
+                UI.showNotification('Payment system unavailable. Please refresh.', 'error');
+                reject(new Error('PaystackPop not loaded'));
+                return;
+            }
+
+            const amountInKobo = Math.round(amount * 100);
+            const reference = 'ATAFI_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8).toUpperCase();
+            
+            console.log('✅ Initializing payment with secure key');
+
+            try {
                 const handler = PaystackPop.setup({
-                    key: window.ENV.PAYSTACK_PUBLIC_KEY,  // Read from ENV directly
+                    key: window.ENV.PAYSTACK_PUBLIC_KEY, // From Render environment
                     email: email,
                     amount: amountInKobo,
-                    currency: 'NGN',  // Hardcode or get from BUSINESS object
+                    currency: 'NGN',
                     ref: reference,
                     metadata: {
                         userId: userId,
@@ -50,7 +56,7 @@ const Payment = {
                 handler.openIframe();
                 
             } catch (error) {
-                console.error('Paystack initialization error:', error);
+                console.error('❌ Paystack error:', error);
                 UI.showNotification('Failed to initialize payment', 'error');
                 reject(error);
             }
@@ -61,13 +67,13 @@ const Payment = {
         UI.showLoading(true);
         
         try {
-            // Register user with backend
+            // Register with Apps Script backend
             await API.registerUser(userData);
             
             const tempUserId = 'user_' + Date.now();
             
             const result = await this.initialize(
-                2900,  // Price
+                2900,
                 userData.email,
                 tempUserId,
                 {
@@ -76,44 +82,32 @@ const Payment = {
                 }
             );
             
-            if (result.success) {
+            if (result && result.success) {
                 sessionStorage.setItem('pendingUser', JSON.stringify({
                     ...userData,
-                    paymentReference: result.reference
+                    paymentReference: result.reference,
+                    userId: tempUserId
                 }));
                 
                 setTimeout(() => {
-                    window.location.href = '/payment-success.html';
+                    window.location.href = '/payment-success.html?reference=' + result.reference;
                 }, 2000);
             }
             
         } catch (error) {
-            console.error('Payment process error:', error);
+            console.error('❌ Payment process error:', error);
             UI.showNotification('Error processing payment. Please try again.', 'error');
         } finally {
             UI.showLoading(false);
         }
     },
 
-    async checkPaymentStatus(reference) {
-        UI.showLoading(true);
+    async verifyPayment(reference) {
         try {
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            const pendingUser = sessionStorage.getItem('pendingUser');
-            if (pendingUser) {
-                const userData = JSON.parse(pendingUser);
-                UI.showNotification(`Welcome ${userData.fullName}! Your journey begins!`, 'success');
-                sessionStorage.removeItem('pendingUser');
-            }
-            
-            return true;
-            
+            return await API.verifyPayment(reference);
         } catch (error) {
-            console.error('Verification error:', error);
-            return false;
-        } finally {
-            UI.showLoading(false);
+            console.error('❌ Verification error:', error);
+            return { success: false };
         }
     }
 };

@@ -12,9 +12,7 @@ const API = {
             const response = await fetch(window.ENV.APPS_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     action: action,
                     ...data,
@@ -45,21 +43,7 @@ const API = {
         });
     },
 
-    async createReferral(referrerId, referredEmail) {
-        return this.request('createReferral', {
-            referrerId: referrerId,
-            referredEmail: referredEmail
-        });
-    },
-
-    async getReferralStats(userId) {
-        return this.request('getReferralStats', { userId });
-    },
-
     async verifyPayment(reference, userId) {
-        return this.request('verifyPaystackPayment', {
-            reference: reference,
-            userId: userId
-        });
+        return this.request('verifyPaystackPayment', { reference, userId });
     }
 };
