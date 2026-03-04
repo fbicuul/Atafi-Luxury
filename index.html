@@ -14,16 +14,17 @@
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
     
-    <!-- Environment configuration -->
+    <!-- Environment configuration - MUST COME FIRST -->
     <script>
-        // Safely initialize window.ENV
-        window.ENV = window.ENV || {};
+        // Initialize ALL environment variables first
+        window.ENV = {
+            PAYSTACK_PUBLIC_KEY: 'pk_live_ab0810040c9f8d590803f5834d25680ae66160',
+            APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwnXjzsNo-jcU8/exec', // Add your actual URL
+            ANALYTICS_ENABLED: false // Disable analytics until fully configured
+        };
         
-        // Paystack public key (safe to expose)
-        window.PAYSTACK_PUBLIC_KEY = 'pk_live_ab0810040c9f8d590803f5834d25680ae66160';
-        window.ENV.PAYSTACK_PUBLIC_KEY = window.PAYSTACK_PUBLIC_KEY;
-        
-        console.log('✅ Atafi Luxury initialized');
+        window.PAYSTACK_PUBLIC_KEY = window.ENV.PAYSTACK_PUBLIC_KEY;
+        console.log('✅ Environment configured');
     </script>
 </head>
 <body>
@@ -172,17 +173,10 @@
     <!-- Notification Toast -->
     <div id="notificationToast" class="notification-toast" style="display: none;"></div>
 
-    <!-- Load JavaScript files -->
-    <script src="js/api.js"></script>
-    <script src="js/payment.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/analytics.js"></script>
-    <script src="js/email.js"></script>
-
-    <!-- Main Application Script -->
+    <!-- UI Helper Object - DECLARED ONCE GLOBALLY -->
     <script>
-        // UI Helper Functions (ensure they exist globally)
-        const UI = {
+        // Global UI object - declared only once
+        window.UI = {
             showLoading: function(show) {
                 const overlay = document.getElementById('loadingOverlay');
                 if (overlay) overlay.style.display = show ? 'flex' : 'none';
@@ -197,91 +191,126 @@
                 }
             }
         };
+    </script>
 
-        // Handle form submission
-        document.getElementById('predictionForm')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('email')?.value;
-            if (!email) {
-                UI.showNotification('Please enter your email', 'error');
-                return;
-            }
-            
-            // Calculate mock prediction
-            const growth = Math.round(Math.random() * 20 + 10);
-            const revenue = parseInt(document.getElementById('monthlyRevenue')?.value || 500000);
-            const customers = parseInt(document.getElementById('customerCount')?.value || 50);
-            
-            document.getElementById('growthPercentage').textContent = growth + '%';
-            document.getElementById('projectedRevenue').textContent = Math.round(revenue * (1 + growth/100)).toLocaleString();
-            document.getElementById('projectedCustomers').textContent = Math.round(customers * (1 + growth/100));
-            document.getElementById('projectedROI').textContent = Math.round(growth * 1.5);
-            
-            document.getElementById('predictionResults').style.display = 'block';
-            document.getElementById('predictionResults').scrollIntoView({ behavior: 'smooth' });
-            
-            // Store in session
-            sessionStorage.setItem('pendingPrediction', JSON.stringify({
-                email: email,
-                growth: growth
-            }));
-        });
+    <!-- Load JavaScript files - with null checks -->
+    <script src="js/api.js"></script>
+    <script src="js/payment.js"></script>
+    <script src="js/main.js"></script>
+    
+    <!-- Analytics - Conditionally load only if enabled -->
+    <script>
+        if (window.ENV && window.ENV.ANALYTICS_ENABLED) {
+            document.write('<script src="js/analytics.js"><\/script>');
+        }
+    </script>
+    
+    <!-- Email - Conditionally load -->
+    <script>
+        if (window.ENV && window.ENV.APPS_SCRIPT_URL) {
+            document.write('<script src="js/email.js"><\/script>');
+        }
+    </script>
 
-        // Handle payment button
-        document.getElementById('startJourneyBtn')?.addEventListener('click', function() {
-            const email = document.getElementById('email')?.value;
-            if (!email) {
-                UI.showNotification('Please fill the form first', 'error');
-                document.getElementById('email').focus();
-                return;
-            }
+    <!-- Main Application Script -->
+    <script>
+        // Ensure DOM is fully loaded before attaching events
+        document.addEventListener('DOMContentLoaded', function() {
             
-            try {
-                const handler = PaystackPop.setup({
-                    key: window.PAYSTACK_PUBLIC_KEY,
-                    email: email,
-                    amount: 290000,
-                    currency: 'NGN',
-                    ref: 'ATAFI_' + Date.now(),
-                    callback: function(response) {
-                        UI.showNotification('Payment successful!', 'success');
-                        setTimeout(() => {
-                            window.location.href = '/payment-success.html?reference=' + response.reference;
-                        }, 2000);
-                    },
-                    onClose: function() {
-                        UI.showNotification('Payment cancelled', 'info');
+            // Handle form submission
+            const predictionForm = document.getElementById('predictionForm');
+            if (predictionForm) {
+                predictionForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const email = document.getElementById('email')?.value;
+                    if (!email) {
+                        window.UI.showNotification('Please enter your email', 'error');
+                        return;
+                    }
+                    
+                    // Calculate mock prediction
+                    const growth = Math.round(Math.random() * 20 + 10);
+                    const revenue = parseInt(document.getElementById('monthlyRevenue')?.value || 500000);
+                    const customers = parseInt(document.getElementById('customerCount')?.value || 50);
+                    
+                    document.getElementById('growthPercentage').textContent = growth + '%';
+                    document.getElementById('projectedRevenue').textContent = Math.round(revenue * (1 + growth/100)).toLocaleString();
+                    document.getElementById('projectedCustomers').textContent = Math.round(customers * (1 + growth/100));
+                    document.getElementById('projectedROI').textContent = Math.round(growth * 1.5);
+                    
+                    document.getElementById('predictionResults').style.display = 'block';
+                    document.getElementById('predictionResults').scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Store in session
+                    sessionStorage.setItem('pendingPrediction', JSON.stringify({
+                        email: email,
+                        growth: growth
+                    }));
+                });
+            }
+
+            // Handle payment button
+            const startJourneyBtn = document.getElementById('startJourneyBtn');
+            if (startJourneyBtn) {
+                startJourneyBtn.addEventListener('click', function() {
+                    const email = document.getElementById('email')?.value;
+                    if (!email) {
+                        window.UI.showNotification('Please fill the form first', 'error');
+                        document.getElementById('email').focus();
+                        return;
+                    }
+                    
+                    try {
+                        const handler = PaystackPop.setup({
+                            key: window.PAYSTACK_PUBLIC_KEY,
+                            email: email,
+                            amount: 290000,
+                            currency: 'NGN',
+                            ref: 'ATAFI_' + Date.now(),
+                            callback: function(response) {
+                                window.UI.showNotification('Payment successful!', 'success');
+                                setTimeout(() => {
+                                    window.location.href = '/payment-success.html?reference=' + response.reference;
+                                }, 2000);
+                            },
+                            onClose: function() {
+                                window.UI.showNotification('Payment cancelled', 'info');
+                            }
+                        });
+                        handler.openIframe();
+                    } catch (error) {
+                        console.error('Payment error:', error);
+                        window.UI.showNotification('Error starting payment', 'error');
                     }
                 });
-                handler.openIframe();
-            } catch (error) {
-                console.error('Payment error:', error);
-                UI.showNotification('Error starting payment', 'error');
+            }
+
+            // Load community stats
+            setTimeout(() => {
+                const memberCount = document.getElementById('memberCount');
+                const referralCount = document.getElementById('referralCount');
+                
+                if (memberCount) memberCount.textContent = '547';
+                if (referralCount) referralCount.textContent = '1,234';
+            }, 1000);
+
+            // Load success stories
+            const storiesContainer = document.getElementById('successStories');
+            if (storiesContainer) {
+                storiesContainer.innerHTML = [
+                    { name: "Blessing's Fashion House", story: "Revenue doubled in 3 months!", growth: "+120%" },
+                    { name: "Chidi's Tech Solutions", story: "Grew exactly as projected", growth: "+85%" },
+                    { name: "Amara Beauty", story: "Community support is amazing!", growth: "+200%" }
+                ].map(s => `
+                    <div class="story-card">
+                        <h4>${s.name}</h4>
+                        <p>"${s.story}"</p>
+                        <span class="growth-badge">${s.growth}</span>
+                    </div>
+                `).join('');
             }
         });
-
-        // Load community stats
-        setTimeout(() => {
-            document.getElementById('memberCount').textContent = '547';
-            document.getElementById('referralCount').textContent = '1,234';
-        }, 1000);
-
-        // Load success stories
-        const storiesContainer = document.getElementById('successStories');
-        if (storiesContainer) {
-            storiesContainer.innerHTML = [
-                { name: "Blessing's Fashion House", story: "Revenue doubled in 3 months!", growth: "+120%" },
-                { name: "Chidi's Tech Solutions", story: "Grew exactly as projected", growth: "+85%" },
-                { name: "Amara Beauty", story: "Community support is amazing!", growth: "+200%" }
-            ].map(s => `
-                <div class="story-card">
-                    <h4>${s.name}</h4>
-                    <p>"${s.story}"</p>
-                    <span class="growth-badge">${s.growth}</span>
-                </div>
-            `).join('');
-        }
     </script>
 </body>
 </html>
