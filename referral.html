@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referral Program - Atafi Luxury</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <h2>Atafi Luxury</h2>
+                <p>Referral Program</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="referral.html" class="active">
+                    <i class="fas fa-users"></i>
+                    <span>Referrals</span>
+                </a>
+                <a href="#">
+                    <i class="fas fa-gift"></i>
+                    <span>Rewards</span>
+                </a>
+                <a href="#">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </a>
+                <a href="index.html">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <div class="header-title">
+                    <h1>Referral Program</h1>
+                    <p>Invite friends and earn 10% commission</p>
+                </div>
+            </header>
+
+            <!-- Referral Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Total Referrals</h3>
+                        <div class="stat-number" id="totalRef">12</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Successful</h3>
+                        <div class="stat-number" id="successfulRef">8</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Pending</h3>
+                        <div class="stat-number" id="pendingRef">4</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Commission Earned</h3>
+                        <div class="stat-number" id="commissionTotal">₦2,320</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Referral Link Section -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>Your Referral Link</h2>
+                    <div>
+                        <button class="btn btn-primary" onclick="copyReferralLink()">
+                            <i class="fas fa-copy"></i> Copy Link
+                        </button>
+                        <button class="btn btn-secondary" onclick="shareReferral()">
+                            <i class="fas fa-share-alt"></i> Share
+                        </button>
+                    </div>
+                </div>
+                <div class="referral-link-box">
+                    <input type="text" id="referralLink" readonly value="https://atafi-luxury.com/?ref=USER123" class="referral-input">
+                </div>
+                <p class="referral-info">You earn 10% commission (₦290) for each friend who subscribes through your link!</p>
+            </div>
+
+            <!-- Invite Form -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>Invite via Email</h2>
+                </div>
+                <form id="inviteForm" onsubmit="sendInvite(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Friend's Email</label>
+                            <input type="email" id="inviteEmail" required placeholder="friend@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Personal Message (Optional)</label>
+                            <textarea id="inviteMessage" placeholder="Join me on Atafi Luxury..."></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Invite</button>
+                </form>
+            </div>
+
+            <!-- Referral History -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>Referral History</h2>
+                    <select class="filter-select" onchange="filterReferrals(this.value)">
+                        <option value="all">All</option>
+                        <option value="successful">Successful</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                </div>
+                <table id="referralTable">
+                    <thead>
+                        <tr>
+                            <th>Friend</th>
+                            <th>Date Joined</th>
+                            <th>Status</th>
+                            <th>Commission</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="referralTableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/referral.js"></script>
+</body>
+</html>

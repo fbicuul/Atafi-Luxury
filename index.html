@@ -14,13 +14,16 @@
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
     
-    <!-- Production environment with LIVE key -->
+    <!-- ONLY PAYSTACK PUBLIC KEY IS VISIBLE - Everything else loads from config.js -->
     <script>
-        window.ENV = {
-            PAYSTACK_PUBLIC_KEY: 'pk_live_ab0810040c9f8d590803f5834d25680ae66160e3',
-            APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwlF4bIb56ikD8EjCM_EUtYPEqp6vGMvf0yvYlS8Ez2QtNGns1UidkLbj7fqTk9-K6iBQ/exec'
-        };
-        console.log('✅ Atafi Luxury LIVE mode ready');
+        // Only the public key is visible - this is SAFE
+        window.PAYSTACK_PUBLIC_KEY = 'pk_live_ab0810040c9f8d590803f5834d25680ae66160e3';
+        
+        // All other configurations will be loaded from config.js (gitignored)
+        window.ENV = window.ENV || {};
+        window.ENV.PAYSTACK_PUBLIC_KEY = window.PAYSTACK_PUBLIC_KEY;
+        
+        console.log('✅ Paystack public key loaded');
     </script>
 </head>
 <body>
@@ -31,6 +34,7 @@
             <li><a href="#home">Home</a></li>
             <li><a href="#predictor">Predictor</a></li>
             <li><a href="#community">Community</a></li>
+            <li><a href="dashboard.html" class="dashboard-link">Dashboard</a></li>
             <li><a href="#login" class="btn-login">Login</a></li>
         </ul>
     </nav>
@@ -41,6 +45,18 @@
             <h1>Predict Your Business Growth with Atafi Luxury</h1>
             <p>Join successful businesses that increased their cash flow by 200%+</p>
             <a href="#predictor" class="cta-button">Get Your Free Prediction</a>
+        </div>
+    </section>
+
+    <!-- Plans Section -->
+    <section id="plans" class="plans-section">
+        <div class="container">
+            <h2>Choose Your Growth Plan</h2>
+            <p class="section-subtitle">Start with Basic, upgrade as you grow</p>
+            
+            <div class="plans-grid" id="plansContainer">
+                <!-- Plans will be populated by config.js -->
+            </div>
         </div>
     </section>
 
@@ -104,6 +120,15 @@
                     <input type="password" id="password" name="password" required minlength="8" placeholder="Create a password">
                 </div>
 
+                <div class="form-group">
+                    <label for="plan">Select Plan</label>
+                    <select id="plan" name="plan" required>
+                        <option value="BASIC">Basic - ₦2,900/month</option>
+                        <option value="PRO" selected>Professional - ₦4,900/month</option>
+                        <option value="ENTERPRISE">Enterprise - ₦9,900/month</option>
+                    </select>
+                </div>
+
                 <button type="submit" class="btn-predict">Get My Free Prediction</button>
             </form>
 
@@ -125,14 +150,30 @@
                         </ul>
                     </div>
                     
+                    <div id="referralBonusContainer" style="display: none;">
+                        <div class="referral-bonus">
+                            <p>🤝 Refer friends and earn <strong class="referral-amount">₦0</strong> per referral!</p>
+                        </div>
+                    </div>
+                    
                     <div class="testimonial-preview">
                         <p>"Atafi Luxury helped us increase our revenue by 150% in just 2 months!"</p>
                         <cite>- Sarah's Boutique</cite>
                     </div>
                     
-                    <button class="btn-start-journey" id="startJourneyBtn">Start Your Growth Journey - ₦2,900/month</button>
-                    <p class="disclaimer">*This is a predictive estimate based on similar businesses</p>
+                    <button class="btn-start-journey" id="startJourneyBtn">Start Your Growth Journey</button>
+                    <p class="disclaimer" id="trialMessage">*14-day free trial. Cancel anytime.</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Preview -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <h2>Everything You Need to Grow</h2>
+            <div class="features-grid" id="featuresContainer">
+                <!-- Features will be populated by config.js -->
             </div>
         </div>
     </section>
@@ -151,14 +192,12 @@
                     <span class="stat-label">Average Growth</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-number" id="referralCount">1000+</span>
-                    <span class="stat-label">Referrals</span>
+                    <span class="stat-number" id="referralCount">1,234</span>
+                    <span class="stat-label">Successful Referrals</span>
                 </div>
             </div>
             
-            <div class="success-stories" id="successStories">
-                <!-- Success stories will load dynamically -->
-            </div>
+            <div class="success-stories" id="successStories"></div>
         </div>
     </section>
 
@@ -171,12 +210,15 @@
     <!-- Notification Toast -->
     <div id="notificationToast" class="notification-toast" style="display: none;"></div>
 
-    <!-- Load JavaScript files -->
+    <!-- Load config.js FIRST (gitignored - contains all secrets except public key) -->
+    <script src="js/config.js"></script>
+    
+    <!-- Then load other JavaScript files -->
     <script src="js/api.js"></script>
     <script src="js/payment.js"></script>
     <script src="js/main.js"></script>
 
-    <!-- Production payment handler -->
+    <!-- Payment handler - uses config from config.js -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const startJourneyBtn = document.getElementById('startJourneyBtn');
@@ -188,6 +230,8 @@
                     const email = document.getElementById('email')?.value;
                     const fullName = document.getElementById('fullName')?.value;
                     const phone = document.getElementById('phone')?.value;
+                    const planSelect = document.getElementById('plan');
+                    const selectedPlan = planSelect ? planSelect.value : 'PRO';
                     
                     if (!email || !email.includes('@')) {
                         UI.showNotification('Please enter a valid email address', 'error');
@@ -195,22 +239,27 @@
                         return;
                     }
                     
+                    // Get plan price from config.js (loaded separately)
+                    const planPrice = window.ENV?.PLANS?.[selectedPlan]?.price || 4900;
+                    
                     try {
                         const handler = PaystackPop.setup({
-                            key: window.ENV.PAYSTACK_PUBLIC_KEY,
+                            key: window.PAYSTACK_PUBLIC_KEY, // From visible variable
                             email: email,
-                            amount: 290000,
+                            amount: planPrice * 100,
                             currency: 'NGN',
                             ref: 'ATAFI_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8),
                             metadata: {
                                 full_name: fullName,
-                                phone_number: phone
+                                phone_number: phone,
+                                plan: selectedPlan,
+                                plan_name: window.ENV?.PLANS?.[selectedPlan]?.name || 'Professional'
                             },
                             callback: function(response) {
                                 UI.showNotification('Payment successful! Redirecting...', 'success');
                                 setTimeout(() => {
-                                    window.location.href = '/payment-success.html?reference=' + response.reference;
-                                }, 1500);
+                                    window.location.href = '/dashboard.html?welcome=true&plan=' + selectedPlan;
+                                }, 2000);
                             },
                             onClose: function() {
                                 UI.showNotification('Payment cancelled', 'info');
@@ -224,6 +273,14 @@
                 });
             }
         });
+
+        function selectPlan(planKey) {
+            const planSelect = document.getElementById('plan');
+            if (planSelect) {
+                planSelect.value = planKey;
+                document.getElementById('predictor').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
     </script>
 </body>
 </html>
