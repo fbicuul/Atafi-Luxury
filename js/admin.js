@@ -118,6 +118,7 @@ function viewUser(email) {
     // Implement user view modal
 }
 
+
 function editUser(email) {
     alert(`Edit user: ${email}`);
     // Implement user edit modal
