@@ -5,25 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Success - Atafi Luxury</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .payment-success {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .success-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.2);
+            max-width: 500px;
+        }
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #28a745;
+            color: white;
+            font-size: 3rem;
+            line-height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #d4af37;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
     <div class="payment-success">
         <div class="success-card">
             <div class="success-icon">✓</div>
             <h1>Payment Successful!</h1>
-            <p>Thank you for joining Atafi Luxury. Your journey to business growth begins now.</p>
-            <div class="spinner" style="width: 30px; height: 30px; margin: 20px auto;"></div>
+            <p>Thank you for joining Atafi Luxury (powered by KRO Media). Your journey to business growth begins now.</p>
+            <div class="spinner"></div>
             <p>Redirecting you to your dashboard...</p>
-            <p><small>Reference: <span id="reference"></span></small></p>
+            <p><small>Transaction ID: <span id="reference"></span></small></p>
         </div>
     </div>
 
     <script>
-        const reference = new URLSearchParams(window.location.search).get('reference');
+        const urlParams = new URLSearchParams(window.location.search);
+        const reference = urlParams.get('reference');
+        const status = urlParams.get('status');
+        
         if (reference) {
             document.getElementById('reference').textContent = reference;
         }
-        setTimeout(() => window.location.href = '/', 5000);
+        
+        console.log('Payment status:', status, 'Reference:', reference);
+        
+        // Redirect to dashboard after 5 seconds
+        setTimeout(() => {
+            window.location.href = '/dashboard.html';
+        }, 5000);
     </script>
 </body>
 </html>

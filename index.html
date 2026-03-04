@@ -8,17 +8,20 @@
     <!-- CSS Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
     
-    <!-- Paystack inline script -->
-    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <!-- Flutterwave Inline Script (V3) -->
+    <script src="https://checkout.flutterwave.com/v3.js"></script>
     
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
     
-    <!-- LIVE MODE CONFIGURATION -->
+    <!-- Flutterwave Configuration -->
     <script>
-        // Your live Paystack public key
-        const PAYSTACK_LIVE_KEY = 'pk_test_e26810fb9b2c12f479f3f9ffb21e794964505447';
-        console.log('✅ Live Paystack key loaded');
+        // Flutterwave Configuration - UPDATE WITH YOUR PUBLIC KEY
+        const FLW_CONFIG = {
+            PUBLIC_KEY: 'FLWPUBK-2139829c2de5b6071f89e39b59e9d9ca-X', // Replace with your KRO Media public key
+            SUBACCOUNT_ID: 'RS_89D720D484AF8296626AC1C84E2B0044' // Atafi Luxury subaccount
+        };
+        console.log('✅ Flutterwave configured for Atafi Luxury');
     </script>
 </head>
 <body>
@@ -167,7 +170,7 @@
     <!-- Notification Toast -->
     <div id="notificationToast" class="notification-toast" style="display: none;"></div>
 
-    <!-- Simple UI Helper -->
+    <!-- UI Helper -->
     <script>
         function showMessage(msg, type) {
             const toast = document.getElementById('notificationToast');
@@ -185,7 +188,7 @@
         }
     </script>
 
-    <!-- LIVE PAYMENT HANDLER -->
+    <!-- Flutterwave Payment Handler -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             
@@ -199,7 +202,7 @@
                     return;
                 }
                 
-                // Calculate simple prediction
+                // Calculate prediction
                 const revenue = parseFloat(document.getElementById('monthlyRevenue').value) || 500000;
                 const growth = 18.5;
                 
@@ -210,9 +213,24 @@
                 
                 document.getElementById('predictionResults').style.display = 'block';
                 document.getElementById('predictionResults').scrollIntoView({ behavior: 'smooth' });
+                
+                // Store form data
+                const formData = {
+                    fullName: document.getElementById('fullName').value,
+                    businessName: document.getElementById('businessName').value,
+                    email: email,
+                    phone: document.getElementById('phone').value,
+                    industry: document.getElementById('industry').value,
+                    monthlyRevenue: revenue,
+                    customerCount: document.getElementById('customerCount').value,
+                    marketingBudget: document.getElementById('marketingBudget').value,
+                    password: document.getElementById('password').value
+                };
+                
+                sessionStorage.setItem('pendingUser', JSON.stringify(formData));
             });
 
-            // LIVE PAYMENT HANDLER - Use this with your live key
+            // FLUTTERWAVE PAYMENT HANDLER
             document.getElementById('startJourneyBtn').addEventListener('click', function() {
                 const email = document.getElementById('email').value;
                 const fullName = document.getElementById('fullName').value;
@@ -224,70 +242,89 @@
                     return;
                 }
                 
-                // Validate email format
                 if (!email.includes('@') || !email.includes('.')) {
                     showMessage('Please enter a valid email address', 'error');
                     return;
                 }
                 
-                // Show loading
+                if (!phone || phone.length < 10) {
+                    showMessage('Please enter a valid phone number', 'error');
+                    document.getElementById('phone').focus();
+                    return;
+                }
+                
                 showLoading(true);
                 
-                // Generate unique reference
-                const reference = 'ATAFI_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8).toUpperCase();
-                
                 try {
-                    const handler = PaystackPop.setup({
-                        // LIVE KEY - Your actual live public key
-                        key: 'pk_test_e26810fb9b2c12f479f3f9ffb21e794964505447',
-                        
-                        // Customer information
-                        email: email,
-                        amount: 290000, // ₦2,900 in kobo
+                    // Flutterwave payment configuration
+                    FlutterwaveCheckout({
+                        public_key: FLW_CONFIG.PUBLIC_KEY,
+                        tx_ref: 'ATAFI_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8),
+                        amount: 2900,
                         currency: 'NGN',
-                        ref: reference,
                         
-                        // Additional customer info
-                        metadata: {
-                            custom_fields: [
-                                {
-                                    display_name: "Full Name",
-                                    variable_name: "full_name",
-                                    value: fullName || 'Not provided'
-                                },
-                                {
-                                    display_name: "Phone Number",
-                                    variable_name: "phone",
-                                    value: phone || 'Not provided'
-                                }
-                            ]
+                        // Atafi Luxury subaccount
+                        subaccounts: [
+                            {
+                                id: FLW_CONFIG.SUBACCOUNT_ID
+                            }
+                        ],
+                        
+                        payment_options: 'card, banktransfer, ussd',
+                        
+                        // Redirect URL after payment
+                        redirect_url: window.location.origin + '/payment-success.html',
+                        
+                        customer: {
+                            email: email,
+                            name: fullName || 'Customer',
+                            phone_number: phone
                         },
                         
-                        // Callback on success
+                        customizations: {
+                            title: 'Atafi Luxury',
+                            description: 'Business Growth Journey',
+                            logo: 'https://atafi-lux.onrender.com/logo.png'
+                        },
+                        
                         callback: function(response) {
                             showLoading(false);
-                            showMessage('Payment successful! Redirecting...', 'success');
-                            console.log('Payment success:', response);
                             
-                            // Redirect to success page
-                            setTimeout(() => {
-                                window.location.href = '/payment-success.html?reference=' + response.reference;
-                            }, 2000);
+                            if (response.status === 'successful') {
+                                showMessage('Payment successful! Redirecting...', 'success');
+                                console.log('Payment successful:', response);
+                                
+                                // Get stored user data
+                                const userData = JSON.parse(sessionStorage.getItem('pendingUser') || '{}');
+                                
+                                // Send to backend
+                                fetch(APPS_SCRIPT_URL, {
+                                    method: 'POST',
+                                    mode: 'no-cors',
+                                    body: JSON.stringify({
+                                        action: 'register',
+                                        ...userData,
+                                        paymentRef: response.transaction_id
+                                    })
+                                });
+                                
+                                setTimeout(() => {
+                                    window.location.href = '/payment-success.html?reference=' + response.transaction_id + '&status=success';
+                                }, 2000);
+                            } else {
+                                showMessage('Payment was not successful', 'error');
+                            }
                         },
                         
-                        // Callback on close
-                        onClose: function() {
+                        onclose: function() {
                             showLoading(false);
                             showMessage('Payment cancelled', 'info');
                         }
                     });
                     
-                    // Open the payment modal
-                    handler.openIframe();
-                    
                 } catch (error) {
                     showLoading(false);
-                    console.error('Payment error:', error);
+                    console.error('Flutterwave error:', error);
                     showMessage('Unable to initialize payment. Please try again.', 'error');
                 }
             });
