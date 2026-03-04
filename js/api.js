@@ -1,5 +1,5 @@
 /**
- * ATAFI LUXURY - API CLIENT
+ * ATAFI LUXURY - API CLIENT (UPDATED FOR MERGED APPS SCRIPT)
  */
 
 const API = {
@@ -12,7 +12,6 @@ const API = {
                 body: JSON.stringify({
                     action: action,
                     ...data,
-                    businessId: 'atafi_luxury',
                     timestamp: new Date().toISOString()
                 })
             });
@@ -25,19 +24,32 @@ const API = {
         }
     },
 
+    // Atafi Luxury endpoints
     async registerUser(userData) {
-        return this.request('register', userData);
+        return this.request('atafi_register', userData);
+    },
+
+    async login(email, password) {
+        return this.request('atafi_login', { email, password });
     },
 
     async getUserProfile(userId) {
-        return this.request('getUserProfile', { userId });
+        return this.request('atafi_getUserProfile', { userId });
     },
 
     async updateUserProfile(userId, profileData) {
-        return this.request('updateUserProfile', { userId, ...profileData });
+        return this.request('atafi_updateUserProfile', { userId, ...profileData });
+    },
+
+    async savePrediction(userId, predictionData) {
+        return this.request('atafi_savePrediction', { userId, ...predictionData });
+    },
+
+    async getPredictions(userId) {
+        return this.request('atafi_getPredictions', { userId });
     },
 
     async trackAnalytics(event, eventData = {}) {
-        return this.request('trackAnalytics', { event, eventData });
+        return this.request('atafi_trackAnalytics', { event, eventData });
     }
 };
