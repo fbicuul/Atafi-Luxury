@@ -42,5 +42,23 @@ const API = {
             customerCount: userData.customerCount,
             marketingBudget: userData.marketingBudget
         });
+    },
+
+    // Add these methods to your existing API object
+
+    async sendEmail(emailData) {
+        return this.request('sendEmail', emailData);
+    },
+
+    async getUserGrowth(userId) {
+        return this.request('getUserGrowth', { userId });
+    },
+
+    async trackAnalytics(event) {
+        return this.request('trackAnalytics', event);
+    },
+
+    async getAnalytics(params) {
+        return this.request('getAnalytics', params);
     }
 };
