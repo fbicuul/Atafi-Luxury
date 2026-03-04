@@ -53,7 +53,7 @@
             <h2>Business Growth Predictor</h2>
             <p class="section-subtitle">See what your business could achieve in just 30 days</p>
             
-            <form id="predictionForm" class="prediction-form" onsubmit="event.preventDefault(); handlePredictionSubmit()">
+            <form id="predictionForm" class="prediction-form">
                 <div class="form-group">
                     <label for="fullName">Full Name</label>
                     <input type="text" id="fullName" name="fullName" required placeholder="John Doe">
@@ -176,10 +176,12 @@
     <script src="js/api.js"></script>
     <script src="js/payment.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/analytics.js"></script>
+    <script src="js/email.js"></script>
 
-    <!-- Simplified payment handler -->
+    <!-- Main Application Script -->
     <script>
-        // UI Helper Functions
+        // UI Helper Functions (ensure they exist globally)
         const UI = {
             showLoading: function(show) {
                 const overlay = document.getElementById('loadingOverlay');
@@ -197,7 +199,9 @@
         };
 
         // Handle form submission
-        window.handlePredictionSubmit = function() {
+        document.getElementById('predictionForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
             const email = document.getElementById('email')?.value;
             if (!email) {
                 UI.showNotification('Please enter your email', 'error');
@@ -222,67 +226,62 @@
                 email: email,
                 growth: growth
             }));
-        };
+        });
 
         // Handle payment button
-        document.addEventListener('DOMContentLoaded', function() {
-            const payBtn = document.getElementById('startJourneyBtn');
-            if (payBtn) {
-                payBtn.addEventListener('click', function() {
-                    const email = document.getElementById('email')?.value;
-                    if (!email) {
-                        UI.showNotification('Please fill the form first', 'error');
-                        document.getElementById('email').focus();
-                        return;
-                    }
-                    
-                    try {
-                        const handler = PaystackPop.setup({
-                            key: window.PAYSTACK_PUBLIC_KEY,
-                            email: email,
-                            amount: 290000,
-                            currency: 'NGN',
-                            ref: 'ATAFI_' + Date.now(),
-                            callback: function(response) {
-                                UI.showNotification('Payment successful!', 'success');
-                                setTimeout(() => {
-                                    window.location.href = '/payment-success.html?reference=' + response.reference;
-                                }, 2000);
-                            },
-                            onClose: function() {
-                                UI.showNotification('Payment cancelled', 'info');
-                            }
-                        });
-                        handler.openIframe();
-                    } catch (error) {
-                        console.error('Payment error:', error);
-                        UI.showNotification('Error starting payment', 'error');
+        document.getElementById('startJourneyBtn')?.addEventListener('click', function() {
+            const email = document.getElementById('email')?.value;
+            if (!email) {
+                UI.showNotification('Please fill the form first', 'error');
+                document.getElementById('email').focus();
+                return;
+            }
+            
+            try {
+                const handler = PaystackPop.setup({
+                    key: window.PAYSTACK_PUBLIC_KEY,
+                    email: email,
+                    amount: 290000,
+                    currency: 'NGN',
+                    ref: 'ATAFI_' + Date.now(),
+                    callback: function(response) {
+                        UI.showNotification('Payment successful!', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/payment-success.html?reference=' + response.reference;
+                        }, 2000);
+                    },
+                    onClose: function() {
+                        UI.showNotification('Payment cancelled', 'info');
                     }
                 });
-            }
-            
-            // Load community stats
-            setTimeout(() => {
-                document.getElementById('memberCount').textContent = '547';
-                document.getElementById('referralCount').textContent = '1,234';
-            }, 1000);
-            
-            // Load success stories
-            const storiesContainer = document.getElementById('successStories');
-            if (storiesContainer) {
-                storiesContainer.innerHTML = [
-                    { name: "Blessing's Fashion House", story: "Revenue doubled in 3 months!", growth: "+120%" },
-                    { name: "Chidi's Tech Solutions", story: "Grew exactly as projected", growth: "+85%" },
-                    { name: "Amara Beauty", story: "Community support is amazing!", growth: "+200%" }
-                ].map(s => `
-                    <div class="story-card">
-                        <h4>${s.name}</h4>
-                        <p>"${s.story}"</p>
-                        <span class="growth-badge">${s.growth}</span>
-                    </div>
-                `).join('');
+                handler.openIframe();
+            } catch (error) {
+                console.error('Payment error:', error);
+                UI.showNotification('Error starting payment', 'error');
             }
         });
+
+        // Load community stats
+        setTimeout(() => {
+            document.getElementById('memberCount').textContent = '547';
+            document.getElementById('referralCount').textContent = '1,234';
+        }, 1000);
+
+        // Load success stories
+        const storiesContainer = document.getElementById('successStories');
+        if (storiesContainer) {
+            storiesContainer.innerHTML = [
+                { name: "Blessing's Fashion House", story: "Revenue doubled in 3 months!", growth: "+120%" },
+                { name: "Chidi's Tech Solutions", story: "Grew exactly as projected", growth: "+85%" },
+                { name: "Amara Beauty", story: "Community support is amazing!", growth: "+200%" }
+            ].map(s => `
+                <div class="story-card">
+                    <h4>${s.name}</h4>
+                    <p>"${s.story}"</p>
+                    <span class="growth-badge">${s.growth}</span>
+                </div>
+            `).join('');
+        }
     </script>
 </body>
 </html>
