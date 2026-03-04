@@ -1,75 +1,93 @@
 /**
- * ATAFI LUXURY - REFERRAL JS
+ * ATAFI LUXURY - REFERRAL SYSTEM
  */
 
-// Mock referral data
-const mockReferrals = [
-    { name: 'Sarah Johnson', email: 'sarah@example.com', date: '2026-03-04', status: 'successful', commission: 290 },
-    { name: 'Mike Peters', email: 'mike@example.com', date: '2026-03-03', status: 'successful', commission: 290 },
-    { name: 'Lisa Anderson', email: 'lisa@example.com', date: '2026-03-02', status: 'pending', commission: 0 },
-    { name: 'Tom Williams', email: 'tom@example.com', date: '2026-03-01', status: 'successful', commission: 290 },
-    { name: 'Emma Davis', email: 'emma@example.com', date: '2026-02-28', status: 'pending', commission: 0 },
-    { name: 'Chris Brown', email: 'chris@example.com', date: '2026-02-27', status: 'successful', commission: 290 }
-];
+let userId = localStorage.getItem('userId');
+let userEmail = localStorage.getItem('userEmail');
+let userName = localStorage.getItem('userName');
 
 document.addEventListener('DOMContentLoaded', function() {
-    loadReferralStats();
-    populateReferralTable();
+    if (!userId) {
+        window.location.href = '/index.html';
+        return;
+    }
     
-    // Set referral link
-    const userId = localStorage.getItem('userId') || 'USER123';
-    const baseUrl = window.location.origin;
-    document.getElementById('referralLink').value = `${baseUrl}/?ref=${userId}`;
+    loadReferralStats();
+    loadReferrals();
 });
 
-function loadReferralStats() {
-    const total = mockReferrals.length;
-    const successful = mockReferrals.filter(r => r.status === 'successful').length;
-    const pending = mockReferrals.filter(r => r.status === 'pending').length;
-    const commission = mockReferrals.reduce((sum, r) => sum + r.commission, 0);
-    
-    document.getElementById('totalRef').textContent = total;
-    document.getElementById('successfulRef').textContent = successful;
-    document.getElementById('pendingRef').textContent = pending;
-    document.getElementById('commissionTotal').textContent = '₦' + commission.toLocaleString();
+async function loadReferralStats() {
+    try {
+        const response = await API.request('atafi_getReferralStats', { referrerId: userId });
+        
+        if (response.success) {
+            document.getElementById('totalReferrals').textContent = response.stats.total || 0;
+            document.getElementById('pendingReferrals').textContent = response.stats.pending || 0;
+            document.getElementById('convertedReferrals').textContent = response.stats.converted || 0;
+            document.getElementById('totalCommission').textContent = '₦' + (response.stats.totalCommission || 0).toLocaleString();
+            document.getElementById('referralLink').value = response.referralLink || 'https://atafi-lux.onrender.com/?ref=' + userId;
+        }
+        
+    } catch (error) {
+        console.error('Failed to load referral stats:', error);
+        showNotification('Failed to load referral stats', 'error');
+    }
 }
 
-function populateReferralTable(filter = 'all') {
+async function loadReferrals(filter = 'all') {
+    try {
+        const response = await API.request('atafi_getReferrals', { referrerId: userId });
+        
+        if (response.success) {
+            displayReferrals(response.referrals, filter);
+        }
+        
+    } catch (error) {
+        console.error('Failed to load referrals:', error);
+        document.getElementById('referralTableBody').innerHTML = 
+            '<tr><td colspan="5" class="text-center">Failed to load referrals</td></tr>';
+    }
+}
+
+function displayReferrals(referrals, filter) {
     const tbody = document.getElementById('referralTableBody');
     
-    let filtered = mockReferrals;
+    let filtered = referrals;
     if (filter !== 'all') {
-        filtered = mockReferrals.filter(r => r.status === filter);
+        filtered = referrals.filter(r => r.status === filter);
+    }
+    
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">No referrals found</td></tr>';
+        return;
     }
     
     tbody.innerHTML = filtered.map(ref => `
         <tr>
-            <td>
-                <strong>${ref.name}</strong><br>
-                <small>${ref.email}</small>
-            </td>
-            <td>${ref.date}</td>
+            <td><strong>${ref.referredEmail}</strong></td>
+            <td>${new Date(ref.createdAt).toLocaleDateString()}</td>
             <td><span class="status-badge status-${ref.status}">${ref.status}</span></td>
             <td>${ref.commission > 0 ? '₦' + ref.commission : '-'}</td>
             <td>
-                <button class="btn btn-sm btn-secondary" onclick="remindFriend('${ref.email}')">
-                    <i class="fas fa-bell"></i> Remind
-                </button>
+                ${ref.status === 'pending' ? 
+                    `<button class="btn btn-sm btn-secondary" onclick="remindFriend('${ref.referredEmail}')">
+                        <i class="fas fa-bell"></i> Remind
+                    </button>` : 
+                    '-'}
             </td>
         </tr>
     `).join('');
 }
 
 function filterReferrals(filter) {
-    populateReferralTable(filter);
+    loadReferrals(filter);
 }
 
 function copyReferralLink() {
     const linkInput = document.getElementById('referralLink');
     linkInput.select();
     document.execCommand('copy');
-    
-    UI.showNotification('Referral link copied!', 'success');
+    showNotification('Referral link copied!', 'success');
 }
 
 function shareReferral() {
@@ -80,26 +98,73 @@ function shareReferral() {
             title: 'Join Atafi Luxury',
             text: 'Join me on Atafi Luxury business growth platform!',
             url: link
-        });
+        }).catch(() => copyReferralLink());
     } else {
         copyReferralLink();
-        UI.showNotification('Link copied! Share it with friends.', 'info');
     }
 }
 
-function sendInvite(event) {
+async function sendInvite(event) {
     event.preventDefault();
     
     const email = document.getElementById('inviteEmail').value;
     const message = document.getElementById('inviteMessage').value;
     
-    // In production, send to your backend
-    console.log('Sending invite to:', email, message);
-    
-    UI.showNotification(`Invitation sent to ${email}!`, 'success');
-    document.getElementById('inviteForm').reset();
+    try {
+        const response = await API.request('atafi_createReferral', {
+            referrerId: userId,
+            referrerEmail: userEmail,
+            referrerName: userName,
+            referredEmail: email,
+            message: message
+        });
+        
+        if (response.success) {
+            showNotification(`Invitation sent to ${email}!`, 'success');
+            document.getElementById('inviteForm').reset();
+            loadReferrals();
+            loadReferralStats();
+        } else {
+            showNotification(response.error || 'Failed to send invite', 'error');
+        }
+        
+    } catch (error) {
+        console.error('Failed to send invite:', error);
+        showNotification('Failed to send invite', 'error');
+    }
 }
 
-function remindFriend(email) {
-    UI.showNotification(`Reminder sent to ${email}`, 'info');
+async function remindFriend(email) {
+    try {
+        await API.request('atafi_queueEmail', {
+            to: email,
+            template: 'referral_reminder',
+            data: {
+                referrerName: userName,
+                referralLink: `https://atafi-lux.onrender.com/?ref=${userId}`
+            }
+        });
+        
+        showNotification(`Reminder sent to ${email}`, 'success');
+    } catch (error) {
+        console.error('Failed to send reminder:', error);
+        showNotification('Failed to send reminder', 'error');
+    }
 }
+
+function showNotification(message, type) {
+    const toast = document.getElementById('notificationToast');
+    if (toast) {
+        toast.textContent = message;
+        toast.className = 'notification-toast ' + type;
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 3000);
+    }
+}
+
+// Logout
+document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    localStorage.clear();
+    window.location.href = '/index.html';
+});

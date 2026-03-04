@@ -5,7 +5,7 @@
 const API = {
     async request(action, data = {}) {
         try {
-            const response = await fetch('https://script.google.com/macros/s/AKfycbwhEvFKIhP7U6DiDyfI2i8x9cPgKP8ktaKk9SgFmH_ZDDXNEHHjEwyrL-aaPutldX8u/exec', { // Replace with your Apps Script URL
+            const response = await fetch('https://script.google.com/macros/s/AKfycbxNKh38WdpnbNz0mRIMVW4vnb0XNOo99CRPU4oiGOB54INRRboYPmLnXKZkJ_lX_YXx/exec', { // Replace with your Apps Script URL
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },

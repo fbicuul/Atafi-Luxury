@@ -6,9 +6,7 @@
     <title>Dashboard - Atafi Luxury</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Chart.js for graphs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -28,19 +26,15 @@
                     <i class="fas fa-users"></i>
                     <span>Referrals</span>
                 </a>
-                <a href="#">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Analytics</span>
-                </a>
-                <a href="#">
+                <a href="subscription.html">
                     <i class="fas fa-credit-card"></i>
-                    <span>Payments</span>
+                    <span>Subscription</span>
                 </a>
-                <a href="#">
+                <a href="profile.html">
                     <i class="fas fa-user"></i>
                     <span>Profile</span>
                 </a>
-                <a href="index.html">
+                <a href="index.html" id="logoutBtn">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </a>
@@ -49,7 +43,6 @@
 
         <!-- Main Content -->
         <main class="dashboard-main">
-            <!-- Header -->
             <header class="dashboard-header">
                 <div class="header-title">
                     <h1>Welcome back, <span id="userName">Loading...</span></h1>
@@ -57,7 +50,7 @@
                 </div>
                 <div class="header-actions">
                     <div class="user-profile">
-                        <div class="user-avatar" id="userInitials">JD</div>
+                        <div class="user-avatar" id="userInitials">AL</div>
                         <div>
                             <div id="userEmail">loading@email.com</div>
                             <small>Member since <span id="memberSince">2026</span></small>
@@ -70,17 +63,8 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-info">
-                        <h3>Total Revenue</h3>
-                        <div class="stat-number" id="totalRevenue">₦0</div>
-                    </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-naira-sign"></i>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <h3>Growth Rate</h3>
-                        <div class="stat-number" id="growthRate">0%</div>
+                        <h3>Total Predictions</h3>
+                        <div class="stat-number" id="totalPredictions">0</div>
                     </div>
                     <div class="stat-icon">
                         <i class="fas fa-chart-line"></i>
@@ -88,11 +72,42 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-info">
-                        <h3>Total Referrals</h3>
-                        <div class="stat-number" id="totalReferrals">0</div>
+                        <h3>Avg. Growth</h3>
+                        <div class="stat-number" id="avgGrowth">0%</div>
                     </div>
                     <div class="stat-icon">
-                        <i class="fas fa-users"></i>
+                        <i class="fas fa-percent"></i>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Total Payments</h3>
+                        <div class="stat-number" id="totalPayments">0</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Total Spent</h3>
+                        <div class="stat-number" id="totalSpent">₦0</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second Row Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Active Referrals</h3>
+                        <div class="stat-number" id="activeReferrals">0</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-user-friends"></i>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -104,56 +119,103 @@
                         <i class="fas fa-gift"></i>
                     </div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Current Plan</h3>
+                        <div class="stat-number" id="currentPlan">Basic</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Status</h3>
+                        <div class="stat-number" id="accountStatus">Active</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
             </div>
 
             <!-- Growth Chart -->
             <div class="chart-container">
-                <h2>30-Day Growth Projection</h2>
+                <h2>Growth Trend</h2>
                 <canvas id="growthChart"></canvas>
             </div>
 
-            <!-- Recent Activity -->
+            <!-- Recent Activity & Referral Link -->
+            <div class="stats-grid" style="grid-template-columns: 2fr 1fr;">
+                <!-- Recent Activity -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2>Recent Activity</h2>
+                        <button class="btn btn-secondary btn-sm" onclick="refreshActivity()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div id="activityList" class="activity-list">
+                        <p class="text-center">Loading activities...</p>
+                    </div>
+                </div>
+
+                <!-- Referral Section -->
+                <div class="referral-card">
+                    <h3><i class="fas fa-gift"></i> Refer & Earn</h3>
+                    <p>Share your referral link and earn <strong>10% commission</strong> on every subscription!</p>
+                    
+                    <div class="referral-link-box">
+                        <input type="text" id="referralLink" readonly value="Loading..." class="referral-input">
+                        <button class="btn btn-primary" onclick="copyReferralLink()">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    
+                    <div class="referral-stats-mini">
+                        <div>
+                            <span class="label">Pending</span>
+                            <span class="value" id="pendingReferrals">0</span>
+                        </div>
+                        <div>
+                            <span class="label">Converted</span>
+                            <span class="value" id="convertedReferrals">0</span>
+                        </div>
+                        <div>
+                            <span class="label">Earnings</span>
+                            <span class="value" id="pendingEarnings">₦0</span>
+                        </div>
+                    </div>
+                    
+                    <a href="referral.html" class="btn-link">View All Referrals →</a>
+                </div>
+            </div>
+
+            <!-- Payment History -->
             <div class="table-container">
                 <div class="table-header">
-                    <h2>Recent Activity</h2>
-                    <button class="btn btn-primary btn-sm" onclick="refreshData()">
-                        <i class="fas fa-sync-alt"></i> Refresh
-                    </button>
+                    <h2>Payment History</h2>
+                    <button class="btn btn-primary btn-sm" onclick="viewAllPayments()">View All</button>
                 </div>
-                <table id="recentActivity">
+                <table id="paymentTable">
                     <thead>
                         <tr>
                             <th>Date</th>
-                            <th>Activity</th>
-                            <th>Status</th>
+                            <th>Reference</th>
                             <th>Amount</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody id="activityTableBody">
+                    <tbody id="paymentTableBody">
                         <tr>
-                            <td colspan="4" class="text-center">Loading activities...</td>
+                            <td colspan="4" class="text-center">Loading payments...</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-
-            <!-- Referral Link Section -->
-            <div class="table-container">
-                <div class="table-header">
-                    <h2>Your Referral Link</h2>
-                    <button class="btn btn-secondary btn-sm" onclick="copyReferralLink()">
-                        <i class="fas fa-copy"></i> Copy
-                    </button>
-                </div>
-                <div class="referral-link-box">
-                    <input type="text" id="referralLink" readonly value="Loading..." class="referral-input">
-                </div>
-                <p class="referral-info">Share this link with friends. You earn 10% commission on their first payment!</p>
-            </div>
         </main>
     </div>
 
-    <script src="js/config.js"></script>
     <script src="js/api.js"></script>
     <script src="js/dashboard.js"></script>
 </body>
