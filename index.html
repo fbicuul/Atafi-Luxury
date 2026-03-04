@@ -14,16 +14,32 @@
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
     
-    <!-- SECURE: Environment variables from Render (no keys exposed) -->
+    <!-- CRITICAL FIX: Direct JavaScript injection - This WILL work -->
     <script>
+        // These values will be replaced by Render during deployment
         window.ENV = {
-            PAYSTACK_PUBLIC_KEY: '{{ .Env.PAYSTACK_PUBLIC_KEY }}',
-            APPS_SCRIPT_URL: '{{ .Env.APPS_SCRIPT_URL }}'
+            PAYSTACK_PUBLIC_KEY: "{{PAYSTACK_PUBLIC_KEY}}",
+            APPS_SCRIPT_URL: "{{APPS_SCRIPT_URL}}"
         };
-        console.log('✅ Environment variables loaded from Render');
+        
+        // Immediate verification
+        console.log('🔍 Environment check:');
+        console.log('- PAYSTACK_PUBLIC_KEY exists:', !!window.ENV.PAYSTACK_PUBLIC_KEY);
+        console.log('- PAYSTACK_PUBLIC_KEY value:', window.ENV.PAYSTACK_PUBLIC_KEY);
+        console.log('- APPS_SCRIPT_URL exists:', !!window.ENV.APPS_SCRIPT_URL);
+        
+        if (!window.ENV.PAYSTACK_PUBLIC_KEY || window.ENV.PAYSTACK_PUBLIC_KEY.includes('{{')) {
+            console.error('❌ CRITICAL: Paystack key not injected! Check Render environment variables.');
+            document.addEventListener('DOMContentLoaded', function() {
+                UI.showNotification('Payment system configuration error. Please contact support.', 'error');
+            });
+        } else {
+            console.log('✅ Environment successfully loaded from Render');
+        }
     </script>
 </head>
 <body>
+    <!-- Rest of your HTML remains exactly the same -->
     <!-- Navigation -->
     <nav class="navbar">
         <div class="logo">Atafi Luxury</div>

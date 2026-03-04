@@ -1,22 +1,43 @@
 /**
  * ATAFI LUXURY - PAYSTACK PAYMENT INTEGRATION
- * SECURE VERSION - No hardcoded keys
+ * WITH BETTER ERROR HANDLING
  */
 
 const Payment = {
     initialize(amount, email, userId, metadata = {}) {
         return new Promise((resolve, reject) => {
-            // Check if environment variables exist
-            if (!window.ENV || !window.ENV.PAYSTACK_PUBLIC_KEY) {
-                console.error('❌ Paystack key missing - check Render environment variables');
-                UI.showNotification('Payment configuration error. Please contact support.', 'error');
-                reject(new Error('Paystack key not found'));
+            // Detailed debugging
+            console.log('🔍 Payment initialization started');
+            console.log('- Email:', email);
+            console.log('- Amount:', amount);
+            
+            // Check environment
+            if (!window.ENV) {
+                console.error('❌ window.ENV is undefined');
+                UI.showNotification('System configuration error', 'error');
+                reject(new Error('Environment not loaded'));
+                return;
+            }
+            
+            console.log('- ENV exists, checking PAYSTACK_PUBLIC_KEY...');
+            
+            if (!window.ENV.PAYSTACK_PUBLIC_KEY) {
+                console.error('❌ PAYSTACK_PUBLIC_KEY is missing from window.ENV');
+                UI.showNotification('Payment key not configured', 'error');
+                reject(new Error('Paystack key missing'));
+                return;
+            }
+            
+            if (window.ENV.PAYSTACK_PUBLIC_KEY.includes('{{')) {
+                console.error('❌ PAYSTACK_PUBLIC_KEY contains placeholder:', window.ENV.PAYSTACK_PUBLIC_KEY);
+                UI.showNotification('Payment system not properly configured', 'error');
+                reject(new Error('Key not injected'));
                 return;
             }
 
             if (typeof PaystackPop === 'undefined') {
-                console.error('❌ Paystack library not loaded');
-                UI.showNotification('Payment system unavailable. Please refresh.', 'error');
+                console.error('❌ PaystackPop library not loaded');
+                UI.showNotification('Payment library unavailable', 'error');
                 reject(new Error('PaystackPop not loaded'));
                 return;
             }
@@ -24,11 +45,11 @@ const Payment = {
             const amountInKobo = Math.round(amount * 100);
             const reference = 'ATAFI_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8).toUpperCase();
             
-            console.log('✅ Initializing payment with secure key');
+            console.log('✅ All checks passed, initializing Paystack with key length:', window.ENV.PAYSTACK_PUBLIC_KEY.length);
 
             try {
                 const handler = PaystackPop.setup({
-                    key: window.ENV.PAYSTACK_PUBLIC_KEY, // From Render environment
+                    key: window.ENV.PAYSTACK_PUBLIC_KEY,
                     email: email,
                     amount: amountInKobo,
                     currency: 'NGN',
@@ -40,7 +61,8 @@ const Payment = {
                         ...metadata
                     },
                     callback: function(response) {
-                        UI.showNotification('Payment successful! Redirecting...', 'success');
+                        console.log('✅ Payment callback received:', response);
+                        UI.showNotification('Payment successful!', 'success');
                         resolve({
                             success: true,
                             reference: response.reference,
@@ -48,15 +70,17 @@ const Payment = {
                         });
                     },
                     onClose: function() {
+                        console.log('ℹ️ Payment popup closed by user');
                         UI.showNotification('Payment cancelled', 'info');
-                        reject(new Error('Payment cancelled by user'));
+                        reject(new Error('Payment cancelled'));
                     }
                 });
                 
                 handler.openIframe();
+                console.log('✅ Paystack iframe opened');
                 
             } catch (error) {
-                console.error('❌ Paystack error:', error);
+                console.error('❌ Paystack setup error:', error);
                 UI.showNotification('Failed to initialize payment', 'error');
                 reject(error);
             }
@@ -64,11 +88,14 @@ const Payment = {
     },
 
     async processSignupPayment(userData) {
+        console.log('🔄 processSignupPayment called with:', userData.email);
         UI.showLoading(true);
         
         try {
-            // Register with Apps Script backend
+            // Register with Apps Script
+            console.log('📝 Registering user...');
             await API.registerUser(userData);
+            console.log('✅ User registered');
             
             const tempUserId = 'user_' + Date.now();
             
@@ -96,18 +123,9 @@ const Payment = {
             
         } catch (error) {
             console.error('❌ Payment process error:', error);
-            UI.showNotification('Error processing payment. Please try again.', 'error');
+            UI.showNotification('Error processing payment', 'error');
         } finally {
             UI.showLoading(false);
-        }
-    },
-
-    async verifyPayment(reference) {
-        try {
-            return await API.verifyPayment(reference);
-        } catch (error) {
-            console.error('❌ Verification error:', error);
-            return { success: false };
         }
     }
 };
