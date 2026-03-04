@@ -14,26 +14,13 @@
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
     
-    <!-- Environment variables loader -->
+    <!-- Environment configuration - Clean and simple -->
     <script>
-        (function() {
-            console.log('🔧 Loading environment...');
-            
-            window.ENV = window.ENV || {};
-            
-            // Try Render injection first, fallback to test key if needed
-            window.ENV.PAYSTACK_PUBLIC_KEY = "{{PAYSTACK_PUBLIC_KEY}}";
-            window.ENV.APPS_SCRIPT_URL = "{{APPS_SCRIPT_URL}}";
-            
-            // Fallback for development if Render doesn't inject
-            if (window.ENV.PAYSTACK_PUBLIC_KEY.includes('{{')) {
-                console.warn('⚠️ Using fallback test key');
-                window.ENV.PAYSTACK_PUBLIC_KEY = 'pk_test_e26810fb9b2c12f479f3f9ffb21e794964505447';
-                window.ENV.APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLOSQnJCJvQoSYck7-wqCLbKkQQq9HKlSEBxxmapm8pEvkMlg16-Ae55-G5gcvin1w-A/exec';
-            }
-            
-            console.log('✅ Environment ready');
-        })();
+        window.ENV = {
+            PAYSTACK_PUBLIC_KEY: 'pk_test_e26810fb9b2c12f479f3f9ffb21e794964505447',
+            APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzLOSQnJCJvQoSYck7-wqCLbKkQQq9HKlSEBxxmapm8pEvkMlg16-Ae55-G5gcvin1w-A/exec'
+        };
+        console.log('✅ Atafi Luxury environment ready');
     </script>
 </head>
 <body>
@@ -189,39 +176,27 @@
     <script src="js/payment.js"></script>
     <script src="js/main.js"></script>
 
-    <!-- FIXED: Main button handler - This makes it work! -->
+    <!-- Clean, production-ready payment handler -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔧 Setting up payment button...');
-            
             const startJourneyBtn = document.getElementById('startJourneyBtn');
             
             if (startJourneyBtn) {
-                // Remove any existing handlers and attach new one
-                startJourneyBtn.replaceWith(startJourneyBtn.cloneNode(true));
-                const newBtn = document.getElementById('startJourneyBtn');
-                
-                newBtn.addEventListener('click', function(e) {
+                startJourneyBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('💰 Payment button clicked');
                     
-                    // Get user email from form
-                    const emailInput = document.getElementById('email');
-                    const email = emailInput ? emailInput.value : 'customer@example.com';
+                    // Get user data from form
+                    const email = document.getElementById('email')?.value;
+                    const fullName = document.getElementById('fullName')?.value;
+                    const phone = document.getElementById('phone')?.value;
                     
                     if (!email || !email.includes('@')) {
-                        alert('Please enter a valid email address in the form first');
+                        UI.showNotification('Please enter a valid email address', 'error');
                         document.getElementById('email').focus();
                         return;
                     }
                     
-                    // Check if Paystack key exists
-                    if (!window.ENV || !window.ENV.PAYSTACK_PUBLIC_KEY) {
-                        alert('Payment system not configured. Please refresh.');
-                        return;
-                    }
-                    
-                    // Initialize Paystack
+                    // Initialize Paystack payment
                     try {
                         const handler = PaystackPop.setup({
                             key: window.ENV.PAYSTACK_PUBLIC_KEY,
@@ -229,46 +204,27 @@
                             amount: 290000, // ₦2,900 in kobo
                             currency: 'NGN',
                             ref: 'ATAFI_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8),
+                            metadata: {
+                                full_name: fullName,
+                                phone_number: phone,
+                                business_id: 'atafi_luxury'
+                            },
                             callback: function(response) {
-                                alert('Payment successful! Reference: ' + response.reference);
-                                window.location.href = '/payment-success.html?reference=' + response.reference;
+                                UI.showNotification('Payment successful! Redirecting...', 'success');
+                                setTimeout(() => {
+                                    window.location.href = '/payment-success.html?reference=' + response.reference;
+                                }, 1500);
                             },
                             onClose: function() {
-                                console.log('Payment popup closed');
+                                UI.showNotification('Payment cancelled', 'info');
                             }
                         });
                         handler.openIframe();
                     } catch (error) {
                         console.error('Payment error:', error);
-                        alert('Error starting payment: ' + error.message);
+                        UI.showNotification('Error starting payment. Please try again.', 'error');
                     }
                 });
-                
-                console.log('✅ Payment button fixed and ready');
-            } else {
-                console.error('❌ Could not find payment button');
-            }
-        });
-    </script>
-
-    <!-- Emergency test button (you can remove this later) -->
-    <button id="emergencyTest" style="position:fixed; bottom:100px; right:20px; z-index:9999; background:red; padding:10px; color:white; border:none; border-radius:5px;">EMERGENCY TEST</button>
-    
-    <script>
-        document.getElementById('emergencyTest').addEventListener('click', function() {
-            const email = document.getElementById('email')?.value || 'test@example.com';
-            
-            if (window.ENV?.PAYSTACK_PUBLIC_KEY) {
-                const handler = PaystackPop.setup({
-                    key: window.ENV.PAYSTACK_PUBLIC_KEY,
-                    email: email,
-                    amount: 5000,
-                    currency: 'NGN',
-                    callback: function(r) { alert('Success!'); }
-                });
-                handler.openIframe();
-            } else {
-                alert('Key not found');
             }
         });
     </script>
