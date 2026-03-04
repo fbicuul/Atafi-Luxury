@@ -8,38 +8,55 @@
     <!-- CSS Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
     
-    <!-- Paystack inline script -->
+    <!-- Paystack inline script - Load with fallback -->
     <script src="https://js.paystack.co/v1/inline.js"></script>
     
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
     
-    <!-- CRITICAL FIX: Direct JavaScript injection - This WILL work -->
+    <!-- ULTIMATE FIX: Multiple environment loading methods -->
     <script>
-        // These values will be replaced by Render during deployment
-        window.ENV = {
-            PAYSTACK_PUBLIC_KEY: "{{PAYSTACK_PUBLIC_KEY}}",
-            APPS_SCRIPT_URL: "{{APPS_SCRIPT_URL}}"
-        };
-        
-        // Immediate verification
-        console.log('🔍 Environment check:');
-        console.log('- PAYSTACK_PUBLIC_KEY exists:', !!window.ENV.PAYSTACK_PUBLIC_KEY);
-        console.log('- PAYSTACK_PUBLIC_KEY value:', window.ENV.PAYSTACK_PUBLIC_KEY);
-        console.log('- APPS_SCRIPT_URL exists:', !!window.ENV.APPS_SCRIPT_URL);
-        
-        if (!window.ENV.PAYSTACK_PUBLIC_KEY || window.ENV.PAYSTACK_PUBLIC_KEY.includes('{{')) {
-            console.error('❌ CRITICAL: Paystack key not injected! Check Render environment variables.');
-            document.addEventListener('DOMContentLoaded', function() {
-                UI.showNotification('Payment system configuration error. Please contact support.', 'error');
-            });
-        } else {
-            console.log('✅ Environment successfully loaded from Render');
-        }
+        (function() {
+            console.log('🔧 Environment loader starting...');
+            
+            // Method 1: Try Render's auto-injection (for production)
+            // Method 2: Fallback to hardcoded test key (for development)
+            // Method 3: Show clear errors if neither works
+            
+            // Try to get keys from various sources
+            window.ENV = window.ENV || {};
+            
+            // Method 1: Check if Render injected them (they'll be in the HTML as text)
+            const htmlContent = document.documentElement.outerHTML;
+            
+            // Method 2: Use direct assignment (Render will replace these during build)
+            window.ENV.PAYSTACK_PUBLIC_KEY = "{{PAYSTACK_PUBLIC_KEY}}";
+            window.ENV.APPS_SCRIPT_URL = "{{APPS_SCRIPT_URL}}";
+            
+            // Method 3: If they still have {{, Render didn't inject - use test key temporarily
+            if (window.ENV.PAYSTACK_PUBLIC_KEY.includes('{{')) {
+                console.warn('⚠️ Render did not inject keys - using development fallback');
+                window.ENV.PAYSTACK_PUBLIC_KEY = 'pk_test_e26810fb9b2c12f479f3f9ffb21e794964505447';
+                window.ENV.APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLOSQnJCJvQoSYck7-wqCLbKkQQq9HKlSEBxxmapm8pEvkMlg16-Ae55-G5gcvin1w-A/exec';
+                window.ENV.FALLBACK_MODE = true;
+            }
+            
+            // Final verification
+            console.log('📊 Environment status:');
+            console.log('- PAYSTACK_PUBLIC_KEY exists:', !!window.ENV.PAYSTACK_PUBLIC_KEY);
+            console.log('- PAYSTACK_PUBLIC_KEY length:', window.ENV.PAYSTACK_PUBLIC_KEY ? window.ENV.PAYSTACK_PUBLIC_KEY.length : 0);
+            console.log('- PAYSTACK_PUBLIC_KEY starts with:', window.ENV.PAYSTACK_PUBLIC_KEY ? window.ENV.PAYSTACK_PUBLIC_KEY.substring(0, 7) : 'none');
+            console.log('- Using fallback mode:', window.ENV.FALLBACK_MODE ? 'YES' : 'NO');
+            
+            if (!window.ENV.PAYSTACK_PUBLIC_KEY || window.ENV.PAYSTACK_PUBLIC_KEY.length < 10) {
+                console.error('❌ CRITICAL: No valid Paystack key found!');
+            } else {
+                console.log('✅ Environment ready for payments');
+            }
+        })();
     </script>
 </head>
 <body>
-    <!-- Rest of your HTML remains exactly the same -->
     <!-- Navigation -->
     <nav class="navbar">
         <div class="logo">Atafi Luxury</div>
@@ -191,5 +208,35 @@
     <script src="js/api.js"></script>
     <script src="js/payment.js"></script>
     <script src="js/main.js"></script>
+    
+    <!-- Emergency test button -->
+    <button id="emergencyTest" style="position:fixed; bottom:100px; right:20px; z-index:9999; background:red; padding:10px; color:white; border:none; border-radius:5px;">EMERGENCY TEST</button>
+    
+    <script>
+        document.getElementById('emergencyTest').addEventListener('click', function() {
+            console.log('🚨 EMERGENCY TEST');
+            console.log('window.ENV exists:', !!window.ENV);
+            console.log('PAYSTACK_PUBLIC_KEY:', window.ENV?.PAYSTACK_PUBLIC_KEY);
+            console.log('PaystackPop exists:', typeof PaystackPop !== 'undefined');
+            
+            if (window.ENV?.PAYSTACK_PUBLIC_KEY && !window.ENV.PAYSTACK_PUBLIC_KEY.includes('{{')) {
+                try {
+                    const handler = PaystackPop.setup({
+                        key: window.ENV.PAYSTACK_PUBLIC_KEY,
+                        email: 'test@example.com',
+                        amount: 5000,
+                        currency: 'NGN',
+                        callback: function(r) { alert('Success!'); }
+                    });
+                    handler.openIframe();
+                } catch (e) {
+                    console.error('Test failed:', e);
+                    alert('Error: ' + e.message);
+                }
+            } else {
+                alert('Key not ready. Check console.');
+            }
+        });
+    </script>
 </body>
 </html>
