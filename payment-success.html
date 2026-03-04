@@ -19,12 +19,10 @@
     </div>
 
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const reference = urlParams.get('reference');
+        const reference = new URLSearchParams(window.location.search).get('reference');
         if (reference) {
             document.getElementById('reference').textContent = reference;
         }
-        
         setTimeout(() => window.location.href = '/', 5000);
     </script>
 </body>

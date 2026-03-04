@@ -1,23 +1,9 @@
 /**
  * ATAFI LUXURY - MAIN APPLICATION LOGIC
- * SECURE VERSION - With environment verification
+ * PRODUCTION VERSION
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Verify environment is properly configured
-    if (!window.ENV) {
-        console.error('❌ CRITICAL: Environment variables not loaded');
-        UI.showNotification('Site configuration error. Please refresh.', 'error');
-        return;
-    }
-    
-    if (!window.ENV.PAYSTACK_PUBLIC_KEY || window.ENV.PAYSTACK_PUBLIC_KEY.includes('{{')) {
-        console.error('❌ CRITICAL: Paystack key not properly configured in Render');
-        UI.showNotification('Payment system configuration error.', 'error');
-    } else {
-        console.log('✅ Environment verified - system ready');
-    }
-    
     initializeApp();
 });
 
@@ -27,10 +13,6 @@ function initializeApp() {
     
     if (predictionForm) {
         predictionForm.addEventListener('submit', handlePredictionSubmit);
-    }
-    
-    if (startJourneyBtn) {
-        startJourneyBtn.addEventListener('click', handleStartJourney);
     }
     
     loadCommunityStats();
@@ -68,28 +50,10 @@ async function handlePredictionSubmit(e) {
         UI.showNotification('Prediction calculated! Scroll down to see results.', 'success');
         
     } catch (error) {
-        console.error('❌ Prediction error:', error);
+        console.error('Prediction error:', error);
         UI.showNotification('Error calculating prediction', 'error');
     } finally {
         UI.showLoading(false);
-    }
-}
-
-async function handleStartJourney() {
-    const pendingData = sessionStorage.getItem('pendingPrediction');
-    
-    if (!pendingData) {
-        UI.showNotification('Please get a prediction first', 'info');
-        document.getElementById('predictor').scrollIntoView({ behavior: 'smooth' });
-        return;
-    }
-    
-    try {
-        const { formData } = JSON.parse(pendingData);
-        await Payment.processSignupPayment(formData);
-    } catch (error) {
-        console.error('❌ Journey error:', error);
-        UI.showNotification('Error starting your journey', 'error');
     }
 }
 

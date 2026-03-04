@@ -1,15 +1,16 @@
 /**
  * ATAFI LUXURY - GOOGLE APPS SCRIPT API HANDLER
+ * PRODUCTION VERSION
  */
 
 const API = {
     async request(action, data = {}) {
         try {
-            if (!window.ENV || !window.ENV.APPS_SCRIPT_URL) {
+            if (!window.ENV?.APPS_SCRIPT_URL) {
                 throw new Error('Apps Script URL not configured');
             }
 
-            const response = await fetch(window.ENV.APPS_SCRIPT_URL, {
+            await fetch(window.ENV.APPS_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
@@ -24,8 +25,8 @@ const API = {
             return { success: true };
             
         } catch (error) {
-            console.error(`API Error (${action}):`, error);
-            throw new Error(`Failed to ${action}: ${error.message}`);
+            console.error(`API Error:`, error);
+            throw error;
         }
     },
 
@@ -37,13 +38,9 @@ const API = {
             password: userData.password,
             businessName: userData.businessName,
             industry: userData.industry,
-            monthlyRevenue: parseFloat(userData.monthlyRevenue),
-            customerCount: parseInt(userData.customerCount),
-            marketingBudget: parseFloat(userData.marketingBudget)
+            monthlyRevenue: userData.monthlyRevenue,
+            customerCount: userData.customerCount,
+            marketingBudget: userData.marketingBudget
         });
-    },
-
-    async verifyPayment(reference, userId) {
-        return this.request('verifyPaystackPayment', { reference, userId });
     }
 };

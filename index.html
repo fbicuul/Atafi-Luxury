@@ -14,13 +14,13 @@
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
     
-    <!-- Environment configuration - Clean and simple -->
+    <!-- Production environment with LIVE key -->
     <script>
         window.ENV = {
-            PAYSTACK_PUBLIC_KEY: 'pk_test_e26810fb9b2c12f479f3f9ffb21e794964505447',
-            APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzLOSQnJCJvQoSYck7-wqCLbKkQQq9HKlSEBxxmapm8pEvkMlg16-Ae55-G5gcvin1w-A/exec'
+            PAYSTACK_PUBLIC_KEY: 'pk_live_ab0810040c9f8d590803f5834d25680ae66160e3',
+            APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwlF4bIb56ikD8EjCM_EUtYPEqp6vGMvf0yvYlS8Ez2QtNGns1UidkLbj7fqTk9-K6iBQ/exec'
         };
-        console.log('✅ Atafi Luxury environment ready');
+        console.log('✅ Atafi Luxury LIVE mode ready');
     </script>
 </head>
 <body>
@@ -176,7 +176,7 @@
     <script src="js/payment.js"></script>
     <script src="js/main.js"></script>
 
-    <!-- Clean, production-ready payment handler -->
+    <!-- Production payment handler -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const startJourneyBtn = document.getElementById('startJourneyBtn');
@@ -185,7 +185,6 @@
                 startJourneyBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     
-                    // Get user data from form
                     const email = document.getElementById('email')?.value;
                     const fullName = document.getElementById('fullName')?.value;
                     const phone = document.getElementById('phone')?.value;
@@ -196,18 +195,16 @@
                         return;
                     }
                     
-                    // Initialize Paystack payment
                     try {
                         const handler = PaystackPop.setup({
                             key: window.ENV.PAYSTACK_PUBLIC_KEY,
                             email: email,
-                            amount: 290000, // ₦2,900 in kobo
+                            amount: 290000,
                             currency: 'NGN',
                             ref: 'ATAFI_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8),
                             metadata: {
                                 full_name: fullName,
-                                phone_number: phone,
-                                business_id: 'atafi_luxury'
+                                phone_number: phone
                             },
                             callback: function(response) {
                                 UI.showNotification('Payment successful! Redirecting...', 'success');
