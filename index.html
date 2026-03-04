@@ -14,11 +14,11 @@
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
     
-    <!-- SIMPLE CONFIGURATION - NO COMPLEX CODE -->
+    <!-- LIVE MODE CONFIGURATION -->
     <script>
-        // Your Paystack public key - this is all that's needed for payments
-        const PAYSTACK_KEY = 'pk_live_ab0810040c9f8d590803f5834d25680ae66160';
-        console.log('✅ Paystack key loaded');
+        // Your live Paystack public key
+        const PAYSTACK_LIVE_KEY = 'pk_live_ab0810040c9f8d590803f5834d25680ae66160';
+        console.log('✅ Live Paystack key loaded');
     </script>
 </head>
 <body>
@@ -167,9 +167,8 @@
     <!-- Notification Toast -->
     <div id="notificationToast" class="notification-toast" style="display: none;"></div>
 
-    <!-- SIMPLE UI HELPER -->
+    <!-- Simple UI Helper -->
     <script>
-        // Simple notification function
         function showMessage(msg, type) {
             const toast = document.getElementById('notificationToast');
             if (toast) {
@@ -186,9 +185,8 @@
         }
     </script>
 
-    <!-- SIMPLE PAYMENT HANDLER -->
+    <!-- LIVE PAYMENT HANDLER -->
     <script>
-        // Wait for page to load
         document.addEventListener('DOMContentLoaded', function() {
             
             // Handle form submission
@@ -214,9 +212,11 @@
                 document.getElementById('predictionResults').scrollIntoView({ behavior: 'smooth' });
             });
 
-            // Handle payment button - SIMPLE AND DIRECT
+            // LIVE PAYMENT HANDLER - Use this with your live key
             document.getElementById('startJourneyBtn').addEventListener('click', function() {
                 const email = document.getElementById('email').value;
+                const fullName = document.getElementById('fullName').value;
+                const phone = document.getElementById('phone').value;
                 
                 if (!email) {
                     showMessage('Please enter your email first', 'error');
@@ -224,28 +224,71 @@
                     return;
                 }
                 
-                // DIRECT PAYSTACK CALL - NO COMPLEX CODE
+                // Validate email format
+                if (!email.includes('@') || !email.includes('.')) {
+                    showMessage('Please enter a valid email address', 'error');
+                    return;
+                }
+                
+                // Show loading
+                showLoading(true);
+                
+                // Generate unique reference
+                const reference = 'ATAFI_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8).toUpperCase();
+                
                 try {
                     const handler = PaystackPop.setup({
-                        key: 'pk_live_ab0810040c9f8d590803f5834d25680ae66160', // Direct key
+                        // LIVE KEY - Your actual live public key
+                        key: 'pk_live_ab0810040c9f8d590803f5834d25680ae66160',
+                        
+                        // Customer information
                         email: email,
-                        amount: 290000, // ₦2,900
+                        amount: 290000, // ₦2,900 in kobo
                         currency: 'NGN',
-                        ref: 'ATAFI_' + Date.now(),
+                        ref: reference,
+                        
+                        // Additional customer info
+                        metadata: {
+                            custom_fields: [
+                                {
+                                    display_name: "Full Name",
+                                    variable_name: "full_name",
+                                    value: fullName || 'Not provided'
+                                },
+                                {
+                                    display_name: "Phone Number",
+                                    variable_name: "phone",
+                                    value: phone || 'Not provided'
+                                }
+                            ]
+                        },
+                        
+                        // Callback on success
                         callback: function(response) {
-                            showMessage('Payment successful!', 'success');
+                            showLoading(false);
+                            showMessage('Payment successful! Redirecting...', 'success');
+                            console.log('Payment success:', response);
+                            
+                            // Redirect to success page
                             setTimeout(() => {
                                 window.location.href = '/payment-success.html?reference=' + response.reference;
                             }, 2000);
                         },
+                        
+                        // Callback on close
                         onClose: function() {
+                            showLoading(false);
                             showMessage('Payment cancelled', 'info');
                         }
                     });
+                    
+                    // Open the payment modal
                     handler.openIframe();
+                    
                 } catch (error) {
+                    showLoading(false);
                     console.error('Payment error:', error);
-                    showMessage('Error starting payment', 'error');
+                    showMessage('Unable to initialize payment. Please try again.', 'error');
                 }
             });
 
@@ -273,7 +316,5 @@
             `;
         });
     </script>
-
-    <!-- NO OTHER SCRIPTS - KEEP IT SIMPLE -->
 </body>
 </html>
