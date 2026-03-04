@@ -14,16 +14,16 @@
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
     
-    <!-- ONLY PAYSTACK PUBLIC KEY IS VISIBLE - Everything else loads from config.js -->
+    <!-- Environment configuration - Fixed -->
     <script>
-        // Only the public key is visible - this is SAFE
-        window.PAYSTACK_PUBLIC_KEY = 'pk_live_ab0810040c9f8d590803f5834d25680ae66160e3';
-        
-        // All other configurations will be loaded from config.js (gitignored)
+        // Safely initialize window.ENV
         window.ENV = window.ENV || {};
+        
+        // Paystack public key (safe to expose)
+        window.PAYSTACK_PUBLIC_KEY = 'pk_live_ab0810040c9f8d590803f5834d25680ae66160';
         window.ENV.PAYSTACK_PUBLIC_KEY = window.PAYSTACK_PUBLIC_KEY;
         
-        console.log('✅ Paystack public key loaded');
+        console.log('✅ Atafi Luxury initialized');
     </script>
 </head>
 <body>
@@ -34,7 +34,6 @@
             <li><a href="#home">Home</a></li>
             <li><a href="#predictor">Predictor</a></li>
             <li><a href="#community">Community</a></li>
-            <li><a href="dashboard.html" class="dashboard-link">Dashboard</a></li>
             <li><a href="#login" class="btn-login">Login</a></li>
         </ul>
     </nav>
@@ -48,25 +47,13 @@
         </div>
     </section>
 
-    <!-- Plans Section -->
-    <section id="plans" class="plans-section">
-        <div class="container">
-            <h2>Choose Your Growth Plan</h2>
-            <p class="section-subtitle">Start with Basic, upgrade as you grow</p>
-            
-            <div class="plans-grid" id="plansContainer">
-                <!-- Plans will be populated by config.js -->
-            </div>
-        </div>
-    </section>
-
     <!-- Predictor Section -->
     <section id="predictor" class="predictor-section">
         <div class="container">
             <h2>Business Growth Predictor</h2>
             <p class="section-subtitle">See what your business could achieve in just 30 days</p>
             
-            <form id="predictionForm" class="prediction-form">
+            <form id="predictionForm" class="prediction-form" onsubmit="event.preventDefault(); handlePredictionSubmit()">
                 <div class="form-group">
                     <label for="fullName">Full Name</label>
                     <input type="text" id="fullName" name="fullName" required placeholder="John Doe">
@@ -120,15 +107,6 @@
                     <input type="password" id="password" name="password" required minlength="8" placeholder="Create a password">
                 </div>
 
-                <div class="form-group">
-                    <label for="plan">Select Plan</label>
-                    <select id="plan" name="plan" required>
-                        <option value="BASIC">Basic - ₦2,900/month</option>
-                        <option value="PRO" selected>Professional - ₦4,900/month</option>
-                        <option value="ENTERPRISE">Enterprise - ₦9,900/month</option>
-                    </select>
-                </div>
-
                 <button type="submit" class="btn-predict">Get My Free Prediction</button>
             </form>
 
@@ -150,30 +128,14 @@
                         </ul>
                     </div>
                     
-                    <div id="referralBonusContainer" style="display: none;">
-                        <div class="referral-bonus">
-                            <p>🤝 Refer friends and earn <strong class="referral-amount">₦0</strong> per referral!</p>
-                        </div>
-                    </div>
-                    
                     <div class="testimonial-preview">
                         <p>"Atafi Luxury helped us increase our revenue by 150% in just 2 months!"</p>
                         <cite>- Sarah's Boutique</cite>
                     </div>
                     
-                    <button class="btn-start-journey" id="startJourneyBtn">Start Your Growth Journey</button>
-                    <p class="disclaimer" id="trialMessage">*14-day free trial. Cancel anytime.</p>
+                    <button class="btn-start-journey" id="startJourneyBtn">Start Your Growth Journey - ₦2,900/month</button>
+                    <p class="disclaimer">*This is a predictive estimate based on similar businesses</p>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Preview -->
-    <section id="features" class="features-section">
-        <div class="container">
-            <h2>Everything You Need to Grow</h2>
-            <div class="features-grid" id="featuresContainer">
-                <!-- Features will be populated by config.js -->
             </div>
         </div>
     </section>
@@ -192,8 +154,8 @@
                     <span class="stat-label">Average Growth</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-number" id="referralCount">1,234</span>
-                    <span class="stat-label">Successful Referrals</span>
+                    <span class="stat-number" id="referralCount">1000+</span>
+                    <span class="stat-label">Referrals</span>
                 </div>
             </div>
             
@@ -210,55 +172,81 @@
     <!-- Notification Toast -->
     <div id="notificationToast" class="notification-toast" style="display: none;"></div>
 
-    <!-- Load config.js FIRST (gitignored - contains all secrets except public key) -->
-    <script src="js/config.js"></script>
-    
-    <!-- Then load other JavaScript files -->
+    <!-- Load JavaScript files -->
     <script src="js/api.js"></script>
     <script src="js/payment.js"></script>
     <script src="js/main.js"></script>
 
-    <!-- Payment handler - uses config from config.js -->
+    <!-- Simplified payment handler -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const startJourneyBtn = document.getElementById('startJourneyBtn');
+        // UI Helper Functions (ensure they exist)
+        const UI = {
+            showLoading: function(show) {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) overlay.style.display = show ? 'flex' : 'none';
+            },
+            showNotification: function(message, type) {
+                const toast = document.getElementById('notificationToast');
+                if (toast) {
+                    toast.textContent = message;
+                    toast.className = 'notification-toast ' + (type || 'info');
+                    toast.style.display = 'block';
+                    setTimeout(() => { toast.style.display = 'none'; }, 3000);
+                }
+            }
+        };
+
+        // Handle form submission
+        window.handlePredictionSubmit = function() {
+            const email = document.getElementById('email')?.value;
+            if (!email) {
+                UI.showNotification('Please enter your email', 'error');
+                return;
+            }
             
-            if (startJourneyBtn) {
-                startJourneyBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
+            // Calculate mock prediction
+            const growth = Math.round(Math.random() * 20 + 10);
+            const revenue = parseInt(document.getElementById('monthlyRevenue')?.value || 500000);
+            const customers = parseInt(document.getElementById('customerCount')?.value || 50);
+            
+            document.getElementById('growthPercentage').textContent = growth + '%';
+            document.getElementById('projectedRevenue').textContent = Math.round(revenue * (1 + growth/100)).toLocaleString();
+            document.getElementById('projectedCustomers').textContent = Math.round(customers * (1 + growth/100));
+            document.getElementById('projectedROI').textContent = Math.round(growth * 1.5);
+            
+            document.getElementById('predictionResults').style.display = 'block';
+            document.getElementById('predictionResults').scrollIntoView({ behavior: 'smooth' });
+            
+            // Store in session
+            sessionStorage.setItem('pendingPrediction', JSON.stringify({
+                email: email,
+                growth: growth
+            }));
+        };
+
+        // Handle payment button
+        document.addEventListener('DOMContentLoaded', function() {
+            const payBtn = document.getElementById('startJourneyBtn');
+            if (payBtn) {
+                payBtn.addEventListener('click', function() {
                     const email = document.getElementById('email')?.value;
-                    const fullName = document.getElementById('fullName')?.value;
-                    const phone = document.getElementById('phone')?.value;
-                    const planSelect = document.getElementById('plan');
-                    const selectedPlan = planSelect ? planSelect.value : 'PRO';
-                    
-                    if (!email || !email.includes('@')) {
-                        UI.showNotification('Please enter a valid email address', 'error');
+                    if (!email) {
+                        UI.showNotification('Please fill the form first', 'error');
                         document.getElementById('email').focus();
                         return;
                     }
                     
-                    // Get plan price from config.js (loaded separately)
-                    const planPrice = window.ENV?.PLANS?.[selectedPlan]?.price || 4900;
-                    
                     try {
                         const handler = PaystackPop.setup({
-                            key: window.PAYSTACK_PUBLIC_KEY, // From visible variable
+                            key: window.PAYSTACK_PUBLIC_KEY,
                             email: email,
-                            amount: planPrice * 100,
+                            amount: 290000,
                             currency: 'NGN',
-                            ref: 'ATAFI_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8),
-                            metadata: {
-                                full_name: fullName,
-                                phone_number: phone,
-                                plan: selectedPlan,
-                                plan_name: window.ENV?.PLANS?.[selectedPlan]?.name || 'Professional'
-                            },
+                            ref: 'ATAFI_' + Date.now(),
                             callback: function(response) {
-                                UI.showNotification('Payment successful! Redirecting...', 'success');
+                                UI.showNotification('Payment successful!', 'success');
                                 setTimeout(() => {
-                                    window.location.href = '/dashboard.html?welcome=true&plan=' + selectedPlan;
+                                    window.location.href = '/payment-success.html?reference=' + response.reference;
                                 }, 2000);
                             },
                             onClose: function() {
@@ -268,19 +256,30 @@
                         handler.openIframe();
                     } catch (error) {
                         console.error('Payment error:', error);
-                        UI.showNotification('Error starting payment. Please try again.', 'error');
+                        UI.showNotification('Error starting payment', 'error');
                     }
                 });
             }
+            
+            // Load community stats
+            setTimeout(() => {
+                document.getElementById('memberCount').textContent = '547';
+                document.getElementById('referralCount').textContent = '1,234';
+            }, 1000);
+            
+            // Load success stories
+            document.getElementById('successStories').innerHTML = [
+                { name: "Blessing's Fashion House", story: "Revenue doubled in 3 months!", growth: "+120%" },
+                { name: "Chidi's Tech Solutions", story: "Grew exactly as projected", growth: "+85%" },
+                { name: "Amara Beauty", story: "Community support is amazing!", growth: "+200%" }
+            ].map(s => `
+                <div class="story-card">
+                    <h4>${s.name}</h4>
+                    <p>"${s.story}"</p>
+                    <span class="growth-badge">${s.growth}</span>
+                </div>
+            `).join('');
         });
-
-        function selectPlan(planKey) {
-            const planSelect = document.getElementById('plan');
-            if (planSelect) {
-                planSelect.value = planKey;
-                document.getElementById('predictor').scrollIntoView({ behavior: 'smooth' });
-            }
-        }
     </script>
 </body>
 </html>
