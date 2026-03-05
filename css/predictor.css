@@ -1542,11 +1542,13 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 0.8rem;
     font-weight: bold;
     margin-bottom: 1rem;
+    margin-left: 3rem;
 }
 
 .story-content h3 {
     font-size: 1.8rem;
     margin-bottom: 1rem;
+    margin-left: 3rem;
     color: var(--secondary);
 }
 
@@ -1555,11 +1557,13 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--gray-600);
     font-style: italic;
     margin-bottom: 1.5rem;
+    margin-left: 3rem;
     line-height: 1.8;
 }
 
 .story-meta {
     margin-bottom: 1.5rem;
+    margin-left: 3rem;
 }
 
 .story-author {
