@@ -3,6 +3,85 @@
  * World-class prediction algorithm with Flutterwave integration
  */
 
+// ==================== MOBILE NAVBAR TOGGLE ====================
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navLinks = document.getElementById('nav-links');
+    const navLinksItems = document.querySelectorAll('.nav-link');
+    
+    // Toggle menu on hamburger click
+    if (mobileMenu) {
+        mobileMenu.addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.classList.toggle('active');
+            navLinks.classList.toggle('active');
+            document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : 'auto';
+        });
+    }
+    
+    // Close menu when clicking a link
+    navLinksItems.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all links
+            navLinksItems.forEach(l => l.classList.remove('active'));
+            
+            // Add active class to clicked link
+            this.classList.add('active');
+            
+            // Close mobile menu
+            if (mobileMenu) {
+                mobileMenu.classList.remove('active');
+                navLinks.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+            
+            // Smooth scroll to section
+            const targetId = this.getAttribute('href');
+            if (targetId && targetId !== '#') {
+                const targetSection = document.querySelector(targetId);
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+        if (navLinks.classList.contains('active') && 
+            !navLinks.contains(e.target) && 
+            !mobileMenu.contains(e.target)) {
+            mobileMenu.classList.remove('active');
+            navLinks.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    });
+    
+    // Highlight active section on scroll
+    window.addEventListener('scroll', function() {
+        const sections = document.querySelectorAll('section');
+        const scrollPosition = window.scrollY + 100;
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionBottom = sectionTop + section.offsetHeight;
+            const sectionId = section.getAttribute('id');
+            
+            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                navLinksItems.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${sectionId}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+    });
+});
+
+
 class BrandPredictor {
     constructor() {
         this.formData = {};
@@ -344,8 +423,13 @@ class BrandPredictor {
                 })
             });
             
-            // Then send email - using a more reliable method
-            await this.sendConfirmationEmail();
+            // Then try to send email (but don't fail if it doesn't work)
+            try {
+                await this.sendConfirmationEmail();
+            } catch (emailError) {
+                console.log('Email failed but account created:', emailError);
+                showNotification('Account created! Email delivery failed, but you can still proceed.', 'warning', 8000);
+            }
             
             return true;
         } catch (error) {
@@ -1309,24 +1393,3 @@ async function retryFailedEmails() {
     }
 }
 
-
-// Mobile Menu Toggle
-document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenu = document.getElementById('mobile-menu');
-    const navLinks = document.getElementById('nav-links');
-    
-    if (mobileMenu) {
-        mobileMenu.addEventListener('click', function() {
-            this.classList.toggle('active');
-            navLinks.classList.toggle('active');
-        });
-    }
-    
-    // Close menu when clicking a link
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenu.classList.remove('active');
-            navLinks.classList.remove('active');
-        });
-    });
-});
