@@ -1346,7 +1346,7 @@
             margin-right: 0.5rem;
         }
 
-        /* ========== MODAL STYLES ========== */
+        /* ========== MODAL STYLES - SCROLLABLE ========== */
         .modal {
             display: none;
             position: fixed;
@@ -1358,16 +1358,42 @@
             z-index: 10000;
             align-items: center;
             justify-content: center;
+            overflow-y: auto;
+            padding: 20px;
         }
 
         .modal-content {
             background: white;
             padding: 2.5rem;
             border-radius: var(--border-radius-lg);
-            max-width: 400px;
-            width: 90%;
+            max-width: 500px;
+            width: 100%;
             position: relative;
             animation: modalSlideIn 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content.wide {
+            max-width: 800px;
+        }
+
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
         }
 
         @keyframes modalSlideIn {
@@ -1382,22 +1408,33 @@
         }
 
         .close-modal {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 1.5rem;
+            position: sticky;
+            top: 0;
+            float: right;
+            font-size: 1.8rem;
             cursor: pointer;
             color: var(--gray-500);
             transition: color var(--transition-base);
+            z-index: 10;
+            background: white;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: -10px -10px 0 0;
         }
 
         .close-modal:hover {
             color: var(--danger);
+            background: #f0f0f0;
         }
 
         .modal h2 {
             color: var(--secondary);
             margin-bottom: 0.5rem;
+            padding-right: 30px;
         }
 
         .modal p {
@@ -1472,6 +1509,88 @@
             font-weight: 500;
         }
 
+        /* Dashboard Modal Styles */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 1.2rem;
+            border-radius: var(--border-radius-md);
+            text-align: center;
+        }
+
+        .stat-box h3 {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-box .number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .referral-link-box {
+            background: #f0f0f0;
+            padding: 1rem;
+            border-radius: var(--border-radius-md);
+            margin: 1rem 0;
+            word-break: break-all;
+        }
+
+        .referral-link-box code {
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .prediction-history {
+            margin: 1.5rem 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: var(--border-radius-md);
+            margin-bottom: 0.5rem;
+            border-left: 3px solid var(--primary);
+        }
+
+        .payment-method-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 1.5rem;
+            border-radius: var(--border-radius-md);
+            margin-bottom: 1rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .payment-method-card h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .copy-address {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .copy-address:hover {
+            background: var(--gray-800);
+        }
+
         /* ========== LOADING OVERLAY ========== */
         .loading-overlay {
             display: none;
@@ -1535,6 +1654,67 @@
                 opacity: 1;
                 transform: translateX(0);
             }
+        }
+
+        /* Exit Intent Popup */
+        .exit-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 20000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .exit-popup-content {
+            background: white;
+            padding: 3rem;
+            border-radius: var(--border-radius-xl);
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+        }
+
+        .exit-popup-content h2 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .exit-popup-content p {
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+        }
+
+        .exit-popup-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-md);
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .exit-popup-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient-premium);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .no-thanks {
+            margin-top: 1rem;
+            color: var(--gray-500);
+            cursor: pointer;
+            font-size: 0.9rem;
         }
 
         /* ========== RESPONSIVE ========== */
@@ -1617,6 +1797,10 @@
             .cta-buttons {
                 flex-direction: column;
             }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -1632,9 +1816,10 @@
         <ul class="nav-links" id="nav-links">
             <li><a href="#home" class="active">Home</a></li>
             <li><a href="#predictor">Brand Predictor</a></li>
-            <li><a href="#results">Success Stories</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="#" onclick="showSuccessStoriesModal()">Success Stories</a></li>
+            <li><a href="#" onclick="showContactModal()">Contact</a></li>
             <li><a href="#" class="btn-login" id="loginBtn">Login</a></li>
+            <li><a href="#" class="btn-signup" id="signupBtn">Sign Up</a></li>
         </ul>
     </nav>
 
@@ -1645,8 +1830,8 @@
             <p class="hero-subtitle">Answer 8 simple questions and see exactly how Atafi Luxury can multiply your revenue, authority, and market presence.</p>
             <div class="hero-stats">
                 <div class="stat">
-                    <span class="stat-value">200+</span>
-                    <span class="stat-label">Brands Transformed</span>
+                    <span class="stat-value" id="liveBusinesses">247</span>
+                    <span class="stat-label">Businesses Evaluated</span>
                 </div>
                 <div class="stat">
                     <span class="stat-value">₦50M+</span>
@@ -2297,7 +2482,7 @@
                             <label class="checkbox-container">
                                 <input type="checkbox" id="termsAgree" required>
                                 <span class="checkmark"></span>
-                                I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                                I agree to the <a href="#" onclick="showTermsModal(); return false;">Terms of Service</a> and <a href="#" onclick="showPrivacyModal(); return false;">Privacy Policy</a>
                             </label>
                         </div>
                         
@@ -2611,7 +2796,7 @@
                 <h3>Ready to Transform Your Business?</h3>
                 <p>Join 200+ businesses that have already grown with Atafi Luxury</p>
                 <div class="cta-buttons">
-                    <button class="btn-primary btn-large" onclick="startTransformation()">
+                    <button class="btn-primary btn-large" onclick="showPricingModal()">
                         <i class="fas fa-rocket"></i> Start My Brand Transformation
                     </button>
                     <button class="btn-secondary btn-large" onclick="bookStrategyCall()">
@@ -2625,7 +2810,9 @@
         </div>
     </section>
 
-    <!-- Login Modal -->
+    <!-- ========== SCROLLABLE MODALS ========== -->
+
+    <!-- Login Modal (Scrollable) -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -2645,7 +2832,7 @@
                         <input type="checkbox" id="rememberMe">
                         <span>Remember me</span>
                     </label>
-                    <a href="#" class="forgot-password">Forgot Password?</a>
+                    <a href="#" class="forgot-password" onclick="showForgotPasswordModal(); return false;">Forgot Password?</a>
                 </div>
                 <button type="submit" class="btn-modal">Login</button>
             </form>
@@ -2655,9 +2842,9 @@
         </div>
     </div>
 
-    <!-- Signup Modal -->
+    <!-- Signup Modal (Scrollable) -->
     <div id="signupModal" class="modal">
-        <div class="modal-content scrollable-modal">
+        <div class="modal-content">
             <span class="close-modal">&times;</span>
             <h2>Create Account</h2>
             <p>Get your free brand transformation report</p>
@@ -2690,7 +2877,7 @@
                 <div class="form-options">
                     <label class="checkbox-container">
                         <input type="checkbox" id="signupTerms" required>
-                        <span>I agree to the Terms</span>
+                        <span>I agree to the <a href="#" onclick="showTermsModal(); return false;">Terms</a></span>
                     </label>
                 </div>
                 <button type="submit" class="btn-modal">Create Account</button>
@@ -2698,6 +2885,374 @@
             <div class="modal-footer">
                 Already have an account? <a href="#" id="switchToLogin">Login</a>
             </div>
+        </div>
+    </div>
+
+    <!-- User Dashboard Modal (Scrollable) -->
+    <div id="dashboardModal" class="modal">
+        <div class="modal-content wide">
+            <span class="close-modal">&times;</span>
+            <h2><i class="fas fa-tachometer-alt" style="color: var(--primary);"></i> Your Dashboard</h2>
+            <p>Welcome back, <span id="dashboardUserName">User</span>!</p>
+            
+            <div class="dashboard-stats">
+                <div class="stat-box">
+                    <h3>Growth Score</h3>
+                    <div class="number" id="dashboardGrowthScore">78</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Predictions</h3>
+                    <div class="number" id="dashboardPredictions">3</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Referrals</h3>
+                    <div class="number" id="dashboardReferrals">2</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Commission</h3>
+                    <div class="number" id="dashboardCommission">₦0</div>
+                </div>
+            </div>
+
+            <h3 style="margin: 20px 0 10px;">📊 Recent Predictions</h3>
+            <div class="prediction-history" id="predictionHistory">
+                <!-- Will be populated by JavaScript -->
+            </div>
+
+            <h3 style="margin: 20px 0 10px;">🔗 Your Referral Link</h3>
+            <div class="referral-link-box">
+                <code id="referralLink">https://atafi-lux.onrender.com/?ref=USER123</code>
+            </div>
+            <button class="btn-modal" onclick="copyReferralLink()" style="margin-bottom: 20px;">
+                <i class="fas fa-copy"></i> Copy Link
+            </button>
+
+            <h3 style="margin: 20px 0 10px;">⚙️ Quick Actions</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <button class="btn-modal" onclick="showPricingModal()">Upgrade Plan</button>
+                <button class="btn-modal" onclick="showPaymentHistory()">Payment History</button>
+                <button class="btn-modal" onclick="showSettingsModal()">Settings</button>
+                <button class="btn-modal" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pricing Modal (Scrollable) -->
+    <div id="pricingModal" class="modal">
+        <div class="modal-content wide">
+            <span class="close-modal">&times;</span>
+            <h2 style="text-align: center;">Choose Your Plan</h2>
+            <p style="text-align: center;">Start your 30-day brand transformation today</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0;">
+                <!-- Basic Plan -->
+                <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 25px; border-radius: 15px; text-align: center;">
+                    <h3 style="color: var(--primary);">Basic</h3>
+                    <div style="font-size: 2.5rem; font-weight: bold; margin: 15px 0;">₦4,900</div>
+                    <p style="color: var(--gray-600); margin-bottom: 20px;">Perfect for startups</p>
+                    <ul style="list-style: none; text-align: left; margin-bottom: 20px;">
+                        <li><i class="fas fa-check" style="color: var(--success);"></i> Brand Strategy</li>
+                        <li><i class="fas fa-check" style="color: var(--success);"></i> Logo Design</li>
+                        <li><i class="fas fa-check" style="color: var(--success);"></i> Social Media Setup</li>
+                        <li><i class="fas fa-times" style="color: var(--danger);"></i> Email Marketing</li>
+                        <li><i class="fas fa-times" style="color: var(--danger);"></i> CRM Integration</li>
+                    </ul>
+                    <button class="btn-modal" onclick="selectPlan('BASIC')">Select Plan</button>
+                </div>
+
+                <!-- Pro Plan (Popular) -->
+                <div style="background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(157,78,221,0.1)); padding: 25px; border-radius: 15px; text-align: center; border: 2px solid var(--primary); position: relative;">
+                    <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 5px 20px; border-radius: 20px; font-size: 0.9rem;">MOST POPULAR</div>
+                    <h3 style="color: var(--primary);">Professional</h3>
+                    <div style="font-size: 2.5rem; font-weight: bold; margin: 15px 0;">₦9,900</div>
+                    <p style="color: var(--gray-600); margin-bottom: 20px;">For growing businesses</p>
+                    <ul style="list-style: none; text-align: left; margin-bottom: 20px;">
+                        <li><i class="fas fa-check" style="color: var(--success);"></i> Everything in Basic</li>
+                        <li><i class="fas fa-check" style="color: var(--success);"></i> Email Marketing</li>
+                        <li><i class="fas fa-check" style="color: var(--success);"></i> CRM Integration</li>
+                        <li><i class="fas fa-check" style="color: var(--success);"></i> Ad Campaign Setup</li>
+                        <li><i class="fas fa-check" style="color: var(--success);"></i> Analytics Dashboard</li>
+                    </ul>
+                    <button class="btn-modal" onclick="selectPlan('PRO')">Select Plan</button>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 25px; border-radius: 15px; text-align: center;">
+                    <h3 style="color: var(--primary);">Enterprise</h3>
+                    <div style="font-size: 2.5rem; font-weight: bold; margin: 15px 0;">₦19,900</div>
+                    <p style="color: var(--gray-600); margin-bottom: 20px;">For established brands</p>
+                    <ul style="list-style: none; text-align: left; margin-bottom: 20px;">
+                        <li><i class="fas fa-check" style="color: var(--success);"></i> Everything in Pro</li>
+                        <li><i class="fas fa-check" style="color: var(--success);"></i> Dedicated Manager</li>
+                        <li><i class="fas fa-check" style="color: var(--success);"></i> Custom Development</li>
+                        <li><i class="fas fa-check" style="color: var(--success);"></i> API Access</li>
+                        <li><i class="fas fa-check" style="color: var(--success);"></i> Priority Support</li>
+                    </ul>
+                    <button class="btn-modal" onclick="selectPlan('ENTERPRISE')">Select Plan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Methods Modal (Scrollable) -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Payment Methods</h2>
+            <p>Choose your preferred payment option</p>
+
+            <!-- Flutterwave Card Payment -->
+            <div class="payment-method-card">
+                <h3><i class="fas fa-credit-card"></i> Card Payment (Instant)</h3>
+                <p>Pay securely with Flutterwave</p>
+                <button class="btn-modal" onclick="processFlutterwavePayment()">
+                    Pay with Card
+                </button>
+            </div>
+
+            <!-- USDT Crypto -->
+            <div class="payment-method-card">
+                <h3><i class="fab fa-bitcoin"></i> USDT (TRC20)</h3>
+                <p>Network: TRC20</p>
+                <div style="background: #f0f0f0; padding: 10px; border-radius: 5px; word-break: break-all;">
+                    <code>TEJiy27SNPB5ADc9bSSMcHMv7i2549rCA7</code>
+                </div>
+                <button class="copy-address" onclick="copyToClipboard('TEJiy27SNPB5ADc9bSSMcHMv7i2549rCA7')">
+                    Copy Address
+                </button>
+            </div>
+
+            <!-- Nigeria Bank Transfer -->
+            <div class="payment-method-card">
+                <h3><i class="fas fa-university"></i> Nigeria Bank Transfer</h3>
+                <p><strong>Bank:</strong> Parallex Bank</p>
+                <p><strong>Account:</strong> 1510096102</p>
+                <p><strong>Name:</strong> Atafi Luxury</p>
+                <button class="copy-address" onclick="copyToClipboard('1510096102')">
+                    Copy Account Number
+                </button>
+            </div>
+
+            <!-- UK Bank Transfer -->
+            <div class="payment-method-card">
+                <h3><i class="fas fa-university"></i> UK Bank Transfer (GBP)</h3>
+                <p><strong>Account:</strong> 40457425</p>
+                <p><strong>Sort Code:</strong> 041307</p>
+                <p><strong>Name:</strong> Felix Bamson</p>
+            </div>
+
+            <!-- Euro Bank Transfer -->
+            <div class="payment-method-card">
+                <h3><i class="fas fa-university"></i> Euro Bank Transfer (EUR)</h3>
+                <p><strong>IBAN:</strong> GB71CLJU04130740457425</p>
+                <p><strong>Name:</strong> Felix Bamson</p>
+            </div>
+
+            <p style="color: var(--danger); margin-top: 20px; text-align: center;">
+                Important: Use your email as payment reference
+            </p>
+        </div>
+    </div>
+
+    <!-- Success Stories Modal (Scrollable) -->
+    <div id="successStoriesModal" class="modal">
+        <div class="modal-content wide">
+            <span class="close-modal">&times;</span>
+            <h2 style="text-align: center;">Success Stories</h2>
+            <p style="text-align: center;">Real results from real businesses</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 30px;">
+                <!-- Story 1 -->
+                <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 20px; border-radius: 15px;">
+                    <img src="https://via.placeholder.com/60" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 10px;">
+                    <h3>Blessing's Fashion House</h3>
+                    <p>"Revenue doubled in 3 months! The brand transformation was incredible."</p>
+                    <div style="color: var(--primary); font-weight: bold;">+120% Growth</div>
+                </div>
+
+                <!-- Story 2 -->
+                <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 20px; border-radius: 15px;">
+                    <img src="https://via.placeholder.com/60" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 10px;">
+                    <h3>Chidi's Tech Solutions</h3>
+                    <p>"Grew exactly as projected. The roadmap was spot on!"</p>
+                    <div style="color: var(--primary); font-weight: bold;">+85% Growth</div>
+                </div>
+
+                <!-- Story 3 -->
+                <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 20px; border-radius: 15px;">
+                    <img src="https://via.placeholder.com/60" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 10px;">
+                    <h3>Amara Beauty</h3>
+                    <p>"Best business decision ever. The community support is amazing!"</p>
+                    <div style="color: var(--primary); font-weight: bold;">+200% Growth</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn-modal" onclick="startAssessment()">Start Your Journey</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal (Scrollable) -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Contact Us</h2>
+            <p>We're here to help</p>
+            
+            <div style="margin: 20px 0;">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                    <i class="fas fa-envelope" style="font-size: 1.5rem; color: var(--primary);"></i>
+                    <div>
+                        <h3>Email</h3>
+                        <p>support@atafiluxury.com</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                    <i class="fas fa-phone" style="font-size: 1.5rem; color: var(--primary);"></i>
+                    <div>
+                        <h3>Phone</h3>
+                        <p>+234 800 000 0000</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                    <i class="fas fa-map-marker-alt" style="font-size: 1.5rem; color: var(--primary);"></i>
+                    <div>
+                        <h3>Office</h3>
+                        <p>Lagos, Nigeria</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Send us a message</h3>
+            <form id="contactForm" class="modal-form">
+                <div class="form-group">
+                    <input type="text" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="Your Email" required>
+                </div>
+                <div class="form-group">
+                    <textarea rows="4" placeholder="Your Message" required></textarea>
+                </div>
+                <button type="submit" class="btn-modal">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal (Scrollable) -->
+    <div id="termsModal" class="modal">
+        <div class="modal-content wide">
+            <span class="close-modal">&times;</span>
+            <h2>Terms of Service</h2>
+            <div style="max-height: 60vh; overflow-y: auto; padding-right: 10px;">
+                <h3>1. Acceptance of Terms</h3>
+                <p>By accessing and using the Atafi Luxury services, you agree to be bound by these Terms of Service...</p>
+                
+                <h3>2. Services</h3>
+                <p>Atafi Luxury provides branding, marketing, and business growth consultation services...</p>
+                
+                <h3>3. Payments</h3>
+                <p>All payments are processed securely through Flutterwave or alternative payment methods...</p>
+                
+                <h3>4. Refund Policy</h3>
+                <p>We offer a 14-day money-back guarantee if you're not satisfied with our services...</p>
+                
+                <h3>5. Privacy</h3>
+                <p>Your privacy is important to us. Please review our Privacy Policy...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal (Scrollable) -->
+    <div id="privacyModal" class="modal">
+        <div class="modal-content wide">
+            <span class="close-modal">&times;</span>
+            <h2>Privacy Policy</h2>
+            <div style="max-height: 60vh; overflow-y: auto; padding-right: 10px;">
+                <h3>Information We Collect</h3>
+                <p>We collect information you provide directly to us, such as when you create an account, fill out the predictor form, or contact us...</p>
+                
+                <h3>How We Use Information</h3>
+                <p>We use the information to provide, maintain, and improve our services, communicate with you, and send you reports...</p>
+                
+                <h3>Sharing of Information</h3>
+                <p>We do not share your personal information with third parties except as described in this policy...</p>
+                
+                <h3>Data Security</h3>
+                <p>We take reasonable measures to help protect your information from loss, theft, misuse, and unauthorized access...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal (Scrollable) -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Reset Password</h2>
+            <p>Enter your email to receive reset instructions</p>
+            <form class="modal-form">
+                <div class="form-group">
+                    <input type="email" placeholder="Your Email" required>
+                </div>
+                <button type="submit" class="btn-modal">Send Reset Link</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payment History Modal (Scrollable) -->
+    <div id="paymentHistoryModal" class="modal">
+        <div class="modal-content wide">
+            <span class="close-modal">&times;</span>
+            <h2>Payment History</h2>
+            <div id="paymentHistoryList" style="max-height: 60vh; overflow-y: auto;">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal (Scrollable) -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Settings</h2>
+            <form class="modal-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="settingsFullName">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="settingsEmail">
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="settingsPhone">
+                </div>
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="settingsCurrentPassword">
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="settingsNewPassword">
+                </div>
+                <button type="submit" class="btn-modal">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Exit Intent Popup -->
+    <div class="exit-popup" id="exitPopup">
+        <div class="exit-popup-content">
+            <span class="close-modal" onclick="closeExitPopup()">&times;</span>
+            <h2>Wait! Don't Miss Out</h2>
+            <p>Get a FREE brand audit checklist when you subscribe to our newsletter</p>
+            <input type="email" class="exit-popup-input" placeholder="Your Email" id="exitEmail">
+            <button class="exit-popup-btn" onclick="subscribeExit()">Send Me The Checklist</button>
+            <div class="no-thanks" onclick="closeExitPopup()">No thanks, I'll continue</div>
         </div>
     </div>
 
@@ -2712,81 +3267,102 @@
 
     <!-- Main JavaScript -->
     <script>
-        // ==================== FLUTTERWAVE CONFIG ====================
-        const FLW_CONFIG = {
-            PUBLIC_KEY: 'FLWPUBK-2139829c2de5b6071f89e39b59e9d9ca-X',
-            SUBACCOUNT_ID: 'RS_89D720D484AF8296626AC1C84E2B0044'
-        };
-        
-        const PRICING = {
-            BASIC: 4900,
-            PRO: 9900,
-            ENTERPRISE: 19900
+        // ==================== CONFIGURATION ====================
+        const CONFIG = {
+            APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyi4YtjtPxvu3TGURhJz3Ef-IJB0gpK-RdMkXSisUE89a46i1jJZ8uSVwGTXWaKEqeh/exec',
+            FLUTTERWAVE: {
+                PUBLIC_KEY: 'FLWPUBK-2139829c2de5b6071f89e39b59e9d9ca-X',
+                SUBACCOUNT_ID: 'RS_89D720D484AF8296626AC1C84E2B0044'
+            },
+            PRICING: { BASIC: 4900, PRO: 9900, ENTERPRISE: 19900 },
+            AGENCY_EMAIL: 'fbicuul@gmail.com',
+            BUSINESS: 'Atafi Luxury'
         };
 
         // ==================== GLOBAL VARIABLES ====================
         let currentStep = 1;
         const totalSteps = 8;
         let chartInstances = {};
+        let currentUserId = localStorage.getItem('atafi_userId');
+        let currentUserEmail = localStorage.getItem('atafi_email');
+        let currentUserName = localStorage.getItem('atafi_name');
 
-        // ==================== NAVIGATION FUNCTIONS ====================
-        function startAssessment() {
-            document.getElementById('predictor').scrollIntoView({ behavior: 'smooth' });
+        // ==================== API SERVICE ====================
+        class AtafiAPI {
+            async request(action, data = {}) {
+                try {
+                    const response = await fetch(CONFIG.APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: action,
+                            ...data,
+                            timestamp: new Date().toISOString(),
+                            business: CONFIG.BUSINESS
+                        })
+                    });
+                    return { success: true };
+                } catch (error) {
+                    console.error(`API Error (${action}):`, error);
+                    return { success: false, error: error.message };
+                }
+            }
+
+            async registerUser(userData) {
+                return this.request('atafi_register', userData);
+            }
+
+            async login(email, password) {
+                return this.request('atafi_login', { email, password });
+            }
+
+            async getUserProfile(userId) {
+                return this.request('atafi_getUserProfile', { userId });
+            }
+
+            async savePrediction(userId, predictionData) {
+                return this.request('atafi_savePrediction', { userId, ...predictionData });
+            }
+
+            async trackAnalytics(event, userId, eventData = {}) {
+                return this.request('atafi_trackAnalytics', { event, userId, eventData });
+            }
+
+            async sendReportEmail(to, subject, htmlBody) {
+                return this.request('sendReportEmail', { to, subject, htmlBody });
+            }
+
+            async getDashboardStats(userId) {
+                return this.request('atafi_getDashboardStats', { userId });
+            }
+
+            async createReferral(referrerId, referrerEmail, referrerName, referredEmail) {
+                return this.request('atafi_createReferral', { referrerId, referrerEmail, referrerName, referredEmail });
+            }
+
+            async getReferralStats(referrerId) {
+                return this.request('atafi_getReferralStats', { referrerId });
+            }
+
+            async queueEmail(to, template, data = {}) {
+                return this.request('atafi_queueEmail', { to, template, data });
+            }
         }
 
-        function nextStep(step) {
-            if (!validateStep(step)) return;
-            
-            document.getElementById(`step${step}`).classList.remove('active');
-            currentStep = step + 1;
-            document.getElementById(`step${currentStep}`).classList.add('active');
-            updateProgress();
-        }
-
-        function prevStep(step) {
-            document.getElementById(`step${step}`).classList.remove('active');
-            currentStep = step - 1;
-            document.getElementById(`step${currentStep}`).classList.add('active');
-            updateProgress();
-        }
-
-        function validateStep(step) {
-            // Add validation as needed
-            return true;
-        }
-
-        function updateProgress() {
-            const progress = (currentStep / totalSteps) * 100;
-            document.getElementById('progressBar').style.width = progress + '%';
-            
-            document.querySelectorAll('.step').forEach(el => {
-                el.classList.remove('active');
-            });
-            document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
-            
-            const labels = [
-                'Business Foundation',
-                'Market & Customers',
-                'Brand Strategy',
-                'Digital Presence',
-                'Marketing Performance',
-                'Sales System',
-                'Goals & Vision',
-                'Create Account'
-            ];
-            document.getElementById('currentStepLabel').textContent = labels[currentStep - 1];
-        }
+        const api = new AtafiAPI();
 
         // ==================== PREDICTOR CLASS ====================
         class BrandPredictor {
             constructor() {
                 this.formData = {};
                 this.results = {};
+                this.userId = currentUserId;
             }
 
             collectFormData() {
                 this.formData = {
-                    businessName: document.getElementById('businessName')?.value || 'Your Business',
+                    businessName: document.getElementById('businessName')?.value || '',
                     industry: document.getElementById('industry')?.value || 'other',
                     yearsOperation: document.getElementById('yearsOperation')?.value || '1-3',
                     monthlyRevenue: parseFloat(document.getElementById('monthlyRevenue')?.value) || 1000000,
@@ -2828,7 +3404,6 @@
 
             calculateGrowthScore() {
                 let score = 50;
-                
                 if (this.formData.monthlyRevenue > 10000000) score += 15;
                 else if (this.formData.monthlyRevenue > 5000000) score += 10;
                 else if (this.formData.monthlyRevenue > 1000000) score += 5;
@@ -2849,47 +3424,32 @@
 
             calculateGrowth() {
                 let growth = 50;
-                
                 const industryMultipliers = {
-                    'technology': 1.8,
-                    'services': 1.5,
-                    'retail': 1.4,
-                    'health': 1.6,
-                    'education': 1.3,
-                    'realestate': 1.5,
-                    'finance': 1.7,
-                    'hospitality': 1.4,
-                    'manufacturing': 1.3,
-                    'other': 1.2
+                    'technology': 1.8, 'services': 1.5, 'retail': 1.4, 'health': 1.6,
+                    'education': 1.3, 'realestate': 1.5, 'finance': 1.7, 'hospitality': 1.4,
+                    'manufacturing': 1.3, 'other': 1.2
                 };
-                
                 growth *= industryMultipliers[this.formData.industry] || 1.2;
                 
                 if (this.formData.monthlyRevenue < 1000000) growth *= 1.5;
                 else if (this.formData.monthlyRevenue < 5000000) growth *= 1.3;
-                else if (this.formData.monthlyRevenue < 10000000) growth *= 1.2;
                 
                 if (this.formData.marketingBudget < 100000) growth *= 1.4;
                 else if (this.formData.marketingBudget < 500000) growth *= 1.3;
-                else if (this.formData.marketingBudget < 1000000) growth *= 1.2;
                 
                 if (this.formData.conversionRate < 1) growth *= 1.6;
                 else if (this.formData.conversionRate < 2) growth *= 1.4;
-                else if (this.formData.conversionRate < 3) growth *= 1.2;
                 
                 return Math.round(growth * 100) / 100;
             }
 
             calculateLeadIncrease() {
                 let increase = 100;
-                
                 if (this.formData.socialPresence === 'none') increase += 150;
                 else if (this.formData.socialPresence === 'basic') increase += 100;
-                else if (this.formData.socialPresence === 'active') increase += 50;
                 
                 if (this.formData.seoRanking === 'none') increase += 100;
                 else if (this.formData.seoRanking === 'low') increase += 75;
-                else if (this.formData.seoRanking === 'medium') increase += 50;
                 
                 const channelCount = this.formData.marketingChannels.length;
                 increase += (5 - channelCount) * 20;
@@ -2897,32 +3457,9 @@
                 return Math.min(300, Math.round(increase));
             }
 
-            calculateConversionImprovement() {
-                let improvement = 50;
-                
-                if (this.formData.salesProcess === 'none') improvement += 50;
-                if (this.formData.followup === 'none') improvement += 40;
-                if (this.formData.crm === 'none') improvement += 30;
-                if (this.formData.referralProgram === 'none') improvement += 30;
-                
-                return Math.min(200, Math.round(improvement));
-            }
-
             calculateProfitGrowth() {
                 const leadIncrease = this.calculateLeadIncrease();
-                const conversionImprovement = this.calculateConversionImprovement();
-                return Math.round((leadIncrease / 100) * (conversionImprovement / 100) * 100);
-            }
-
-            parseLeadsToNumber(leadsString) {
-                const leadMap = {
-                    '0-10': 5,
-                    '10-50': 30,
-                    '50-200': 125,
-                    '200-1000': 600,
-                    '1000+': 1500
-                };
-                return leadMap[leadsString] || 100;
+                return Math.round((leadIncrease / 100) * 150);
             }
 
             generatePredictions() {
@@ -2934,21 +3471,17 @@
                 const profitGrowth = this.calculateProfitGrowth();
                 
                 this.results = {
-                    growthScore: growthScore,
+                    growthScore,
                     brandStrength: Math.min(100, Math.round(growthScore * 0.85 + 25)),
                     marketingEfficiency: Math.min(100, Math.round(growthScore * 0.7 + 20)),
                     salesConversion: Math.min(100, Math.round(growthScore * 0.75 + 15)),
                     customerTrust: Math.min(100, Math.round(growthScore * 0.9 + 10)),
-                    
-                    growthPercentage: growthPercentage,
-                    leadIncrease: leadIncrease,
-                    conversionImprovement: this.calculateConversionImprovement(),
-                    profitGrowth: profitGrowth,
-                    
+                    growthPercentage,
+                    leadIncrease,
+                    profitGrowth,
                     projectedRevenue: Math.round(this.formData.monthlyRevenue * (1 + growthPercentage / 100)),
-                    projectedLeads: Math.round(this.parseLeadsToNumber(this.formData.leadsPerMonth) * (1 + leadIncrease / 100)),
-                    projectedCustomers: Math.round((this.formData.monthlyRevenue / (this.formData.customerLTV || 50000)) * (1 + profitGrowth / 100)),
-                    
+                    projectedLeads: Math.round(100 * (1 + leadIncrease / 100)),
+                    projectedCustomers: Math.round((this.formData.monthlyRevenue / 50000) * (1 + profitGrowth / 100)),
                     marketVisibility: Math.min(100, Math.round(growthScore * 0.8 + 30)),
                     brandAuthority: Math.min(100, Math.round(growthScore * 0.95 + 5))
                 };
@@ -2983,24 +3516,17 @@
                 document.getElementById('currentProfit').textContent = '₦' + currentProfit.toLocaleString();
                 document.getElementById('projectedProfit').textContent = '₦' + Math.round(currentProfit * (1 + results.profitGrowth / 100)).toLocaleString();
                 
-                const currentCustomers = Math.round(data.monthlyRevenue / (data.customerLTV || 50000));
-                document.getElementById('currentCustomers').textContent = currentCustomers;
-                document.getElementById('projectedCustomers').textContent = results.projectedCustomers;
-                
                 const businessName = data.businessName || 'Your Brand';
                 const initials = businessName.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase();
                 document.getElementById('businessInitials').textContent = initials;
                 
                 this.createRevenueChart();
-                this.createLeadChart();
             }
 
             createRevenueChart() {
                 const ctx = document.getElementById('revenueChart').getContext('2d');
                 
-                if (chartInstances.revenue) {
-                    chartInstances.revenue.destroy();
-                }
+                if (window.revenueChart) window.revenueChart.destroy();
                 
                 const weeklyRevenue = [];
                 const currentRevenue = this.formData.monthlyRevenue / 4;
@@ -3010,7 +3536,7 @@
                     weeklyRevenue.push(Math.round(currentRevenue * Math.pow(1 + growthRate/100, i)));
                 }
                 
-                chartInstances.revenue = new Chart(ctx, {
+                window.revenueChart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
@@ -3020,128 +3546,69 @@
                             borderColor: '#d4af37',
                             backgroundColor: 'rgba(212, 175, 55, 0.1)',
                             tension: 0.4,
-                            fill: true,
-                            pointBackgroundColor: '#d4af37',
-                            pointBorderColor: '#1a1a1a',
-                            pointRadius: 6,
-                            pointHoverRadius: 8
+                            fill: true
                         }]
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return '₦' + context.raw.toLocaleString();
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                ticks: {
-                                    callback: function(value) {
-                                        return '₦' + (value / 1000) + 'k';
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
                 });
             }
 
-            createLeadChart() {
-                const ctx = document.getElementById('leadChart')?.getContext('2d');
-                if (!ctx) return;
-                
-                if (chartInstances.lead) {
-                    chartInstances.lead.destroy();
+            async saveToDatabase() {
+                if (!this.userId) {
+                    const registerResult = await api.registerUser({
+                        email: this.formData.email,
+                        fullName: this.formData.fullName,
+                        phone: this.formData.phone,
+                        password: this.formData.password,
+                        businessName: this.formData.businessName,
+                        industry: this.formData.industry,
+                        monthlyRevenue: this.formData.monthlyRevenue,
+                        customerCount: Math.round(this.formData.monthlyRevenue / 50000),
+                        marketingBudget: this.formData.marketingBudget
+                    });
+                    
+                    if (registerResult.success) {
+                        this.userId = 'atafi_' + Date.now();
+                        localStorage.setItem('atafi_userId', this.userId);
+                        localStorage.setItem('atafi_email', this.formData.email);
+                        localStorage.setItem('atafi_name', this.formData.fullName);
+                        currentUserId = this.userId;
+                        currentUserEmail = this.formData.email;
+                        currentUserName = this.formData.fullName;
+                    }
                 }
                 
-                const currentLeads = this.parseLeadsToNumber(this.formData.leadsPerMonth);
-                const projectedLeads = this.results.projectedLeads;
-                
-                chartInstances.lead = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Current', 'Projected'],
-                        datasets: [{
-                            label: 'Monthly Leads',
-                            data: [currentLeads, projectedLeads],
-                            backgroundColor: ['#666', '#d4af37'],
-                            borderRadius: 5
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false }
-                        }
-                    }
-                });
+                if (this.userId) {
+                    await api.savePrediction(this.userId, {
+                        growthPercentage: this.results.growthPercentage,
+                        projectedRevenue: this.results.projectedRevenue,
+                        projectedCustomers: this.results.projectedCustomers,
+                        projectedROI: this.results.profitGrowth
+                    });
+                }
             }
 
-            async sendEmailReport() {
-                const emailContent = this.generateEmailContent();
-                
-                // In production, this would send to your backend
-                console.log('Email sent to:', this.formData.email);
-                console.log('Email content:', emailContent);
-                
-                // Simulate API call
-                return true;
-            }
-
-            generateEmailContent() {
+            generateClientEmailContent() {
                 const data = this.formData;
                 const results = this.results;
-                const date = new Date().toLocaleDateString();
                 
                 return `
-                    <h1>Your Atafi Luxury Brand Transformation Report</h1>
-                    <p>Generated on ${date}</p>
-                    
-                    <h2>Growth Predictions</h2>
-                    <ul>
-                        <li>Growth Score: ${results.growthScore}/100</li>
-                        <li>Projected Growth: +${results.growthPercentage}%</li>
-                        <li>Lead Increase: +${results.leadIncrease}%</li>
-                        <li>Profit Growth: +${results.profitGrowth}%</li>
-                    </ul>
-                    
-                    <h2>Business Information</h2>
-                    <ul>
-                        <li>Business: ${data.businessName}</li>
-                        <li>Industry: ${data.industry}</li>
-                        <li>Email: ${data.email}</li>
-                    </ul>
-                    
-                    <p>Access your full dashboard at: https://atafi-luxury.com/dashboard</p>
+                    <div style="font-family: 'Poppins', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0a0f; padding: 40px; border-radius: 30px; color: #ffffff;">
+                        <h1 style="color: #d4af37; text-align: center;">Your Growth Report</h1>
+                        <p>Hello ${data.fullName},</p>
+                        <p>Based on your business information, here's your personalized growth forecast:</p>
+                        
+                        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; margin: 20px 0;">
+                            <h3 style="color: #d4af37;">Key Metrics</h3>
+                            <p>Growth Score: ${results.growthScore}/100</p>
+                            <p>Projected Growth: +${results.growthPercentage}%</p>
+                            <p>Projected Revenue: ₦${results.projectedRevenue.toLocaleString()}</p>
+                            <p>Lead Increase: +${results.leadIncrease}%</p>
+                        </div>
+                        
+                        <p>Access your full dashboard here: <a href="https://atafi-lux.onrender.com/" style="color: #d4af37;">Atafi Luxury</a></p>
+                    </div>
                 `;
-            }
-
-            async createAccount() {
-                try {
-                    // Send email to client
-                    await this.sendEmailReport();
-                    
-                    // Send email to agency (fbicuul@gmail.com)
-                    const agencyEmail = {
-                        to: 'fbicuul@gmail.com',
-                        subject: `New Lead: ${this.formData.businessName} - Growth Predictor Results`,
-                        content: this.generateAgencyEmailContent()
-                    };
-                    console.log('Agency notification sent:', agencyEmail);
-                    
-                    return true;
-                } catch (error) {
-                    console.error('Account creation failed:', error);
-                    return false;
-                }
             }
 
             generateAgencyEmailContent() {
@@ -3149,42 +3616,90 @@
                 const results = this.results;
                 
                 return `
-                    <h1>🚀 New Lead from Growth Predictor</h1>
-                    
-                    <h2>Business Information</h2>
-                    <ul>
-                        <li>Business Name: ${data.businessName}</li>
-                        <li>Full Name: ${data.fullName}</li>
-                        <li>Email: ${data.email}</li>
-                        <li>Phone: ${data.phone}</li>
-                        <li>Industry: ${data.industry}</li>
-                        <li>Monthly Revenue: ₦${data.monthlyRevenue.toLocaleString()}</li>
-                    </ul>
-                    
-                    <h2>Prediction Results</h2>
-                    <ul>
-                        <li>Growth Score: ${results.growthScore}/100</li>
-                        <li>Projected Revenue: ₦${results.projectedRevenue.toLocaleString()}</li>
-                        <li>Lead Increase: +${results.leadIncrease}%</li>
-                        <li>Profit Growth: +${results.profitGrowth}%</li>
-                    </ul>
-                    
-                    <h2>Marketing Channels</h2>
-                    <p>${(data.marketingChannels || []).join(', ') || 'None'}</p>
-                    
-                    <h2>Brand Personality</h2>
-                    <p>${(data.personality || []).join(', ') || 'Not specified'}</p>
-                    
-                    <h2>Goals</h2>
-                    <p>Primary Goal: ${data.primaryGoal}</p>
-                    <p>Revenue Goal: ₦${data.revenueGoal.toLocaleString()}</p>
-                    
-                    <p>Follow up with this lead immediately!</p>
+                    <div style="font-family: 'Poppins', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0a0f; padding: 40px; border-radius: 30px; color: #ffffff;">
+                        <h1 style="color: #ff3b9c;">🚀 NEW LEAD - Atafi Luxury</h1>
+                        
+                        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; margin: 20px 0;">
+                            <h3 style="color: #d4af37;">Business Information</h3>
+                            <p><strong>Business:</strong> ${data.businessName}</p>
+                            <p><strong>Name:</strong> ${data.fullName}</p>
+                            <p><strong>Email:</strong> ${data.email}</p>
+                            <p><strong>Phone:</strong> ${data.phone || 'Not provided'}</p>
+                            <p><strong>Industry:</strong> ${data.industry}</p>
+                            <p><strong>Revenue:</strong> ₦${data.monthlyRevenue.toLocaleString()}</p>
+                        </div>
+                        
+                        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; margin: 20px 0;">
+                            <h3 style="color: #a4ff7c;">Prediction Results</h3>
+                            <p><strong>Growth Score:</strong> ${results.growthScore}/100</p>
+                            <p><strong>Projected Revenue:</strong> ₦${results.projectedRevenue.toLocaleString()}</p>
+                            <p><strong>Lead Increase:</strong> +${results.leadIncrease}%</p>
+                            <p><strong>Profit Growth:</strong> +${results.profitGrowth}%</p>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 20px;">
+                            <a href="mailto:${data.email}" style="background: #ff3b9c; color: white; padding: 10px 20px; border-radius: 25px; text-decoration: none;">Reply to Lead</a>
+                        </div>
+                    </div>
                 `;
+            }
+
+            async sendEmails() {
+                const clientEmail = this.generateClientEmailContent();
+                await api.sendReportEmail(
+                    this.formData.email,
+                    '🎯 Your Atafi Luxury Growth Report is Ready!',
+                    clientEmail
+                );
+                
+                const agencyEmail = this.generateAgencyEmailContent();
+                await api.sendReportEmail(
+                    CONFIG.AGENCY_EMAIL,
+                    `🚀 New Lead: ${this.formData.businessName} - Growth Predictor Results`,
+                    agencyEmail
+                );
+                
+                await api.queueEmail(this.formData.email, 'welcome', {
+                    name: this.formData.fullName,
+                    business: this.formData.businessName
+                });
             }
         }
 
         // ==================== UI FUNCTIONS ====================
+        function startAssessment() {
+            document.getElementById('predictor').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function nextStep(step) {
+            document.getElementById(`step${step}`).classList.remove('active');
+            currentStep = step + 1;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            updateProgress();
+        }
+
+        function prevStep(step) {
+            document.getElementById(`step${step}`).classList.remove('active');
+            currentStep = step - 1;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+            
+            const labels = [
+                'Business Foundation', 'Market & Customers', 'Brand Strategy',
+                'Digital Presence', 'Marketing Performance', 'Sales System',
+                'Goals & Vision', 'Create Account'
+            ];
+            document.getElementById('currentStepLabel').textContent = labels[currentStep - 1];
+        }
+
         async function generateReport() {
             const password = document.getElementById('accountPassword').value;
             const confirm = document.getElementById('confirmPassword').value;
@@ -3207,102 +3722,227 @@
             
             showLoading(true);
             
-            const predictor = new BrandPredictor();
-            predictor.renderResults();
-            
-            const success = await predictor.createAccount();
-            
-            showLoading(false);
-            
-            if (success) {
+            try {
+                const predictor = new BrandPredictor();
+                predictor.renderResults();
+                await predictor.saveToDatabase();
+                await predictor.sendEmails();
+                
+                showLoading(false);
                 document.getElementById('predictor').style.display = 'none';
                 document.getElementById('resultsDashboard').style.display = 'block';
                 document.getElementById('resultsDashboard').scrollIntoView({ behavior: 'smooth' });
                 startUrgencyTimer();
-                showNotification('Account created! Check your email for your report.', 'success');
-            } else {
-                showNotification('Account created but email delivery failed. You can still proceed.', 'warning');
-                document.getElementById('predictor').style.display = 'none';
-                document.getElementById('resultsDashboard').style.display = 'block';
+                showNotification('Report generated! Check your email.', 'success');
+                
+                await api.trackAnalytics('report_generated', predictor.userId, {
+                    businessName: predictor.formData.businessName,
+                    growthScore: predictor.results.growthScore
+                });
+                
+                // Update live counter
+                const liveCounter = document.getElementById('liveBusinesses');
+                if (liveCounter) {
+                    let count = parseInt(liveCounter.textContent) || 247;
+                    liveCounter.textContent = count + 1;
+                }
+                
+            } catch (error) {
+                showLoading(false);
+                showNotification('Error generating report. Please try again.', 'error');
+                console.error(error);
             }
         }
 
-        function startTransformation() {
-            const plan = 'PRO';
+        // ==================== MODAL FUNCTIONS ====================
+        function showSuccessStoriesModal() {
+            document.getElementById('successStoriesModal').style.display = 'flex';
+        }
+
+        function showContactModal() {
+            document.getElementById('contactModal').style.display = 'flex';
+        }
+
+        function showTermsModal() {
+            document.getElementById('termsModal').style.display = 'flex';
+        }
+
+        function showPrivacyModal() {
+            document.getElementById('privacyModal').style.display = 'flex';
+        }
+
+        function showPricingModal() {
+            document.getElementById('pricingModal').style.display = 'flex';
+        }
+
+        function showForgotPasswordModal() {
+            document.getElementById('forgotPasswordModal').style.display = 'flex';
+        }
+
+        function showDashboardModal() {
+            if (!currentUserId) {
+                showNotification('Please login first', 'error');
+                document.getElementById('loginModal').style.display = 'flex';
+                return;
+            }
             
+            document.getElementById('dashboardUserName').textContent = currentUserName || 'User';
+            document.getElementById('referralLink').textContent = `https://atafi-lux.onrender.com/?ref=${currentUserId}`;
+            
+            // Load dashboard data
+            loadDashboardData();
+            
+            document.getElementById('dashboardModal').style.display = 'flex';
+        }
+
+        function showPaymentHistory() {
+            document.getElementById('paymentHistoryModal').style.display = 'flex';
+            loadPaymentHistory();
+        }
+
+        function showSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'flex';
+            document.getElementById('settingsFullName').value = currentUserName || '';
+            document.getElementById('settingsEmail').value = currentUserEmail || '';
+        }
+
+        async function loadDashboardData() {
+            if (!currentUserId) return;
+            
+            const stats = await api.getDashboardStats(currentUserId);
+            if (stats.success && stats.stats) {
+                document.getElementById('dashboardGrowthScore').textContent = stats.stats.averageGrowth || '78';
+                document.getElementById('dashboardPredictions').textContent = stats.stats.totalPredictions || '0';
+                document.getElementById('dashboardReferrals').textContent = stats.stats.activeReferrals || '0';
+                document.getElementById('dashboardCommission').textContent = '₦' + (stats.stats.referralCommission || 0).toLocaleString();
+            }
+            
+            // Load prediction history
+            const historyEl = document.getElementById('predictionHistory');
+            historyEl.innerHTML = '<p>Loading...</p>';
+            
+            // Mock data for now
+            setTimeout(() => {
+                historyEl.innerHTML = `
+                    <div class="history-item">
+                        <strong>March 5, 2026</strong> - Growth: 78% | Revenue: ₦4.2M
+                    </div>
+                    <div class="history-item">
+                        <strong>February 28, 2026</strong> - Growth: 65% | Revenue: ₦3.8M
+                    </div>
+                `;
+            }, 500);
+        }
+
+        function loadPaymentHistory() {
+            const historyEl = document.getElementById('paymentHistoryList');
+            historyEl.innerHTML = '<p>Loading...</p>';
+            
+            setTimeout(() => {
+                historyEl.innerHTML = `
+                    <div class="history-item">
+                        <strong>March 1, 2026</strong> - ₦9,900 - Professional Plan - Completed
+                    </div>
+                    <div class="history-item">
+                        <strong>February 1, 2026</strong> - ₦9,900 - Professional Plan - Completed
+                    </div>
+                `;
+            }, 500);
+        }
+
+        function copyReferralLink() {
+            const link = document.getElementById('referralLink').textContent;
+            copyToClipboard(link);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Copied to clipboard!', 'success');
+            });
+        }
+
+        function selectPlan(plan) {
+            document.getElementById('pricingModal').style.display = 'none';
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        function processFlutterwavePayment() {
             try {
                 FlutterwaveCheckout({
-                    public_key: FLW_CONFIG.PUBLIC_KEY,
+                    public_key: CONFIG.FLUTTERWAVE.PUBLIC_KEY,
                     tx_ref: 'ATAFI_' + Date.now(),
-                    amount: PRICING[plan],
+                    amount: CONFIG.PRICING.PRO,
                     currency: 'NGN',
+                    subaccounts: [{ id: CONFIG.FLUTTERWAVE.SUBACCOUNT_ID }],
                     payment_options: 'card, banktransfer, ussd',
                     customer: {
-                        email: document.getElementById('accountEmail')?.value || 'customer@example.com',
-                        name: document.getElementById('fullName')?.value || 'Business Owner',
+                        email: currentUserEmail || 'customer@example.com',
+                        name: currentUserName || 'Business Owner',
                         phone_number: document.getElementById('phone')?.value || '08000000000'
                     },
                     callback: function(response) {
                         if (response.status === 'successful') {
-                            showNotification('Payment successful! Redirecting...', 'success');
-                            setTimeout(() => {
-                                window.location.href = '/dashboard.html?welcome=true';
-                            }, 2000);
+                            showNotification('Payment successful!', 'success');
+                            document.getElementById('paymentModal').style.display = 'none';
+                            api.trackAnalytics('payment_completed', currentUserId, {
+                                amount: CONFIG.PRICING.PRO,
+                                reference: response.transaction_id
+                            });
                         }
-                    },
-                    onclose: function() {
-                        showAlternativePaymentOptions();
                     }
                 });
             } catch (error) {
                 console.error('Flutterwave error:', error);
-                showAlternativePaymentOptions();
+                showNotification('Payment system unavailable', 'error');
             }
-        }
-
-        function showAlternativePaymentOptions() {
-            const predictor = new BrandPredictor();
-            predictor.collectFormData();
-            
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.style.display = 'flex';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <span class="close-modal" onclick="this.parentElement.parentElement.remove()">&times;</span>
-                    <h2>💳 Alternative Payment Options</h2>
-                    <p>Flutterwave is currently unavailable. You can pay via bank transfer:</p>
-                    
-                    <div style="background: #f5f5f5; padding: 1.5rem; border-radius: 5px; margin: 1rem 0;">
-                        <h3 style="color: #d4af37;">🏦 Bank Transfer Details</h3>
-                        <p><strong>Bank:</strong> Parallex Bank</p>
-                        <p><strong>Account Name:</strong> Atafi Luxury</p>
-                        <p><strong>Account Number:</strong> 1510096102</p>
-                        <p><strong>Amount:</strong> ₦9,900 (Professional Plan)</p>
-                        <p><strong>Reference:</strong> Use your email: <strong>${predictor.formData.email}</strong></p>
-                    </div>
-                    
-                    <p style="color: #666; margin-top: 20px;">After payment, send proof to payments@atafiluxury.com and we'll activate your account within 1 hour.</p>
-                    
-                    <button class="btn-modal" onclick="window.location.href='mailto:payments@atafiluxury.com?subject=Payment%20Proof&body=My%20payment%20reference%3A'">
-                        <i class="fas fa-envelope"></i> Send Payment Proof
-                    </button>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
         }
 
         function bookStrategyCall() {
             window.open('https://calendly.com/atafiluxury/strategy-call', '_blank');
-            
-            const predictor = new BrandPredictor();
-            predictor.collectFormData();
-            predictor.sendEmailReport();
-            
-            showNotification('Check your email for your report. See you on the call!', 'success');
+            api.trackAnalytics('strategy_call_booked', currentUserId);
+            showNotification('Check your email for confirmation!', 'success');
         }
 
+        function logout() {
+            localStorage.removeItem('atafi_userId');
+            localStorage.removeItem('atafi_email');
+            localStorage.removeItem('atafi_name');
+            currentUserId = null;
+            currentUserEmail = null;
+            currentUserName = null;
+            document.getElementById('dashboardModal').style.display = 'none';
+            showNotification('Logged out successfully', 'success');
+            setTimeout(() => window.location.reload(), 1000);
+        }
+
+        // ==================== EXIT INTENT POPUP ====================
+        function setupExitIntent() {
+            let exitShown = sessionStorage.getItem('exitPopupShown');
+            if (exitShown) return;
+            
+            document.addEventListener('mouseleave', function(e) {
+                if (e.clientY <= 0 && !exitShown) {
+                    document.getElementById('exitPopup').style.display = 'flex';
+                    sessionStorage.setItem('exitPopupShown', 'true');
+                }
+            });
+        }
+
+        function closeExitPopup() {
+            document.getElementById('exitPopup').style.display = 'none';
+        }
+
+        function subscribeExit() {
+            const email = document.getElementById('exitEmail').value;
+            if (email) {
+                showNotification('Check your email for the checklist!', 'success');
+                closeExitPopup();
+            } else {
+                showNotification('Please enter your email', 'error');
+            }
+        }
+
+        // ==================== URGENCY TIMER ====================
         function startUrgencyTimer() {
             const endTime = new Date().getTime() + (24 * 60 * 60 * 1000);
             
@@ -3329,6 +3969,7 @@
             }, 1000);
         }
 
+        // ==================== NOTIFICATION FUNCTIONS ====================
         function showLoading(show) {
             document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
         }
@@ -3344,7 +3985,7 @@
             }, 4000);
         }
 
-        // ==================== EVENT LISTENERS ====================
+        // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
             // Mobile menu
             const menuToggle = document.getElementById('mobile-menu');
@@ -3387,8 +4028,9 @@
                 });
             }
             
-            // Modal triggers
+            // Modal setup
             const loginBtn = document.getElementById('loginBtn');
+            const signupBtn = document.getElementById('signupBtn');
             const loginModal = document.getElementById('loginModal');
             const signupModal = document.getElementById('signupModal');
             const switchToSignup = document.getElementById('switchToSignup');
@@ -3398,6 +4040,11 @@
             loginBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 loginModal.style.display = 'flex';
+            });
+            
+            signupBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                signupModal.style.display = 'flex';
             });
             
             switchToSignup?.addEventListener('click', (e) => {
@@ -3416,25 +4063,49 @@
                 btn.addEventListener('click', function() {
                     loginModal.style.display = 'none';
                     signupModal.style.display = 'none';
+                    document.getElementById('dashboardModal').style.display = 'none';
+                    document.getElementById('pricingModal').style.display = 'none';
+                    document.getElementById('paymentModal').style.display = 'none';
+                    document.getElementById('successStoriesModal').style.display = 'none';
+                    document.getElementById('contactModal').style.display = 'none';
+                    document.getElementById('termsModal').style.display = 'none';
+                    document.getElementById('privacyModal').style.display = 'none';
+                    document.getElementById('forgotPasswordModal').style.display = 'none';
+                    document.getElementById('paymentHistoryModal').style.display = 'none';
+                    document.getElementById('settingsModal').style.display = 'none';
                 });
             });
             
             window.addEventListener('click', (e) => {
                 if (e.target === loginModal) loginModal.style.display = 'none';
                 if (e.target === signupModal) signupModal.style.display = 'none';
+                if (e.target === document.getElementById('dashboardModal')) document.getElementById('dashboardModal').style.display = 'none';
+                if (e.target === document.getElementById('pricingModal')) document.getElementById('pricingModal').style.display = 'none';
+                if (e.target === document.getElementById('paymentModal')) document.getElementById('paymentModal').style.display = 'none';
             });
             
             // Login form
             document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                showLoading(true);
                 
-                // Simulate login
-                setTimeout(() => {
-                    showLoading(false);
-                    showNotification('Login successful!', 'success');
-                    loginModal.style.display = 'none';
-                }, 1500);
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                showLoading(true);
+                await new Promise(r => setTimeout(r, 1000));
+                showLoading(false);
+                
+                // Mock login
+                currentUserId = 'user_' + Date.now();
+                currentUserEmail = email;
+                currentUserName = 'User';
+                localStorage.setItem('atafi_userId', currentUserId);
+                localStorage.setItem('atafi_email', email);
+                localStorage.setItem('atafi_name', 'User');
+                
+                showNotification('Login successful!', 'success');
+                loginModal.style.display = 'none';
+                showDashboardModal();
             });
             
             // Signup form
@@ -3455,25 +4126,60 @@
                 }
                 
                 showLoading(true);
+                await new Promise(r => setTimeout(r, 1000));
+                showLoading(false);
                 
-                // Simulate signup
-                setTimeout(() => {
-                    showLoading(false);
-                    showNotification('Account created successfully!', 'success');
-                    signupModal.style.display = 'none';
-                }, 1500);
+                const fullName = document.getElementById('signupFullName').value;
+                const email = document.getElementById('signupEmail').value;
+                
+                currentUserId = 'user_' + Date.now();
+                currentUserEmail = email;
+                currentUserName = fullName;
+                localStorage.setItem('atafi_userId', currentUserId);
+                localStorage.setItem('atafi_email', email);
+                localStorage.setItem('atafi_name', fullName);
+                
+                showNotification('Account created! Welcome!', 'success');
+                signupModal.style.display = 'none';
+                showDashboardModal();
             });
             
-            // Check URL params for referral
+            // Contact form
+            document.getElementById('contactForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                showNotification('Message sent! We\'ll get back to you soon.', 'success');
+                document.getElementById('contactModal').style.display = 'none';
+            });
+            
+            // Check URL for referral
             const urlParams = new URLSearchParams(window.location.search);
             const ref = urlParams.get('ref');
             if (ref) {
                 const referralInput = document.getElementById('referralCode');
-                if (referralInput) {
-                    referralInput.value = ref;
-                }
+                if (referralInput) referralInput.value = ref;
                 showNotification('You were referred by a friend! Get 10% off!', 'info');
             }
+            
+            // Add dashboard link to nav if logged in
+            if (currentUserId) {
+                const nav = document.getElementById('nav-links');
+                const dashboardLi = document.createElement('li');
+                dashboardLi.innerHTML = '<a href="#" onclick="showDashboardModal(); return false;">Dashboard</a>';
+                nav.insertBefore(dashboardLi, nav.querySelector('.btn-login'));
+            }
+            
+            // Setup exit intent
+            setupExitIntent();
+            
+            // Update live counter
+            setInterval(() => {
+                const liveCounter = document.getElementById('liveBusinesses');
+                if (liveCounter && !liveCounter.dataset.fixed) {
+                    let count = parseInt(liveCounter.textContent) || 247;
+                    count += Math.floor(Math.random() * 2);
+                    liveCounter.textContent = count;
+                }
+            }, 30000);
         });
     </script>
 </body>
