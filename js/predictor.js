@@ -331,9 +331,8 @@ class BrandPredictor {
     // Send data to backend and create account
     async createAccount() {
         try {
-            const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbxNKh38WdpnbNz0mRIMVW4vnb0XNOo99CRPU4oiGOB54INRRboYPmLnXKZkJ_lX_YXx/exec'; // Replace with your actual Apps Script URL
-            
-            const response = await fetch(appsScriptUrl, {
+            // First, create account in database
+            const response = await fetch(CONFIG.APPS_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
@@ -345,7 +344,7 @@ class BrandPredictor {
                 })
             });
             
-            // Send confirmation email with all data
+            // Then send email - using a more reliable method
             await this.sendConfirmationEmail();
             
             return true;
@@ -355,25 +354,88 @@ class BrandPredictor {
         }
     }
 
-    // Send confirmation email with all form data and predictions
+    // Send confirmation email using Apps Script
     async sendConfirmationEmail() {
         const emailContent = this.generateEmailContent();
         
-        // Try to send via email service
-        try {
-            await fetch('https://script.google.com/macros/s/AKfycbxNKh38WdpnbNz0mRIMVW4vnb0XNOo99CRPU4oiGOB54INRRboYPmLnXKZkJ_lX_YXx/exec', {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    to: this.formData.email,
-                    subject: 'Your Atafi Luxury Brand Transformation Report',
-                    html: emailContent
-                })
-            });
-        } catch (error) {
-            console.log('Email service unavailable, but account created');
+        const maxRetries = 3;
+        let attempt = 0;
+        
+        while (attempt < maxRetries) {
+            try {
+                // Show loading notification
+                showNotification('Sending report to your email...', 'info');
+                
+                const response = await fetch(CONFIG.APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'sendReportEmail',
+                        to: this.formData.email,
+                        subject: '🎯 Your Atafi Luxury Brand Transformation Report',
+                        htmlBody: emailContent
+                    })
+                });
+                
+                console.log('Email sent successfully');
+                showNotification('Report sent to your email! Check your inbox.', 'success');
+                break;
+                
+            } catch (error) {
+                attempt++;
+                console.log(`Email attempt ${attempt} failed:`, error);
+                
+                if (attempt === maxRetries) {
+                    // If all retries fail, save to localStorage for manual retry later
+                    const failedEmails = JSON.parse(localStorage.getItem('failedEmails') || '[]');
+                    failedEmails.push({
+                        to: this.formData.email,
+                        subject: 'Your Atafi Luxury Brand Transformation Report',
+                        html: emailContent,
+                        timestamp: new Date().toISOString()
+                    });
+                    localStorage.setItem('failedEmails', JSON.stringify(failedEmails));
+                    
+                    // Show notification to user with manual option
+                    showNotification('⚠️ Email temporarily unavailable. Your report is saved. Click here to download.', 'warning', 10000, () => {
+                        this.downloadReportAsPDF();
+                    });
+                }
+                
+                // Wait before retrying (exponential backoff)
+                await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt)));
+            }
         }
+    }
+
+    // Add fallback method to download report
+    downloadReportAsPDF() {
+        const emailContent = this.generateEmailContent();
+        
+        // Create a printable version
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+            <head>
+                <title>Atafi Luxury - Brand Transformation Report</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 20px; }
+                    .header { background: #d4af37; color: white; padding: 20px; text-align: center; }
+                    .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+                    .label { color: #666; font-size: 0.9em; }
+                    .value { font-size: 1.2em; font-weight: bold; }
+                    .button { background: #d4af37; color: white; padding: 10px 20px; text-decoration: none; display: inline-block; margin: 10px 0; }
+                </style>
+            </head>
+            <body>
+                ${emailContent}
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        
+        showNotification('Report opened in new tab. You can save/print it.', 'success');
     }
 
     // Generate comprehensive email content with all data
@@ -381,6 +443,7 @@ class BrandPredictor {
         const date = new Date().toLocaleDateString();
         const formData = this.formData;
         const results = this.results;
+        const bank = CONFIG.BANK_DETAILS;
         
         return `
             <!DOCTYPE html>
@@ -418,7 +481,7 @@ class BrandPredictor {
                             <p style="color: #ff6b6b; font-size: 0.9em;">⚠️ Please save these credentials and change your password after logging in.</p>
                         </div>
                         
-                        <a href="https://atafi-lux.onrender.com/dashboard.html" class="button">Access Your Dashboard</a>
+                        <a href="${CONFIG.SITE_URL}/dashboard.html" class="button">Access Your Dashboard</a>
                     </div>
                     
                     <div class="section">
@@ -530,22 +593,22 @@ class BrandPredictor {
                         <p>Choose your preferred plan and start your brand transformation today:</p>
                         
                         <div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0;">
-                            <a href="https://atafi-lux.onrender.com/subscription.html?plan=basic" style="flex: 1; background: #333; color: white; text-decoration: none; padding: 15px; text-align: center; border-radius: 5px;">
+                            <a href="${CONFIG.SITE_URL}/subscription.html?plan=basic" style="flex: 1; background: #333; color: white; text-decoration: none; padding: 15px; text-align: center; border-radius: 5px;">
                                 <strong>Basic</strong><br>
-                                ₦4,900/month
+                                ₦${CONFIG.PRICING.BASIC}/month
                             </a>
-                            <a href="https://atafi-lux.onrender.com/subscription.html?plan=pro" style="flex: 1; background: #d4af37; color: white; text-decoration: none; padding: 15px; text-align: center; border-radius: 5px;">
+                            <a href="${CONFIG.SITE_URL}/subscription.html?plan=pro" style="flex: 1; background: #d4af37; color: white; text-decoration: none; padding: 15px; text-align: center; border-radius: 5px;">
                                 <strong>Professional</strong><br>
-                                ₦9,900/month
+                                ₦${CONFIG.PRICING.PRO}/month
                             </a>
-                            <a href="https://atafi-lux.onrender.com/subscription.html?plan=enterprise" style="flex: 1; background: #9d4edd; color: white; text-decoration: none; padding: 15px; text-align: center; border-radius: 5px;">
+                            <a href="${CONFIG.SITE_URL}/subscription.html?plan=enterprise" style="flex: 1; background: #9d4edd; color: white; text-decoration: none; padding: 15px; text-align: center; border-radius: 5px;">
                                 <strong>Enterprise</strong><br>
-                                ₦19,900/month
+                                ₦${CONFIG.PRICING.ENTERPRISE}/month
                             </a>
                         </div>
                         
                         <div style="text-align: center;">
-                            <a href="https://calendly.com/atafiluxury/strategy-call" class="button" style="background: #9d4edd;">Book a Free Strategy Call</a>
+                            <a href="${CONFIG.CALENDLY_URL}" class="button" style="background: #9d4edd;">Book a Free Strategy Call</a>
                         </div>
                     </div>
                     
@@ -554,18 +617,22 @@ class BrandPredictor {
                         <p>If you prefer to pay via bank transfer:</p>
                         
                         <div style="background: #f0f0f0; padding: 15px; border-radius: 5px; margin: 10px 0;">
-                            <p><strong>Bank:</strong> Parallex Bank</p>
-                            <p><strong>Account Name:</strong> Atafi Luxury</p>
-                            <p><strong>Account Number:</strong> 1510096102</p>
+                            <p><strong>Bank:</strong> ${bank.BANK_NAME}</p>
+                            <p><strong>Account Name:</strong> ${bank.ACCOUNT_NAME}</p>
+                            <p><strong>Account Number:</strong> ${bank.ACCOUNT_NUMBER}</p>
                             <p><strong>Amount:</strong> Based on selected plan</p>
                             <p style="color: #d4af37;"><strong>Reference:</strong> Use your email: ${formData.email}</p>
                         </div>
                         
-                        <p style="font-size: 0.9em; color: #666;">After payment, send proof to payments@atafiluxury.com and we'll activate your account within 1 hour.</p>
+                        <div style="background: #f0f0f0; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                            <p><strong>USDT (TRC20):</strong> ${bank.USDT_ADDRESS}</p>
+                        </div>
+                        
+                        <p style="font-size: 0.9em; color: #666;">After payment, send proof to ${CONFIG.EMAIL.PAYMENTS} and we'll activate your account within 1 hour.</p>
                     </div>
                     
                     <div class="footer">
-                        <p>Questions? Contact us at support@atafiluxury.com</p>
+                        <p>Questions? Contact us at ${CONFIG.EMAIL.SUPPORT}</p>
                         <p>© 2026 Atafi Luxury. All rights reserved.</p>
                     </div>
                 </div>
@@ -694,31 +761,42 @@ function generateReport() {
 }
 
 function startTransformation() {
-    // Get selected plan or default to Pro
-    const plan = 'PRO'; // Or get from selected plan
+    const plan = 'PRO';
+    const email = document.getElementById('accountEmail')?.value || sessionStorage.getItem('userEmail');
+    const businessName = document.getElementById('businessName')?.value || 'Business Owner';
+    const phone = document.getElementById('phone')?.value || '08000000000';
+    
+    if (!email) {
+        showNotification('Please complete the assessment first', 'error');
+        return;
+    }
     
     try {
-        // Try Flutterwave payment first
         FlutterwaveCheckout({
-            public_key: FLW_CONFIG.PUBLIC_KEY,
+            public_key: CONFIG.FLUTTERWAVE.PUBLIC_KEY,
             tx_ref: 'TRANSFORM_' + Date.now(),
-            amount: PRICING[plan] * 100, // Convert to kobo
+            amount: CONFIG.PRICING[plan] * 100,
             currency: 'NGN',
-            subaccounts: [{ id: FLW_CONFIG.SUBACCOUNT_ID }],
+            subaccounts: [{ id: CONFIG.FLUTTERWAVE.SUBACCOUNT_ID }],
             payment_options: 'card, banktransfer, ussd',
-            customer: {
-                email: document.getElementById('accountEmail')?.value || 'customer@example.com',
-                name: document.getElementById('businessName')?.value || 'Business Owner',
-                phone_number: document.getElementById('phone')?.value || '08000000000'
-            },
+            
             callback: function(response) {
                 if (response.status === 'successful') {
                     window.location.href = '/dashboard.html?welcome=true&payment=success';
                 }
             },
+            
             onclose: function() {
-                // If Flutterwave is down or user closes, show alternative payment options
-                showAlternativePaymentOptions();
+                if (confirm('Are you sure you want to cancel this payment?')) {
+                    showAlternativePaymentOptions();
+                }
+                return false;
+            },
+            
+            customer: {
+                email: email,
+                name: businessName,
+                phone_number: phone
             }
         });
     } catch (error) {
@@ -730,10 +808,8 @@ function startTransformation() {
 function showAlternativePaymentOptions() {
     const predictor = new BrandPredictor();
     predictor.collectFormData();
+    const bank = CONFIG.BANK_DETAILS;
     
-    const emailContent = predictor.generateEmailContent();
-    
-    // Show modal with bank details
     const modal = document.createElement('div');
     modal.className = 'payment-modal';
     modal.innerHTML = `
@@ -744,22 +820,22 @@ function showAlternativePaymentOptions() {
             
             <div class="bank-details">
                 <h3>🏦 Bank Transfer Details</h3>
-                <p><strong>Bank:</strong> Parallex Bank</p>
-                <p><strong>Account Name:</strong> Atafi Luxury</p>
-                <p><strong>Account Number:</strong> 1510096102</p>
-                <p><strong>Amount:</strong> ₦9,900 (Professional Plan)</p>
+                <p><strong>Bank:</strong> ${bank.BANK_NAME}</p>
+                <p><strong>Account Name:</strong> ${bank.ACCOUNT_NAME}</p>
+                <p><strong>Account Number:</strong> ${bank.ACCOUNT_NUMBER}</p>
+                <p><strong>Amount:</strong> ₦${CONFIG.PRICING.PRO} (Professional Plan)</p>
                 <p><strong>Reference:</strong> Use your email: <strong>${predictor.formData.email}</strong></p>
             </div>
             
             <div class="crypto-details">
                 <h3>₿ Crypto Payment (USDT)</h3>
-                <p><strong>Network:</strong> TRC20</p>
-                <p><strong>Address:</strong> TEJiy27SNPB5ADc9bSSMcHMv7i2549rCA7</p>
+                <p><strong>Network:</strong> ${bank.USDT_NETWORK}</p>
+                <p><strong>Address:</strong> ${bank.USDT_ADDRESS}</p>
             </div>
             
-            <p style="color: #666; margin-top: 20px;">After payment, send proof to payments@atafiluxury.com and we'll activate your account within 1 hour.</p>
+            <p style="color: #666; margin-top: 20px;">After payment, send proof to ${CONFIG.EMAIL.PAYMENTS} and we'll activate your account within 1 hour.</p>
             
-            <button class="btn-primary" onclick="window.location.href='mailto:payments@atafiluxury.com?subject=Payment%20Proof&body=My%20payment%20reference%3A'">
+            <button class="btn-primary" onclick="window.location.href='mailto:${CONFIG.EMAIL.PAYMENTS}?subject=Payment%20Proof&body=My%20payment%20reference%3A'">
                 <i class="fas fa-envelope"></i> Send Payment Proof
             </button>
         </div>
@@ -767,57 +843,58 @@ function showAlternativePaymentOptions() {
     
     document.body.appendChild(modal);
     
-    // Add styles
-    const style = document.createElement('style');
-    style.textContent = `
-        .payment-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .payment-modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            max-width: 500px;
-            width: 90%;
-            position: relative;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        .close-modal {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-        .bank-details, .crypto-details {
-            background: #f5f5f5;
-            padding: 1.5rem;
-            border-radius: 5px;
-            margin: 1rem 0;
-        }
-        .bank-details h3, .crypto-details h3 {
-            color: #d4af37;
-            margin-bottom: 1rem;
-        }
-    `;
-    document.head.appendChild(style);
+    // Add styles if not present
+    if (!document.getElementById('payment-modal-styles')) {
+        const style = document.createElement('style');
+        style.id = 'payment-modal-styles';
+        style.textContent = `
+            .payment-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .payment-modal-content {
+                background: white;
+                padding: 2rem;
+                border-radius: 10px;
+                max-width: 500px;
+                width: 90%;
+                position: relative;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            .close-modal {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+            .bank-details, .crypto-details {
+                background: #f5f5f5;
+                padding: 1.5rem;
+                border-radius: 5px;
+                margin: 1rem 0;
+            }
+            .bank-details h3, .crypto-details h3 {
+                color: #d4af37;
+                margin-bottom: 1rem;
+            }
+        `;
+        document.head.appendChild(style);
+    }
 }
 
 function bookStrategyCall() {
-    // Open calendar booking
-    window.open('https://calendly.com/atafiluxury/strategy-call', '_blank');
+    window.open(CONFIG.CALENDLY_URL, '_blank');
     
-    // Also send email with all data so they have it for the call
     const predictor = new BrandPredictor();
     predictor.collectFormData();
     predictor.sendConfirmationEmail();
@@ -826,7 +903,6 @@ function bookStrategyCall() {
 }
 
 function startUrgencyTimer() {
-    // Set 24 hours from now
     const endTime = new Date().getTime() + (24 * 60 * 60 * 1000);
     
     const timer = setInterval(function() {
@@ -862,7 +938,6 @@ function showLoading(show) {
         overlay.innerHTML = '<div class="spinner"></div><p>Generating your brand transformation report...</p>';
         document.body.appendChild(overlay);
         
-        // Add styles if not present
         if (!document.querySelector('#loading-styles')) {
             const style = document.createElement('style');
             style.id = 'loading-styles';
@@ -901,7 +976,7 @@ function showLoading(show) {
     overlay.style.display = show ? 'flex' : 'none';
 }
 
-function showNotification(message, type = 'info') {
+function showNotification(message, type = 'info', duration = 5000, onClick = null) {
     const toast = document.createElement('div');
     toast.className = `notification-toast ${type}`;
     toast.textContent = message;
@@ -917,13 +992,18 @@ function showNotification(message, type = 'info') {
         z-index: 10001;
         border-left: 4px solid ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#d4af37'};
         animation: slideIn 0.3s ease;
+        cursor: ${onClick ? 'pointer' : 'default'};
     `;
+    
+    if (onClick) {
+        toast.addEventListener('click', onClick);
+    }
     
     document.body.appendChild(toast);
     
     setTimeout(() => {
         toast.remove();
-    }, 5000);
+    }, duration);
 }
 
 // Initialize sliders and event listeners
@@ -967,10 +1047,286 @@ document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get('ref');
     if (ref) {
-        // Pre-fill referral code
         const referralInput = document.getElementById('referralCode');
         if (referralInput) {
             referralInput.value = ref;
         }
     }
+});
+
+// ==================== LOGIN/SIGNUP MODALS ====================
+
+function openLoginModal() {
+    let modal = document.getElementById('loginModal');
+    
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'loginModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeLoginModal()">&times;</span>
+                <h2>Welcome Back</h2>
+                <p>Login to access your dashboard</p>
+                
+                <form id="loginForm" class="modal-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="loginEmail" required placeholder="you@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" required placeholder="Enter your password">
+                    </div>
+                    
+                    <div class="form-options">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="rememberMe">
+                            <span class="checkmark"></span>
+                            Remember me
+                        </label>
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+                    
+                    <button type="submit" class="btn-modal">Login</button>
+                </form>
+                
+                <p class="modal-footer">
+                    Don't have an account? <a href="#" onclick="switchToSignup()">Sign Up</a>
+                </p>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    modal.style.display = 'flex';
+}
+
+function closeLoginModal() {
+    document.getElementById('loginModal').style.display = 'none';
+}
+
+function openSignupModal() {
+    let modal = document.getElementById('signupModal');
+    
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'signupModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeSignupModal()">&times;</span>
+                <h2>Create Account</h2>
+                <p>Start your business growth journey</p>
+                
+                <form id="signupForm" class="modal-form" onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="signupFullName" required placeholder="John Doe">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="signupEmail" required placeholder="you@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="signupPhone" required placeholder="+2348012345678">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="signupPassword" required minlength="8" placeholder="Create a password">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" id="signupConfirmPassword" required minlength="8" placeholder="Confirm your password">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Referral Code (Optional)</label>
+                        <input type="text" id="referralCode" placeholder="Enter referral code">
+                    </div>
+                    
+                    <div class="form-options">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="termsAgree" required>
+                            <span class="checkmark"></span>
+                            I agree to the <a href="#">Terms of Service</a>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn-modal">Create Account</button>
+                </form>
+                
+                <p class="modal-footer">
+                    Already have an account? <a href="#" onclick="switchToLogin()">Login</a>
+                </p>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    modal.style.display = 'flex';
+}
+
+function closeSignupModal() {
+    document.getElementById('signupModal').style.display = 'none';
+}
+
+function switchToLogin() {
+    closeSignupModal();
+    openLoginModal();
+}
+
+function switchToSignup() {
+    closeLoginModal();
+    openSignupModal();
+}
+
+async function handleLogin(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    showLoading(true);
+    
+    try {
+        await fetch(CONFIG.API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({
+                action: 'atafi_login',
+                email: email,
+                password: password
+            })
+        });
+        
+        showLoading(false);
+        showNotification('Login successful! Redirecting...', 'success');
+        
+        localStorage.setItem('userEmail', email);
+        
+        setTimeout(() => {
+            window.location.href = '/dashboard.html';
+        }, 1500);
+        
+    } catch (error) {
+        showLoading(false);
+        showNotification('Login failed. Please try again.', 'error');
+    }
+}
+
+async function handleSignup(event) {
+    event.preventDefault();
+    
+    const password = document.getElementById('signupPassword').value;
+    const confirm = document.getElementById('signupConfirmPassword').value;
+    
+    if (password !== confirm) {
+        showNotification('Passwords do not match', 'error');
+        return;
+    }
+    
+    showLoading(true);
+    
+    const userData = {
+        fullName: document.getElementById('signupFullName').value,
+        email: document.getElementById('signupEmail').value,
+        phone: document.getElementById('signupPhone').value,
+        password: password,
+        referralCode: document.getElementById('referralCode').value
+    };
+    
+    try {
+        await fetch(CONFIG.API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({
+                action: 'atafi_register',
+                ...userData
+            })
+        });
+        
+        showLoading(false);
+        showNotification('Account created! Check your email.', 'success');
+        closeSignupModal();
+        
+        localStorage.setItem('userEmail', userData.email);
+        localStorage.setItem('userName', userData.fullName);
+        
+    } catch (error) {
+        showLoading(false);
+        showNotification('Signup failed. Please try again.', 'error');
+    }
+}
+
+// ==================== RETRY FAILED EMAILS ====================
+
+async function retryFailedEmails() {
+    const failedEmails = JSON.parse(localStorage.getItem('failedEmails') || '[]');
+    
+    if (failedEmails.length === 0) {
+        showNotification('No failed emails to retry', 'info');
+        return;
+    }
+    
+    showLoading(true);
+    showNotification(`Retrying ${failedEmails.length} emails...`, 'info');
+    
+    const remaining = [];
+    
+    for (const email of failedEmails) {
+        try {
+            await fetch(CONFIG.APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({
+                    action: 'sendReportEmail',
+                    to: email.to,
+                    subject: email.subject,
+                    htmlBody: email.html
+                })
+            });
+            console.log('Retry successful for:', email.to);
+        } catch (error) {
+            console.log('Retry failed for:', email.to);
+            remaining.push(email);
+        }
+    }
+    
+    localStorage.setItem('failedEmails', JSON.stringify(remaining));
+    showLoading(false);
+    
+    if (remaining.length === 0) {
+        showNotification('All emails sent successfully!', 'success');
+    } else {
+        showNotification(`${remaining.length} emails still pending`, 'warning');
+    }
+}
+
+
+// Mobile Menu Toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navLinks = document.getElementById('nav-links');
+    
+    if (mobileMenu) {
+        mobileMenu.addEventListener('click', function() {
+            this.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+    }
+    
+    // Close menu when clicking a link
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+            navLinks.classList.remove('active');
+        });
+    });
 });
