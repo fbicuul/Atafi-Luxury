@@ -3,11 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atafi Luxury - Brand Growth Predictor</title>
-    
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/predictor.css">
+    <title>Atafi Luxury - Business Growth Predictor</title>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -18,36 +14,1632 @@
     <!-- Flutterwave -->
     <script src="https://checkout.flutterwave.com/v3.js"></script>
 
-    <!-- Flutterwave Configuration -->
-    <script>
-        // Flutterwave Configuration - Replace with your actual keys
-        const FLW_CONFIG = {
-            PUBLIC_KEY: 'FLWPUBK-2139829c2de5b6071f89e39b59e9d9ca-X', // Replace with your KRO Media public key
-            SUBACCOUNT_ID: 'RS_89D720D484AF8296626AC1C84E2B0044'
-        };
-        
-        // Premium pricing (increased for professional service)
-        const PRICING = {
-            BASIC: 4900,      // Was 2900
-            PRO: 9900,        // Was 4900  
-            ENTERPRISE: 19900 // Was 9900
-        };
-    </script>
+    <style>
+        /* ========== GLOBAL VARIABLES ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #d4af37;
+            --primary-dark: #b38f2c;
+            --primary-light: #e5c55e;
+            --secondary: #1a1a1a;
+            --secondary-light: #2a2a2a;
+            --dark: #0a0a0f;
+            --darker: #050507;
+            --light: #f9f9f9;
+            --white: #ffffff;
+            --gray-100: #f5f5f5;
+            --gray-200: #e5e5e5;
+            --gray-300: #d4d4d4;
+            --gray-400: #a3a3a3;
+            --gray-500: #737373;
+            --gray-600: #525252;
+            --gray-700: #404040;
+            --gray-800: #262626;
+            --gray-900: #171717;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            
+            --gradient-gold: linear-gradient(135deg, #d4af37 0%, #f5e7a3 50%, #d4af37 100%);
+            --gradient-premium: linear-gradient(135deg, #d4af37, #9d4edd);
+            --gradient-dark: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px rgba(0,0,0,0.15);
+            --shadow-2xl: 0 25px 50px rgba(0,0,0,0.25);
+            
+            --border-radius-sm: 0.25rem;
+            --border-radius-md: 0.5rem;
+            --border-radius-lg: 1rem;
+            --border-radius-xl: 1.5rem;
+            --border-radius-2xl: 2rem;
+            --border-radius-full: 9999px;
+            
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --transition-base: 0.3s;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            color: var(--gray-800);
+            line-height: 1.6;
+            background: var(--white);
+            overflow-x: hidden;
+        }
+
+        /* ========== NAVIGATION ========== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: var(--gradient-premium);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-base);
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width var(--transition-base);
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .btn-login {
+            border: 2px solid var(--primary);
+            padding: 0.5rem 1.5rem !important;
+            border-radius: var(--border-radius-full);
+        }
+
+        .btn-login:hover {
+            background: var(--primary);
+            color: var(--secondary) !important;
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .menu-toggle .bar {
+            width: 25px;
+            height: 3px;
+            background: var(--primary);
+            margin: 3px 0;
+            transition: var(--transition-base);
+            border-radius: 3px;
+        }
+
+        /* ========== HERO SECTION ========== */
+        .predictor-hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, rgba(0,0,0,0.95), rgba(0,0,0,0.8)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.1"><path d="M20 20 L80 20 L80 80 L20 80 Z" fill="none" stroke="%23d4af37" stroke-width="2"/><circle cx="50" cy="50" r="20" fill="none" stroke="%23d4af37" stroke-width="2"/></svg>');
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6rem 5% 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .predictor-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            max-width: 900px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            color: var(--white);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .gradient-text {
+            background: var(--gradient-premium);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray-300);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .hero-stats .stat {
+            text-align: center;
+        }
+
+        .hero-stats .stat-value {
+            display: block;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .hero-stats .stat-label {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-start-assessment {
+            background: var(--gradient-premium);
+            color: var(--white);
+            border: none;
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: var(--border-radius-full);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-start-assessment:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        /* ========== ASSESSMENT SECTION ========== */
+        .assessment-section {
+            padding: 5rem 5%;
+            background: var(--light);
+        }
+
+        .assessment-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius-2xl);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+        }
+
+        .progress-container {
+            padding: 2rem 2rem 1rem;
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--gradient-premium);
+            border-radius: var(--border-radius-full);
+            transition: width var(--transition-base);
+            margin-bottom: 1rem;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius-full);
+            background: var(--gray-300);
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all var(--transition-base);
+        }
+
+        .step.active {
+            background: var(--primary);
+            color: var(--white);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.3);
+        }
+
+        .step-label {
+            text-align: center;
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 1.1rem;
+        }
+
+        .assessment-form {
+            padding: 2rem;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            font-size: 2rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-description {
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .form-group .required {
+            color: var(--danger);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-md);
+            font-size: 1rem;
+            transition: all var(--transition-base);
+            background: var(--white);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .slider-container {
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .slider-container input[type=range] {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            background: var(--gray-200);
+            border-radius: var(--border-radius-full);
+            outline: none;
+        }
+
+        .slider-container input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+            transition: all var(--transition-fast);
+            border: 2px solid var(--white);
+        }
+
+        .slider-container input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .slider-value {
+            text-align: right;
+            font-weight: 600;
+            color: var(--primary);
+            margin-top: 0.5rem;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .checkbox-card {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .checkbox-card:hover {
+            border-color: var(--primary);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .checkbox-card input[type=checkbox] {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+
+        .radio-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .radio-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .radio-card:hover {
+            border-color: var(--primary);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .radio-card input[type=radio] {
+            width: auto;
+            margin-top: 0.25rem;
+        }
+
+        .radio-card strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            color: var(--gray-800);
+        }
+
+        .radio-card small {
+            color: var(--gray-500);
+            font-size: 0.85rem;
+        }
+
+        .personality-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .personality-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: center;
+        }
+
+        .personality-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .personality-card i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .personality-card input[type=checkbox] {
+            width: auto;
+        }
+
+        .goal-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .goal-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 2rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            text-align: center;
+        }
+
+        .goal-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .goal-card i {
+            font-size: 3rem;
+            color: var(--primary);
+        }
+
+        .goal-card h4 {
+            font-size: 1.2rem;
+            color: var(--gray-800);
+        }
+
+        .goal-card p {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        .goal-card input[type=radio] {
+            width: auto;
+            margin-top: 0.5rem;
+        }
+
+        .account-preview {
+            margin-bottom: 2rem;
+        }
+
+        .preview-card {
+            background: linear-gradient(135deg, var(--gray-900), var(--secondary));
+            color: var(--white);
+            padding: 2rem;
+            border-radius: var(--border-radius-lg);
+            text-align: center;
+        }
+
+        .preview-card i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .preview-card h3 {
+            margin-bottom: 1.5rem;
+        }
+
+        .preview-card ul {
+            list-style: none;
+            text-align: left;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .preview-card li {
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .preview-card li i {
+            font-size: 1.2rem;
+            color: var(--success);
+            margin: 0;
+        }
+
+        .terms {
+            margin-top: 1rem;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .checkbox-container input[type=checkbox] {
+            width: auto;
+        }
+
+        .step-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--gray-200);
+        }
+
+        .btn-prev,
+        .btn-next,
+        .btn-generate {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            font-size: 1rem;
+        }
+
+        .btn-prev {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .btn-prev:hover {
+            background: var(--gray-300);
+        }
+
+        .btn-next {
+            background: var(--secondary);
+            color: var(--white);
+            margin-left: auto;
+        }
+
+        .btn-next:hover {
+            background: var(--gray-800);
+            transform: translateX(5px);
+        }
+
+        .btn-generate {
+            background: var(--gradient-premium);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .btn-generate:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* ========== RESULTS DASHBOARD ========== */
+        .results-dashboard {
+            padding: 5rem 5%;
+            background: var(--dark);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        .results-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .results-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-premium);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .results-subtitle {
+            text-align: center;
+            color: var(--gray-400);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .growth-score-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--border-radius-xl);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+
+        .score-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .score-label {
+            font-size: 1.2rem;
+            color: var(--gray-300);
+        }
+
+        .score-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .score-meter {
+            height: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--border-radius-full);
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .meter-fill {
+            height: 100%;
+            background: var(--gradient-premium);
+            border-radius: var(--border-radius-full);
+            transition: width 1s ease;
+        }
+
+        .score-interpretation {
+            color: var(--gray-400);
+            font-style: italic;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            border: 1px solid rgba(212,175,55,0.2);
+            transition: transform var(--transition-base);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(212,175,55,0.1);
+            border-radius: var(--border-radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .metric-icon i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .metric-label {
+            color: var(--gray-400);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-trend {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .metric-trend.up {
+            color: var(--success);
+        }
+
+        .chart-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--border-radius-xl);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+
+        .chart-card h3 {
+            margin-bottom: 1.5rem;
+            color: var(--white);
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-bottom: 1.5rem;
+        }
+
+        .projected-numbers {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: var(--border-radius-lg);
+        }
+
+        .projected-item {
+            text-align: center;
+        }
+
+        .projected-item .label {
+            display: block;
+            color: var(--gray-400);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .projected-item .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--white);
+        }
+
+        .projected-item.highlight .value {
+            color: var(--primary);
+            font-size: 2rem;
+        }
+
+        .projected-arrow {
+            color: var(--primary);
+            font-size: 2rem;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .insight-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+
+        .insight-card h4 {
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .insight-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .insight-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--border-radius-full);
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: var(--gradient-premium);
+            border-radius: var(--border-radius-full);
+            transition: width 1s ease;
+        }
+
+        .future-brand-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--border-radius-xl);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+
+        .future-brand-section h3 {
+            margin-bottom: 2rem;
+            color: var(--white);
+        }
+
+        .brand-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .logo-preview h4,
+        .color-palette h4,
+        .website-preview h4,
+        .social-preview h4 {
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .logo-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-circle {
+            width: 100px;
+            height: 100px;
+            background: var(--gradient-premium);
+            border-radius: var(--border-radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--white);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .colors {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .color-swatch {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--border-radius-full);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .website-mock {
+            background: var(--gray-800);
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+        }
+
+        .mock-header {
+            height: 40px;
+            background: var(--gray-700);
+        }
+
+        .mock-content {
+            height: 100px;
+            background: var(--gray-800);
+            margin: 1rem;
+            border-radius: var(--border-radius-sm);
+        }
+
+        .mock-footer {
+            height: 30px;
+            background: var(--gray-700);
+        }
+
+        .social-mock {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .social-post {
+            width: 50px;
+            height: 50px;
+            background: var(--gray-800);
+            border-radius: var(--border-radius-md);
+        }
+
+        .roadmap-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--border-radius-xl);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+
+        .roadmap-section h3 {
+            margin-bottom: 2rem;
+            color: var(--white);
+        }
+
+        .roadmap-timeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .timeline-item {
+            background: rgba(0,0,0,0.3);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary);
+            transition: transform var(--transition-base);
+        }
+
+        .timeline-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .timeline-week {
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .timeline-content h4 {
+            color: var(--white);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content p {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+        }
+
+        .transformation-section {
+            background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(157,78,221,0.1));
+            border-radius: var(--border-radius-xl);
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(212,175,55,0.3);
+            text-align: center;
+        }
+
+        .transformation-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--white);
+        }
+
+        .transformation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .transformation-card {
+            background: rgba(0,0,0,0.3);
+            padding: 2rem;
+            border-radius: var(--border-radius-lg);
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+
+        .transformation-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(212,175,55,0.2);
+            border-radius: var(--border-radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .transformation-icon i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .transformation-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .transformation-label {
+            color: var(--gray-300);
+            margin-bottom: 1rem;
+        }
+
+        .transformation-compare {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .transformation-compare .current {
+            color: var(--gray-500);
+        }
+
+        .transformation-compare .increase {
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .comparison-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--border-radius-xl);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+
+        .comparison-section h3 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--white);
+        }
+
+        .comparison-grid {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .comparison-card {
+            flex: 1;
+            min-width: 250px;
+            padding: 2rem;
+            border-radius: var(--border-radius-lg);
+        }
+
+        .comparison-card.before {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid var(--danger);
+        }
+
+        .comparison-card.after {
+            background: rgba(40, 167, 69, 0.1);
+            border: 1px solid var(--success);
+        }
+
+        .comparison-card h4 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .comparison-card.before h4 {
+            color: var(--danger);
+        }
+
+        .comparison-card.after h4 {
+            color: var(--success);
+        }
+
+        .comparison-card ul {
+            list-style: none;
+        }
+
+        .comparison-card li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .comparison-card.before li i {
+            color: var(--danger);
+        }
+
+        .comparison-card.after li i {
+            color: var(--success);
+        }
+
+        .comparison-arrow {
+            font-size: 3rem;
+            color: var(--primary);
+        }
+
+        .urgency-section {
+            margin-bottom: 2rem;
+        }
+
+        .timer-card {
+            background: linear-gradient(135deg, var(--danger), #b02a37);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            color: var(--white);
+        }
+
+        .timer-card i {
+            font-size: 2.5rem;
+        }
+
+        .timer-content {
+            flex: 1;
+        }
+
+        .timer-content h4 {
+            margin-bottom: 0.25rem;
+        }
+
+        .timer-content p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .timer {
+            font-size: 2rem;
+            font-weight: bold;
+            font-family: monospace;
+            background: rgba(0,0,0,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-md);
+        }
+
+        .final-cta-section {
+            text-align: center;
+            padding: 3rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--border-radius-xl);
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+
+        .final-cta-section h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--white);
+        }
+
+        .final-cta-section p {
+            color: var(--gray-400);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: var(--border-radius-full);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-premium);
+            color: var(--white);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        .guarantee {
+            color: var(--gray-500) !important;
+            font-size: 0.9rem !important;
+        }
+
+        .guarantee i {
+            color: var(--success);
+            margin-right: 0.5rem;
+        }
+
+        /* ========== MODAL STYLES ========== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: var(--border-radius-lg);
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-500);
+            transition: color var(--transition-base);
+        }
+
+        .close-modal:hover {
+            color: var(--danger);
+        }
+
+        .modal h2 {
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal p {
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-form .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .modal-form label {
+            display: block;
+            margin-bottom: 0.3rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+
+        .modal-form input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-md);
+            transition: all var(--transition-base);
+        }
+
+        .modal-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .forgot-password {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-modal {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient-premium);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .btn-modal:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--gray-600);
+        }
+
+        .modal-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* ========== LOADING OVERLAY ========== */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: var(--white);
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(212,175,55,0.3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========== NOTIFICATION TOAST ========== */
+        .notification-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            color: var(--secondary);
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-xl);
+            z-index: 10001;
+            border-left: 4px solid var(--primary);
+            animation: slideInRight 0.3s ease;
+            display: none;
+        }
+
+        .notification-toast.success {
+            border-left-color: var(--success);
+        }
+
+        .notification-toast.error {
+            border-left-color: var(--danger);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 968px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: rgba(26, 26, 26, 0.98);
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                padding-top: 2rem;
+                transition: left 0.3s ease;
+                backdrop-filter: blur(10px);
+                z-index: 999;
+            }
+            
+            .nav-links.active {
+                left: 0;
+            }
+            
+            .nav-links li {
+                margin: 1.5rem 0;
+                width: 100%;
+                text-align: center;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .checkbox-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .radio-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .projected-numbers {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .projected-arrow {
+                transform: rotate(90deg);
+            }
+            
+            .comparison-grid {
+                flex-direction: column;
+            }
+            
+            .comparison-arrow {
+                transform: rotate(90deg);
+            }
+            
+            .timer-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="logo">Atafi Luxury</div>
-        <ul class="nav-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#predictor" class="active">Brand Predictor</a></li>
+        <div class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="#home" class="active">Home</a></li>
+            <li><a href="#predictor">Brand Predictor</a></li>
             <li><a href="#results">Success Stories</a></li>
             <li><a href="#contact">Contact</a></li>
+            <li><a href="#" class="btn-login" id="loginBtn">Login</a></li>
         </ul>
     </nav>
 
     <!-- Hero Section -->
-    <section class="predictor-hero">
+    <section class="predictor-hero" id="home">
         <div class="hero-content">
             <h1>Discover Your <span class="gradient-text">30-Day Brand Transformation</span> Potential</h1>
             <p class="hero-subtitle">Answer 8 simple questions and see exactly how Atafi Luxury can multiply your revenue, authority, and market presence.</p>
@@ -72,7 +1664,7 @@
     </section>
 
     <!-- Multi-Step Assessment -->
-    <section class="assessment-section" id="assessment">
+    <section class="assessment-section" id="predictor">
         <div class="assessment-container">
             <!-- Progress Bar -->
             <div class="progress-container">
@@ -249,12 +1841,11 @@
                         <div class="form-group">
                             <label>Customer Income Level</label>
                             <select id="incomeLevel" name="incomeLevel">
-                                <option value="low">Low Income (₦0-100k/month)</option>
+                                <option value="mass">Mass Market (₦0-100k/month)</option>
                                 <option value="middle">Middle Income (₦100-500k/month)</option>
-                                <option value="upper-middle">Upper Middle (₦500k-1M/month)</option>
-                                <option value="high">High Income (₦1M-5M/month)</option>
+                                <option value="upper">Upper Middle (₦500k-1M/month)</option>
+                                <option value="affluent">Affluent (₦1M-5M/month)</option>
                                 <option value="luxury">Luxury (₦5M+/month)</option>
-                                <option value="mixed">Mixed Income Levels</option>
                             </select>
                         </div>
                         
@@ -312,7 +1903,7 @@
                         
                         <div class="form-group">
                             <label>Average Customer Lifetime Value (₦)</label>
-                            <input type="number" id="customerLTV" placeholder="e.g., 50000">
+                            <input type="number" id="customerLTV" placeholder="e.g., 50000" value="50000">
                         </div>
                     </div>
                     
@@ -378,9 +1969,9 @@
                             <label>Brand Positioning</label>
                             <select id="positioning" name="positioning">
                                 <option value="premium">Premium / Luxury</option>
-                                <option value="affordable">Affordable / Value</option>
+                                <option value="value">Affordable / Value</option>
                                 <option value="innovative">Innovative / Cutting-edge</option>
-                                <option value="traditional">Traditional / Heritage</option>
+                                <option value="heritage">Traditional / Heritage</option>
                                 <option value="convenient">Convenient / Accessible</option>
                             </select>
                         </div>
@@ -494,7 +2085,7 @@
                         
                         <div class="form-group">
                             <label>Cost Per Lead (₦)</label>
-                            <input type="number" id="costPerLead" placeholder="e.g., 5000">
+                            <input type="number" id="costPerLead" placeholder="e.g., 5000" value="5000">
                         </div>
                     </div>
                     
@@ -664,20 +2255,32 @@
                                 <li><i class="fas fa-check-circle"></i> Custom brand strategy</li>
                                 <li><i class="fas fa-check-circle"></i> Visual brand mockups</li>
                                 <li><i class="fas fa-check-circle"></i> Actionable roadmap</li>
+                                <li><i class="fas fa-check-circle"></i> Competitor analysis</li>
+                                <li><i class="fas fa-check-circle"></i> Marketing system design</li>
+                                <li><i class="fas fa-check-circle"></i> Sales funnel blueprint</li>
                             </ul>
                         </div>
                     </div>
                     
                     <div class="form-grid">
                         <div class="form-group full-width">
+                            <label>Full Name <span class="required">*</span></label>
+                            <input type="text" id="fullName" placeholder="Your full name" required>
+                        </div>
+                        
+                        <div class="form-group full-width">
                             <label>Email Address <span class="required">*</span></label>
                             <input type="email" id="accountEmail" placeholder="you@example.com" required>
                         </div>
                         
                         <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="phone" placeholder="0801 234 5678">
+                        </div>
+                        
+                        <div class="form-group">
                             <label>Password <span class="required">*</span></label>
-                            <input type="password" id="accountPassword" placeholder="Create password" required>
-                            <small>Minimum 8 characters</small>
+                            <input type="password" id="accountPassword" placeholder="Create password (min. 8 characters)" required>
                         </div>
                         
                         <div class="form-group">
@@ -685,11 +2288,23 @@
                             <input type="password" id="confirmPassword" placeholder="Confirm password" required>
                         </div>
                         
+                        <div class="form-group full-width">
+                            <label>Referral Code (if any)</label>
+                            <input type="text" id="referralCode" placeholder="e.g., FRIEND10">
+                        </div>
+                        
                         <div class="form-group full-width terms">
                             <label class="checkbox-container">
                                 <input type="checkbox" id="termsAgree" required>
                                 <span class="checkmark"></span>
                                 I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group full-width terms">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="marketingConsent" checked>
+                                <span>I'd like to receive marketing tips and updates</span>
                             </label>
                         </div>
                     </div>
@@ -708,8 +2323,10 @@
     <!-- RESULTS DASHBOARD (Hidden initially) -->
     <section class="results-dashboard" id="resultsDashboard" style="display: none;">
         <div class="results-container">
-            <h2 class="results-title">Your 30-Day Brand Transformation Forecast</h2>
-            <p class="results-subtitle">Based on your business data, here's what Atafi Luxury can achieve for you</p>
+            <div class="dashboard-header">
+                <h2 class="results-title" id="resultBusinessName">Your 30-Day Brand Transformation Forecast</h2>
+                <p class="results-subtitle">Based on your business data, here's what Atafi Luxury can achieve for you</p>
+            </div>
 
             <!-- Growth Score Card -->
             <div class="growth-score-card">
@@ -1008,6 +2625,856 @@
         </div>
     </section>
 
-    <script src="js/predictor.js"></script>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Welcome Back</h2>
+            <p>Login to access your dashboard</p>
+            <form id="loginForm" class="modal-form">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+                <button type="submit" class="btn-modal">Login</button>
+            </form>
+            <div class="modal-footer">
+                Don't have an account? <a href="#" id="switchToSignup">Sign up</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content scrollable-modal">
+            <span class="close-modal">&times;</span>
+            <h2>Create Account</h2>
+            <p>Get your free brand transformation report</p>
+            <form id="signupForm" class="modal-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signupFullName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="signupPhone">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signupPassword" required>
+                    <small>Minimum 8 characters</small>
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="signupConfirmPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>Referral Code (optional)</label>
+                    <input type="text" id="signupReferralCode">
+                </div>
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="signupTerms" required>
+                        <span>I agree to the Terms</span>
+                    </label>
+                </div>
+                <button type="submit" class="btn-modal">Create Account</button>
+            </form>
+            <div class="modal-footer">
+                Already have an account? <a href="#" id="switchToLogin">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Generating your brand transformation report...</p>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="notification-toast" id="notificationToast"></div>
+
+    <!-- Main JavaScript -->
+    <script>
+        // ==================== FLUTTERWAVE CONFIG ====================
+        const FLW_CONFIG = {
+            PUBLIC_KEY: 'FLWPUBK-2139829c2de5b6071f89e39b59e9d9ca-X',
+            SUBACCOUNT_ID: 'RS_89D720D484AF8296626AC1C84E2B0044'
+        };
+        
+        const PRICING = {
+            BASIC: 4900,
+            PRO: 9900,
+            ENTERPRISE: 19900
+        };
+
+        // ==================== GLOBAL VARIABLES ====================
+        let currentStep = 1;
+        const totalSteps = 8;
+        let chartInstances = {};
+
+        // ==================== NAVIGATION FUNCTIONS ====================
+        function startAssessment() {
+            document.getElementById('predictor').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function nextStep(step) {
+            if (!validateStep(step)) return;
+            
+            document.getElementById(`step${step}`).classList.remove('active');
+            currentStep = step + 1;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            updateProgress();
+        }
+
+        function prevStep(step) {
+            document.getElementById(`step${step}`).classList.remove('active');
+            currentStep = step - 1;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            updateProgress();
+        }
+
+        function validateStep(step) {
+            // Add validation as needed
+            return true;
+        }
+
+        function updateProgress() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            document.querySelectorAll('.step').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+            
+            const labels = [
+                'Business Foundation',
+                'Market & Customers',
+                'Brand Strategy',
+                'Digital Presence',
+                'Marketing Performance',
+                'Sales System',
+                'Goals & Vision',
+                'Create Account'
+            ];
+            document.getElementById('currentStepLabel').textContent = labels[currentStep - 1];
+        }
+
+        // ==================== PREDICTOR CLASS ====================
+        class BrandPredictor {
+            constructor() {
+                this.formData = {};
+                this.results = {};
+            }
+
+            collectFormData() {
+                this.formData = {
+                    businessName: document.getElementById('businessName')?.value || 'Your Business',
+                    industry: document.getElementById('industry')?.value || 'other',
+                    yearsOperation: document.getElementById('yearsOperation')?.value || '1-3',
+                    monthlyRevenue: parseFloat(document.getElementById('monthlyRevenue')?.value) || 1000000,
+                    employees: document.getElementById('employees')?.value || '2-5',
+                    marketingChannels: Array.from(document.querySelectorAll('input[name="marketingChannels"]:checked')).map(cb => cb.value),
+                    brandingStatus: document.querySelector('input[name="brandingStatus"]:checked')?.value || 'basic',
+                    targetAge: document.getElementById('targetAge')?.value || '25-34',
+                    incomeLevel: document.getElementById('incomeLevel')?.value || 'middle',
+                    location: document.getElementById('location')?.value || 'local',
+                    customerProblems: Array.from(document.querySelectorAll('input[name="customerProblems"]:checked')).map(cb => cb.value),
+                    purchaseFrequency: document.getElementById('purchaseFrequency')?.value || 'monthly',
+                    customerLTV: parseFloat(document.getElementById('customerLTV')?.value) || 50000,
+                    personality: Array.from(document.querySelectorAll('input[name="personality"]:checked')).map(cb => cb.value),
+                    positioning: document.getElementById('positioning')?.value || 'premium',
+                    usp: document.getElementById('usp')?.value || '',
+                    competitiveAdvantage: document.getElementById('competitiveAdvantage')?.value || '',
+                    websiteStatus: document.getElementById('websiteStatus')?.value || 'none',
+                    socialPresence: document.getElementById('socialPresence')?.value || 'none',
+                    seoRanking: document.getElementById('seoRanking')?.value || 'none',
+                    traffic: document.getElementById('traffic')?.value || '0-100',
+                    marketingBudget: parseFloat(document.getElementById('marketingBudget')?.value) || 500000,
+                    leadsPerMonth: document.getElementById('leadsPerMonth')?.value || '10-50',
+                    conversionRate: parseFloat(document.getElementById('conversionRate')?.value) || 2,
+                    costPerLead: parseFloat(document.getElementById('costPerLead')?.value) || 5000,
+                    salesProcess: document.querySelector('input[name="salesProcess"]:checked')?.value || 'basic',
+                    followup: document.querySelector('input[name="followup"]:checked')?.value || 'none',
+                    crm: document.getElementById('crm')?.value || 'none',
+                    referralProgram: document.getElementById('referralProgram')?.value || 'none',
+                    primaryGoal: document.querySelector('input[name="primaryGoal"]:checked')?.value || 'revenue',
+                    revenueGoal: parseFloat(document.getElementById('revenueGoal')?.value) || 10000000,
+                    brandVision: document.getElementById('brandVision')?.value || '',
+                    fullName: document.getElementById('fullName')?.value || '',
+                    email: document.getElementById('accountEmail')?.value || '',
+                    phone: document.getElementById('phone')?.value || '',
+                    password: document.getElementById('accountPassword')?.value || ''
+                };
+                return this.formData;
+            }
+
+            calculateGrowthScore() {
+                let score = 50;
+                
+                if (this.formData.monthlyRevenue > 10000000) score += 15;
+                else if (this.formData.monthlyRevenue > 5000000) score += 10;
+                else if (this.formData.monthlyRevenue > 1000000) score += 5;
+                
+                const channelCount = this.formData.marketingChannels.length;
+                score += Math.min(channelCount * 3, 15);
+                
+                if (this.formData.brandingStatus === 'established') score += 10;
+                else if (this.formData.brandingStatus === 'moderate') score += 7;
+                else if (this.formData.brandingStatus === 'basic') score += 3;
+                
+                if (this.formData.websiteStatus !== 'none') score += 5;
+                if (this.formData.socialPresence !== 'none') score += 5;
+                if (this.formData.seoRanking !== 'none') score += 5;
+                
+                return Math.min(100, Math.round(score));
+            }
+
+            calculateGrowth() {
+                let growth = 50;
+                
+                const industryMultipliers = {
+                    'technology': 1.8,
+                    'services': 1.5,
+                    'retail': 1.4,
+                    'health': 1.6,
+                    'education': 1.3,
+                    'realestate': 1.5,
+                    'finance': 1.7,
+                    'hospitality': 1.4,
+                    'manufacturing': 1.3,
+                    'other': 1.2
+                };
+                
+                growth *= industryMultipliers[this.formData.industry] || 1.2;
+                
+                if (this.formData.monthlyRevenue < 1000000) growth *= 1.5;
+                else if (this.formData.monthlyRevenue < 5000000) growth *= 1.3;
+                else if (this.formData.monthlyRevenue < 10000000) growth *= 1.2;
+                
+                if (this.formData.marketingBudget < 100000) growth *= 1.4;
+                else if (this.formData.marketingBudget < 500000) growth *= 1.3;
+                else if (this.formData.marketingBudget < 1000000) growth *= 1.2;
+                
+                if (this.formData.conversionRate < 1) growth *= 1.6;
+                else if (this.formData.conversionRate < 2) growth *= 1.4;
+                else if (this.formData.conversionRate < 3) growth *= 1.2;
+                
+                return Math.round(growth * 100) / 100;
+            }
+
+            calculateLeadIncrease() {
+                let increase = 100;
+                
+                if (this.formData.socialPresence === 'none') increase += 150;
+                else if (this.formData.socialPresence === 'basic') increase += 100;
+                else if (this.formData.socialPresence === 'active') increase += 50;
+                
+                if (this.formData.seoRanking === 'none') increase += 100;
+                else if (this.formData.seoRanking === 'low') increase += 75;
+                else if (this.formData.seoRanking === 'medium') increase += 50;
+                
+                const channelCount = this.formData.marketingChannels.length;
+                increase += (5 - channelCount) * 20;
+                
+                return Math.min(300, Math.round(increase));
+            }
+
+            calculateConversionImprovement() {
+                let improvement = 50;
+                
+                if (this.formData.salesProcess === 'none') improvement += 50;
+                if (this.formData.followup === 'none') improvement += 40;
+                if (this.formData.crm === 'none') improvement += 30;
+                if (this.formData.referralProgram === 'none') improvement += 30;
+                
+                return Math.min(200, Math.round(improvement));
+            }
+
+            calculateProfitGrowth() {
+                const leadIncrease = this.calculateLeadIncrease();
+                const conversionImprovement = this.calculateConversionImprovement();
+                return Math.round((leadIncrease / 100) * (conversionImprovement / 100) * 100);
+            }
+
+            parseLeadsToNumber(leadsString) {
+                const leadMap = {
+                    '0-10': 5,
+                    '10-50': 30,
+                    '50-200': 125,
+                    '200-1000': 600,
+                    '1000+': 1500
+                };
+                return leadMap[leadsString] || 100;
+            }
+
+            generatePredictions() {
+                this.collectFormData();
+                
+                const growthScore = this.calculateGrowthScore();
+                const growthPercentage = this.calculateGrowth();
+                const leadIncrease = this.calculateLeadIncrease();
+                const profitGrowth = this.calculateProfitGrowth();
+                
+                this.results = {
+                    growthScore: growthScore,
+                    brandStrength: Math.min(100, Math.round(growthScore * 0.85 + 25)),
+                    marketingEfficiency: Math.min(100, Math.round(growthScore * 0.7 + 20)),
+                    salesConversion: Math.min(100, Math.round(growthScore * 0.75 + 15)),
+                    customerTrust: Math.min(100, Math.round(growthScore * 0.9 + 10)),
+                    
+                    growthPercentage: growthPercentage,
+                    leadIncrease: leadIncrease,
+                    conversionImprovement: this.calculateConversionImprovement(),
+                    profitGrowth: profitGrowth,
+                    
+                    projectedRevenue: Math.round(this.formData.monthlyRevenue * (1 + growthPercentage / 100)),
+                    projectedLeads: Math.round(this.parseLeadsToNumber(this.formData.leadsPerMonth) * (1 + leadIncrease / 100)),
+                    projectedCustomers: Math.round((this.formData.monthlyRevenue / (this.formData.customerLTV || 50000)) * (1 + profitGrowth / 100)),
+                    
+                    marketVisibility: Math.min(100, Math.round(growthScore * 0.8 + 30)),
+                    brandAuthority: Math.min(100, Math.round(growthScore * 0.95 + 5))
+                };
+                
+                return this.results;
+            }
+
+            renderResults() {
+                const results = this.generatePredictions();
+                const data = this.formData;
+                
+                document.getElementById('growthScore').textContent = results.growthScore;
+                document.getElementById('growthScoreMeter').style.width = results.growthScore + '%';
+                
+                document.getElementById('brandStrength').textContent = results.brandStrength + '%';
+                document.getElementById('marketingEfficiency').textContent = results.marketingEfficiency + '%';
+                document.getElementById('salesConversion').textContent = results.salesConversion + '%';
+                document.getElementById('customerTrust').textContent = results.customerTrust + '%';
+                
+                document.getElementById('currentRevenue').textContent = '₦' + data.monthlyRevenue.toLocaleString();
+                document.getElementById('projectedRevenue').textContent = '₦' + results.projectedRevenue.toLocaleString();
+                
+                document.getElementById('leadGrowth').textContent = '+' + results.leadIncrease + '%';
+                document.getElementById('leadGrowthBar').style.width = Math.min(100, results.leadIncrease * 0.33) + '%';
+                
+                document.getElementById('marketVisibility').textContent = results.marketVisibility + '%';
+                document.getElementById('visibilityBar').style.width = results.marketVisibility + '%';
+                document.getElementById('brandAuthority').textContent = results.brandAuthority + '%';
+                document.getElementById('authorityBar').style.width = results.brandAuthority + '%';
+                
+                const currentProfit = Math.round(data.monthlyRevenue * 0.3);
+                document.getElementById('currentProfit').textContent = '₦' + currentProfit.toLocaleString();
+                document.getElementById('projectedProfit').textContent = '₦' + Math.round(currentProfit * (1 + results.profitGrowth / 100)).toLocaleString();
+                
+                const currentCustomers = Math.round(data.monthlyRevenue / (data.customerLTV || 50000));
+                document.getElementById('currentCustomers').textContent = currentCustomers;
+                document.getElementById('projectedCustomers').textContent = results.projectedCustomers;
+                
+                const businessName = data.businessName || 'Your Brand';
+                const initials = businessName.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('businessInitials').textContent = initials;
+                
+                this.createRevenueChart();
+                this.createLeadChart();
+            }
+
+            createRevenueChart() {
+                const ctx = document.getElementById('revenueChart').getContext('2d');
+                
+                if (chartInstances.revenue) {
+                    chartInstances.revenue.destroy();
+                }
+                
+                const weeklyRevenue = [];
+                const currentRevenue = this.formData.monthlyRevenue / 4;
+                const growthRate = this.results.growthPercentage / 4;
+                
+                for (let i = 0; i < 4; i++) {
+                    weeklyRevenue.push(Math.round(currentRevenue * Math.pow(1 + growthRate/100, i)));
+                }
+                
+                chartInstances.revenue = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                        datasets: [{
+                            label: 'Weekly Revenue (₦)',
+                            data: weeklyRevenue,
+                            borderColor: '#d4af37',
+                            backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#d4af37',
+                            pointBorderColor: '#1a1a1a',
+                            pointRadius: 6,
+                            pointHoverRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return '₦' + context.raw.toLocaleString();
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    callback: function(value) {
+                                        return '₦' + (value / 1000) + 'k';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            createLeadChart() {
+                const ctx = document.getElementById('leadChart')?.getContext('2d');
+                if (!ctx) return;
+                
+                if (chartInstances.lead) {
+                    chartInstances.lead.destroy();
+                }
+                
+                const currentLeads = this.parseLeadsToNumber(this.formData.leadsPerMonth);
+                const projectedLeads = this.results.projectedLeads;
+                
+                chartInstances.lead = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Current', 'Projected'],
+                        datasets: [{
+                            label: 'Monthly Leads',
+                            data: [currentLeads, projectedLeads],
+                            backgroundColor: ['#666', '#d4af37'],
+                            borderRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+
+            async sendEmailReport() {
+                const emailContent = this.generateEmailContent();
+                
+                // In production, this would send to your backend
+                console.log('Email sent to:', this.formData.email);
+                console.log('Email content:', emailContent);
+                
+                // Simulate API call
+                return true;
+            }
+
+            generateEmailContent() {
+                const data = this.formData;
+                const results = this.results;
+                const date = new Date().toLocaleDateString();
+                
+                return `
+                    <h1>Your Atafi Luxury Brand Transformation Report</h1>
+                    <p>Generated on ${date}</p>
+                    
+                    <h2>Growth Predictions</h2>
+                    <ul>
+                        <li>Growth Score: ${results.growthScore}/100</li>
+                        <li>Projected Growth: +${results.growthPercentage}%</li>
+                        <li>Lead Increase: +${results.leadIncrease}%</li>
+                        <li>Profit Growth: +${results.profitGrowth}%</li>
+                    </ul>
+                    
+                    <h2>Business Information</h2>
+                    <ul>
+                        <li>Business: ${data.businessName}</li>
+                        <li>Industry: ${data.industry}</li>
+                        <li>Email: ${data.email}</li>
+                    </ul>
+                    
+                    <p>Access your full dashboard at: https://atafi-luxury.com/dashboard</p>
+                `;
+            }
+
+            async createAccount() {
+                try {
+                    // Send email to client
+                    await this.sendEmailReport();
+                    
+                    // Send email to agency (fbicuul@gmail.com)
+                    const agencyEmail = {
+                        to: 'fbicuul@gmail.com',
+                        subject: `New Lead: ${this.formData.businessName} - Growth Predictor Results`,
+                        content: this.generateAgencyEmailContent()
+                    };
+                    console.log('Agency notification sent:', agencyEmail);
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Account creation failed:', error);
+                    return false;
+                }
+            }
+
+            generateAgencyEmailContent() {
+                const data = this.formData;
+                const results = this.results;
+                
+                return `
+                    <h1>🚀 New Lead from Growth Predictor</h1>
+                    
+                    <h2>Business Information</h2>
+                    <ul>
+                        <li>Business Name: ${data.businessName}</li>
+                        <li>Full Name: ${data.fullName}</li>
+                        <li>Email: ${data.email}</li>
+                        <li>Phone: ${data.phone}</li>
+                        <li>Industry: ${data.industry}</li>
+                        <li>Monthly Revenue: ₦${data.monthlyRevenue.toLocaleString()}</li>
+                    </ul>
+                    
+                    <h2>Prediction Results</h2>
+                    <ul>
+                        <li>Growth Score: ${results.growthScore}/100</li>
+                        <li>Projected Revenue: ₦${results.projectedRevenue.toLocaleString()}</li>
+                        <li>Lead Increase: +${results.leadIncrease}%</li>
+                        <li>Profit Growth: +${results.profitGrowth}%</li>
+                    </ul>
+                    
+                    <h2>Marketing Channels</h2>
+                    <p>${(data.marketingChannels || []).join(', ') || 'None'}</p>
+                    
+                    <h2>Brand Personality</h2>
+                    <p>${(data.personality || []).join(', ') || 'Not specified'}</p>
+                    
+                    <h2>Goals</h2>
+                    <p>Primary Goal: ${data.primaryGoal}</p>
+                    <p>Revenue Goal: ₦${data.revenueGoal.toLocaleString()}</p>
+                    
+                    <p>Follow up with this lead immediately!</p>
+                `;
+            }
+        }
+
+        // ==================== UI FUNCTIONS ====================
+        async function generateReport() {
+            const password = document.getElementById('accountPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            const terms = document.getElementById('termsAgree').checked;
+            
+            if (!password || password.length < 8) {
+                showNotification('Password must be at least 8 characters', 'error');
+                return;
+            }
+            
+            if (password !== confirm) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+            
+            if (!terms) {
+                showNotification('You must agree to the Terms of Service', 'error');
+                return;
+            }
+            
+            showLoading(true);
+            
+            const predictor = new BrandPredictor();
+            predictor.renderResults();
+            
+            const success = await predictor.createAccount();
+            
+            showLoading(false);
+            
+            if (success) {
+                document.getElementById('predictor').style.display = 'none';
+                document.getElementById('resultsDashboard').style.display = 'block';
+                document.getElementById('resultsDashboard').scrollIntoView({ behavior: 'smooth' });
+                startUrgencyTimer();
+                showNotification('Account created! Check your email for your report.', 'success');
+            } else {
+                showNotification('Account created but email delivery failed. You can still proceed.', 'warning');
+                document.getElementById('predictor').style.display = 'none';
+                document.getElementById('resultsDashboard').style.display = 'block';
+            }
+        }
+
+        function startTransformation() {
+            const plan = 'PRO';
+            
+            try {
+                FlutterwaveCheckout({
+                    public_key: FLW_CONFIG.PUBLIC_KEY,
+                    tx_ref: 'ATAFI_' + Date.now(),
+                    amount: PRICING[plan],
+                    currency: 'NGN',
+                    payment_options: 'card, banktransfer, ussd',
+                    customer: {
+                        email: document.getElementById('accountEmail')?.value || 'customer@example.com',
+                        name: document.getElementById('fullName')?.value || 'Business Owner',
+                        phone_number: document.getElementById('phone')?.value || '08000000000'
+                    },
+                    callback: function(response) {
+                        if (response.status === 'successful') {
+                            showNotification('Payment successful! Redirecting...', 'success');
+                            setTimeout(() => {
+                                window.location.href = '/dashboard.html?welcome=true';
+                            }, 2000);
+                        }
+                    },
+                    onclose: function() {
+                        showAlternativePaymentOptions();
+                    }
+                });
+            } catch (error) {
+                console.error('Flutterwave error:', error);
+                showAlternativePaymentOptions();
+            }
+        }
+
+        function showAlternativePaymentOptions() {
+            const predictor = new BrandPredictor();
+            predictor.collectFormData();
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'flex';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close-modal" onclick="this.parentElement.parentElement.remove()">&times;</span>
+                    <h2>💳 Alternative Payment Options</h2>
+                    <p>Flutterwave is currently unavailable. You can pay via bank transfer:</p>
+                    
+                    <div style="background: #f5f5f5; padding: 1.5rem; border-radius: 5px; margin: 1rem 0;">
+                        <h3 style="color: #d4af37;">🏦 Bank Transfer Details</h3>
+                        <p><strong>Bank:</strong> Parallex Bank</p>
+                        <p><strong>Account Name:</strong> Atafi Luxury</p>
+                        <p><strong>Account Number:</strong> 1510096102</p>
+                        <p><strong>Amount:</strong> ₦9,900 (Professional Plan)</p>
+                        <p><strong>Reference:</strong> Use your email: <strong>${predictor.formData.email}</strong></p>
+                    </div>
+                    
+                    <p style="color: #666; margin-top: 20px;">After payment, send proof to payments@atafiluxury.com and we'll activate your account within 1 hour.</p>
+                    
+                    <button class="btn-modal" onclick="window.location.href='mailto:payments@atafiluxury.com?subject=Payment%20Proof&body=My%20payment%20reference%3A'">
+                        <i class="fas fa-envelope"></i> Send Payment Proof
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function bookStrategyCall() {
+            window.open('https://calendly.com/atafiluxury/strategy-call', '_blank');
+            
+            const predictor = new BrandPredictor();
+            predictor.collectFormData();
+            predictor.sendEmailReport();
+            
+            showNotification('Check your email for your report. See you on the call!', 'success');
+        }
+
+        function startUrgencyTimer() {
+            const endTime = new Date().getTime() + (24 * 60 * 60 * 1000);
+            
+            const timer = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = endTime - now;
+                
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                const timerEl = document.getElementById('offerTimer');
+                if (timerEl) {
+                    timerEl.textContent = 
+                        String(hours).padStart(2, '0') + ':' +
+                        String(minutes).padStart(2, '0') + ':' +
+                        String(seconds).padStart(2, '0');
+                }
+                
+                if (distance < 0) {
+                    clearInterval(timer);
+                    if (timerEl) timerEl.textContent = 'EXPIRED';
+                }
+            }, 1000);
+        }
+
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+        }
+
+        function showNotification(message, type = 'info') {
+            const toast = document.getElementById('notificationToast');
+            toast.textContent = message;
+            toast.className = 'notification-toast ' + type;
+            toast.style.display = 'block';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 4000);
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu
+            const menuToggle = document.getElementById('mobile-menu');
+            const navLinks = document.getElementById('nav-links');
+            
+            menuToggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+            
+            // Sliders
+            const revenueSlider = document.getElementById('monthlyRevenue');
+            if (revenueSlider) {
+                revenueSlider.addEventListener('input', function() {
+                    document.getElementById('revenueValue').textContent = 
+                        parseInt(this.value).toLocaleString();
+                });
+            }
+            
+            const budgetSlider = document.getElementById('marketingBudget');
+            if (budgetSlider) {
+                budgetSlider.addEventListener('input', function() {
+                    document.getElementById('budgetValue').textContent = 
+                        parseInt(this.value).toLocaleString();
+                });
+            }
+            
+            const conversionSlider = document.getElementById('conversionRate');
+            if (conversionSlider) {
+                conversionSlider.addEventListener('input', function() {
+                    document.getElementById('conversionValue').textContent = this.value;
+                });
+            }
+            
+            const goalSlider = document.getElementById('revenueGoal');
+            if (goalSlider) {
+                goalSlider.addEventListener('input', function() {
+                    document.getElementById('revenueGoalValue').textContent = 
+                        parseInt(this.value).toLocaleString();
+                });
+            }
+            
+            // Modal triggers
+            const loginBtn = document.getElementById('loginBtn');
+            const loginModal = document.getElementById('loginModal');
+            const signupModal = document.getElementById('signupModal');
+            const switchToSignup = document.getElementById('switchToSignup');
+            const switchToLogin = document.getElementById('switchToLogin');
+            const closeBtns = document.querySelectorAll('.close-modal');
+            
+            loginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.style.display = 'flex';
+            });
+            
+            switchToSignup?.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.style.display = 'none';
+                signupModal.style.display = 'flex';
+            });
+            
+            switchToLogin?.addEventListener('click', (e) => {
+                e.preventDefault();
+                signupModal.style.display = 'none';
+                loginModal.style.display = 'flex';
+            });
+            
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    loginModal.style.display = 'none';
+                    signupModal.style.display = 'none';
+                });
+            });
+            
+            window.addEventListener('click', (e) => {
+                if (e.target === loginModal) loginModal.style.display = 'none';
+                if (e.target === signupModal) signupModal.style.display = 'none';
+            });
+            
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                showLoading(true);
+                
+                // Simulate login
+                setTimeout(() => {
+                    showLoading(false);
+                    showNotification('Login successful!', 'success');
+                    loginModal.style.display = 'none';
+                }, 1500);
+            });
+            
+            // Signup form
+            document.getElementById('signupForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const password = document.getElementById('signupPassword').value;
+                const confirm = document.getElementById('signupConfirmPassword').value;
+                
+                if (password !== confirm) {
+                    showNotification('Passwords do not match', 'error');
+                    return;
+                }
+                
+                if (password.length < 8) {
+                    showNotification('Password must be at least 8 characters', 'error');
+                    return;
+                }
+                
+                showLoading(true);
+                
+                // Simulate signup
+                setTimeout(() => {
+                    showLoading(false);
+                    showNotification('Account created successfully!', 'success');
+                    signupModal.style.display = 'none';
+                }, 1500);
+            });
+            
+            // Check URL params for referral
+            const urlParams = new URLSearchParams(window.location.search);
+            const ref = urlParams.get('ref');
+            if (ref) {
+                const referralInput = document.getElementById('referralCode');
+                if (referralInput) {
+                    referralInput.value = ref;
+                }
+                showNotification('You were referred by a friend! Get 10% off!', 'info');
+            }
+        });
+    </script>
 </body>
 </html>
