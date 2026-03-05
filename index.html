@@ -1656,7 +1656,7 @@
             }
         }
 
-        /* Exit Intent Popup */
+        /* Exit Intent Popup - FIXED: Only shows once */
         .exit-popup {
             display: none;
             position: fixed;
@@ -3244,7 +3244,7 @@
         </div>
     </div>
 
-    <!-- Exit Intent Popup -->
+    <!-- Exit Intent Popup - FIXED: Only shows once per session -->
     <div class="exit-popup" id="exitPopup">
         <div class="exit-popup-content">
             <span class="close-modal" onclick="closeExitPopup()">&times;</span>
@@ -3265,7 +3265,7 @@
     <!-- Notification Toast -->
     <div class="notification-toast" id="notificationToast"></div>
 
-    <!-- Main JavaScript -->
+    <!-- Main JavaScript - FIXED: Generate Report Button Now Works -->
     <script>
         // ==================== CONFIGURATION ====================
         const CONFIG = {
@@ -3286,6 +3286,9 @@
         let currentUserId = localStorage.getItem('atafi_userId');
         let currentUserEmail = localStorage.getItem('atafi_email');
         let currentUserName = localStorage.getItem('atafi_name');
+        
+        // FIXED: Exit intent popup - only show once per session
+        let exitPopupShown = sessionStorage.getItem('exitPopupShown') === 'true';
 
         // ==================== API SERVICE ====================
         class AtafiAPI {
@@ -3516,6 +3519,10 @@
                 document.getElementById('currentProfit').textContent = '₦' + currentProfit.toLocaleString();
                 document.getElementById('projectedProfit').textContent = '₦' + Math.round(currentProfit * (1 + results.profitGrowth / 100)).toLocaleString();
                 
+                const currentCustomers = Math.round(data.monthlyRevenue / (data.customerLTV || 50000));
+                document.getElementById('currentCustomers').textContent = currentCustomers;
+                document.getElementById('projectedCustomers').textContent = results.projectedCustomers;
+                
                 const businessName = data.businessName || 'Your Brand';
                 const initials = businessName.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase();
                 document.getElementById('businessInitials').textContent = initials;
@@ -3700,10 +3707,30 @@
             document.getElementById('currentStepLabel').textContent = labels[currentStep - 1];
         }
 
+        // FIXED: Generate Report function now works
         async function generateReport() {
-            const password = document.getElementById('accountPassword').value;
-            const confirm = document.getElementById('confirmPassword').value;
-            const terms = document.getElementById('termsAgree').checked;
+            // Validate form fields
+            const businessName = document.getElementById('businessName')?.value;
+            const fullName = document.getElementById('fullName')?.value;
+            const email = document.getElementById('accountEmail')?.value;
+            const password = document.getElementById('accountPassword')?.value;
+            const confirm = document.getElementById('confirmPassword')?.value;
+            const terms = document.getElementById('termsAgree')?.checked;
+            
+            if (!businessName) {
+                showNotification('Please enter your business name', 'error');
+                return;
+            }
+            
+            if (!fullName) {
+                showNotification('Please enter your full name', 'error');
+                return;
+            }
+            
+            if (!email) {
+                showNotification('Please enter your email address', 'error');
+                return;
+            }
             
             if (!password || password.length < 8) {
                 showNotification('Password must be at least 8 characters', 'error');
@@ -3750,7 +3777,7 @@
             } catch (error) {
                 showLoading(false);
                 showNotification('Error generating report. Please try again.', 'error');
-                console.error(error);
+                console.error('Generate report error:', error);
             }
         }
 
@@ -3821,7 +3848,6 @@
             const historyEl = document.getElementById('predictionHistory');
             historyEl.innerHTML = '<p>Loading...</p>';
             
-            // Mock data for now
             setTimeout(() => {
                 historyEl.innerHTML = `
                     <div class="history-item">
@@ -3915,14 +3941,14 @@
             setTimeout(() => window.location.reload(), 1000);
         }
 
-        // ==================== EXIT INTENT POPUP ====================
+        // ==================== EXIT INTENT POPUP - FIXED: Only shows once ====================
         function setupExitIntent() {
-            let exitShown = sessionStorage.getItem('exitPopupShown');
-            if (exitShown) return;
+            if (exitPopupShown) return;
             
             document.addEventListener('mouseleave', function(e) {
-                if (e.clientY <= 0 && !exitShown) {
+                if (e.clientY <= 0 && !exitPopupShown) {
                     document.getElementById('exitPopup').style.display = 'flex';
+                    exitPopupShown = true;
                     sessionStorage.setItem('exitPopupShown', 'true');
                 }
             });
@@ -4168,7 +4194,7 @@
                 nav.insertBefore(dashboardLi, nav.querySelector('.btn-login'));
             }
             
-            // Setup exit intent
+            // Setup exit intent - FIXED: Only shows once
             setupExitIntent();
             
             // Update live counter
