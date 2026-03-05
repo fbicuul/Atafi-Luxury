@@ -13,6 +13,9 @@
     
     <!-- Flutterwave -->
     <script src="https://checkout.flutterwave.com/v3.js"></script>
+    
+    <!-- Favicon (fixes 404 error) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
 
     <style>
         /* ========== GLOBAL VARIABLES ========== */
@@ -1717,6 +1720,21 @@
             font-size: 0.9rem;
         }
 
+        /* ========== AVATAR PLACEHOLDER STYLES ========== */
+        .avatar-placeholder {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
         /* ========== RESPONSIVE ========== */
         @media (max-width: 968px) {
             .form-grid {
@@ -2558,8 +2576,44 @@
     <!-- Payment Modal -->
     <div id="paymentModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><h2>Payment Methods</h2><p>Choose your preferred payment option</p><div class="payment-method-card"><h3><i class="fas fa-credit-card"></i> Card Payment (Instant)</h3><p>Pay securely with Flutterwave</p><button class="btn-modal" onclick="processFlutterwavePayment()">Pay with Card</button></div><div class="payment-method-card"><h3><i class="fab fa-bitcoin"></i> USDT (TRC20)</h3><p>Network: TRC20</p><div style="background:#f0f0f0;padding:10px;border-radius:5px;word-break:break-all;"><code>TEJiy27SNPB5ADc9bSSMcHMv7i2549rCA7</code></div><button class="copy-address" onclick="copyToClipboard('TEJiy27SNPB5ADc9bSSMcHMv7i2549rCA7')">Copy Address</button></div><div class="payment-method-card"><h3><i class="fas fa-university"></i> Nigeria Bank Transfer</h3><p><strong>Bank:</strong> Parallex Bank</p><p><strong>Account:</strong> 1510096102</p><p><strong>Name:</strong> Atafi Luxury</p><button class="copy-address" onclick="copyToClipboard('1510096102')">Copy Account Number</button></div><p style="color:var(--danger);margin-top:20px;text-align:center;">Important: Use your email as payment reference</p></div></div>
 
-    <!-- Success Stories Modal -->
-    <div id="successStoriesModal" class="modal"><div class="modal-content wide"><span class="close-modal">&times;</span><h2 style="text-align:center;">Success Stories</h2><p style="text-align:center;">Real results from real businesses</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:30px;"><div style="background:linear-gradient(135deg,#f8f9fa,#e9ecef);padding:20px;border-radius:15px;"><img src="https://via.placeholder.com/60" style="width:60px;height:60px;border-radius:50%;margin-bottom:10px;"><h3>Blessing's Fashion House</h3><p>"Revenue doubled in 3 months! The brand transformation was incredible."</p><div style="color:var(--primary);font-weight:bold;">+120% Growth</div></div><div style="background:linear-gradient(135deg,#f8f9fa,#e9ecef);padding:20px;border-radius:15px;"><img src="https://via.placeholder.com/60" style="width:60px;height:60px;border-radius:50%;margin-bottom:10px;"><h3>Chidi's Tech Solutions</h3><p>"Grew exactly as projected. The roadmap was spot on!"</p><div style="color:var(--primary);font-weight:bold;">+85% Growth</div></div><div style="background:linear-gradient(135deg,#f8f9fa,#e9ecef);padding:20px;border-radius:15px;"><img src="https://via.placeholder.com/60" style="width:60px;height:60px;border-radius:50%;margin-bottom:10px;"><h3>Amara Beauty</h3><p>"Best business decision ever. The community support is amazing!"</p><div style="color:var(--primary);font-weight:bold;">+200% Growth</div></div></div><div style="text-align:center;margin-top:30px;"><button class="btn-modal" onclick="startAssessment()">Start Your Journey</button></div></div></div>
+    <!-- Success Stories Modal - FIXED: No external images -->
+    <div id="successStoriesModal" class="modal">
+        <div class="modal-content wide">
+            <span class="close-modal">&times;</span>
+            <h2 style="text-align:center;">Success Stories</h2>
+            <p style="text-align:center;">Real results from real businesses</p>
+            
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:30px;">
+                <!-- Story 1 - Using CSS avatar instead of image -->
+                <div style="background:linear-gradient(135deg,#f8f9fa,#e9ecef);padding:20px;border-radius:15px;">
+                    <div class="avatar-placeholder" style="margin:0 auto 10px;">👗</div>
+                    <h3 style="text-align:center;">Blessing's Fashion House</h3>
+                    <p style="text-align:center;">"Revenue doubled in 3 months! The brand transformation was incredible."</p>
+                    <div style="color:var(--primary);font-weight:bold;text-align:center;">+120% Growth</div>
+                </div>
+
+                <!-- Story 2 - Using CSS avatar -->
+                <div style="background:linear-gradient(135deg,#f8f9fa,#e9ecef);padding:20px;border-radius:15px;">
+                    <div class="avatar-placeholder" style="margin:0 auto 10px;">💻</div>
+                    <h3 style="text-align:center;">Chidi's Tech Solutions</h3>
+                    <p style="text-align:center;">"Grew exactly as projected. The roadmap was spot on!"</p>
+                    <div style="color:var(--primary);font-weight:bold;text-align:center;">+85% Growth</div>
+                </div>
+
+                <!-- Story 3 - Using CSS avatar -->
+                <div style="background:linear-gradient(135deg,#f8f9fa,#e9ecef);padding:20px;border-radius:15px;">
+                    <div class="avatar-placeholder" style="margin:0 auto 10px;">💄</div>
+                    <h3 style="text-align:center;">Amara Beauty</h3>
+                    <p style="text-align:center;">"Best business decision ever. The community support is amazing!"</p>
+                    <div style="color:var(--primary);font-weight:bold;text-align:center;">+200% Growth</div>
+                </div>
+            </div>
+
+            <div style="text-align:center;margin-top:30px;">
+                <button class="btn-modal" onclick="startAssessment()">Start Your Journey</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Contact Modal -->
     <div id="contactModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><h2>Contact Us</h2><p>We're here to help</p><div style="margin:20px 0;"><div style="display:flex;align-items:center;gap:15px;margin-bottom:20px;"><i class="fas fa-envelope" style="font-size:1.5rem;color:var(--primary);"></i><div><h3>Email</h3><p>support@atafiluxury.com</p></div></div><div style="display:flex;align-items:center;gap:15px;margin-bottom:20px;"><i class="fas fa-phone" style="font-size:1.5rem;color:var(--primary);"></i><div><h3>Phone</h3><p>+234 800 000 0000</p></div></div></div><h3>Send us a message</h3><form id="contactForm" class="modal-form"><div class="form-group"><input type="text" placeholder="Your Name" required></div><div class="form-group"><input type="email" placeholder="Your Email" required></div><div class="form-group"><textarea rows="4" placeholder="Your Message" required></textarea></div><button type="submit" class="btn-modal">Send Message</button></form></div></div>
@@ -2588,7 +2642,7 @@
     <!-- Notification Toast -->
     <div class="notification-toast" id="notificationToast"></div>
 
-    <!-- Main JavaScript -->
+    <!-- Main JavaScript - FIXED: No more insertBefore error -->
     <script>
         // ==================== CONFIGURATION ====================
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyi4YtjtPxvu3TGURhJz3Ef-IJB0gpK-RdMkXSisUE89a46i1jJZ8uSVwGTXWaKEqeh/exec';
@@ -2635,16 +2689,8 @@
             return apiRequest('atafi_savePrediction', { userId, ...predictionData });
         }
 
-        async function trackAnalytics(event, userId, eventData = {}) {
-            return apiRequest('atafi_trackAnalytics', { event, userId, eventData });
-        }
-
         async function sendReportEmail(to, subject, htmlBody) {
             return apiRequest('sendReportEmail', { to, subject, htmlBody });
-        }
-
-        async function queueEmail(to, template, data = {}) {
-            return apiRequest('atafi_queueEmail', { to, template, data });
         }
 
         // ==================== PREDICTOR CLASS ====================
@@ -2790,6 +2836,25 @@
                     localStorage.setItem('atafi_email', this.formData.email);
                     localStorage.setItem('atafi_name', this.formData.fullName);
                     currentUserId = this.userId;
+                    currentUserEmail = this.formData.email;
+                    currentUserName = this.formData.fullName;
+                    
+                    // Safely add dashboard link if logged in - FIXED: Check if element exists first
+                    const navLinks = document.getElementById('nav-links');
+                    if (navLinks && !document.querySelector('[data-dashboard-link="true"]')) {
+                        const dashboardLi = document.createElement('li');
+                        dashboardLi.setAttribute('data-dashboard-link', 'true');
+                        dashboardLi.innerHTML = '<a href="#" onclick="showDashboardModal(); return false;">Dashboard</a>';
+                        
+                        // Find login button to insert before
+                        const loginBtn = navLinks.querySelector('.btn-login');
+                        if (loginBtn && loginBtn.parentNode) {
+                            navLinks.insertBefore(dashboardLi, loginBtn.parentNode);
+                        } else {
+                            // If login button not found, just append
+                            navLinks.appendChild(dashboardLi);
+                        }
+                    }
                 }
                 
                 if (this.userId) {
@@ -3025,10 +3090,14 @@
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
             // Mobile menu
-            document.getElementById('mobile-menu').addEventListener('click', function() {
-                this.classList.toggle('active');
-                document.getElementById('nav-links').classList.toggle('active');
-            });
+            const menuToggle = document.getElementById('mobile-menu');
+            const navLinks = document.getElementById('nav-links');
+            if (menuToggle && navLinks) {
+                menuToggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    navLinks.classList.toggle('active');
+                });
+            }
             
             // Sliders
             document.getElementById('monthlyRevenue')?.addEventListener('input', function() {
@@ -3047,15 +3116,31 @@
             const loginModal = document.getElementById('loginModal');
             const signupModal = document.getElementById('signupModal');
             
-            loginBtn.addEventListener('click', (e) => { e.preventDefault(); loginModal.style.display = 'flex'; });
-            signupBtn.addEventListener('click', (e) => { e.preventDefault(); signupModal.style.display = 'flex'; });
+            if (loginBtn) {
+                loginBtn.addEventListener('click', (e) => { e.preventDefault(); loginModal.style.display = 'flex'; });
+            }
+            if (signupBtn) {
+                signupBtn.addEventListener('click', (e) => { e.preventDefault(); signupModal.style.display = 'flex'; });
+            }
             
-            document.getElementById('switchToSignup')?.addEventListener('click', (e) => {
-                e.preventDefault(); loginModal.style.display = 'none'; signupModal.style.display = 'flex';
-            });
-            document.getElementById('switchToLogin')?.addEventListener('click', (e) => {
-                e.preventDefault(); signupModal.style.display = 'none'; loginModal.style.display = 'flex';
-            });
+            const switchToSignup = document.getElementById('switchToSignup');
+            const switchToLogin = document.getElementById('switchToLogin');
+            
+            if (switchToSignup) {
+                switchToSignup.addEventListener('click', (e) => {
+                    e.preventDefault(); 
+                    if (loginModal) loginModal.style.display = 'none'; 
+                    if (signupModal) signupModal.style.display = 'flex';
+                });
+            }
+            
+            if (switchToLogin) {
+                switchToLogin.addEventListener('click', (e) => {
+                    e.preventDefault(); 
+                    if (signupModal) signupModal.style.display = 'none'; 
+                    if (loginModal) loginModal.style.display = 'flex';
+                });
+            }
             
             document.querySelectorAll('.close-modal').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -3068,42 +3153,55 @@
             });
             
             // Login form
-            document.getElementById('loginForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('loginEmail').value;
-                currentUserId = 'user_' + Date.now();
-                currentUserEmail = email;
-                currentUserName = 'User';
-                localStorage.setItem('atafi_userId', currentUserId);
-                localStorage.setItem('atafi_email', email);
-                localStorage.setItem('atafi_name', 'User');
-                showNotification('Login successful!', 'success');
-                loginModal.style.display = 'none';
-                showDashboardModal();
-            });
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('loginEmail')?.value;
+                    if (!email) return;
+                    
+                    currentUserId = 'user_' + Date.now();
+                    currentUserEmail = email;
+                    currentUserName = 'User';
+                    localStorage.setItem('atafi_userId', currentUserId);
+                    localStorage.setItem('atafi_email', email);
+                    localStorage.setItem('atafi_name', 'User');
+                    showNotification('Login successful!', 'success');
+                    if (loginModal) loginModal.style.display = 'none';
+                    showDashboardModal();
+                });
+            }
             
             // Signup form
-            document.getElementById('signupForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const fullName = document.getElementById('signupFullName').value;
-                const email = document.getElementById('signupEmail').value;
-                currentUserId = 'user_' + Date.now();
-                currentUserEmail = email;
-                currentUserName = fullName;
-                localStorage.setItem('atafi_userId', currentUserId);
-                localStorage.setItem('atafi_email', email);
-                localStorage.setItem('atafi_name', fullName);
-                showNotification('Account created! Welcome!', 'success');
-                signupModal.style.display = 'none';
-                showDashboardModal();
-            });
+            const signupForm = document.getElementById('signupForm');
+            if (signupForm) {
+                signupForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const fullName = document.getElementById('signupFullName')?.value;
+                    const email = document.getElementById('signupEmail')?.value;
+                    if (!fullName || !email) return;
+                    
+                    currentUserId = 'user_' + Date.now();
+                    currentUserEmail = email;
+                    currentUserName = fullName;
+                    localStorage.setItem('atafi_userId', currentUserId);
+                    localStorage.setItem('atafi_email', email);
+                    localStorage.setItem('atafi_name', fullName);
+                    showNotification('Account created! Welcome!', 'success');
+                    if (signupModal) signupModal.style.display = 'none';
+                    showDashboardModal();
+                });
+            }
             
             // Contact form
-            document.getElementById('contactForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                showNotification('Message sent!', 'success');
-                document.getElementById('contactModal').style.display = 'none';
-            });
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    showNotification('Message sent!', 'success');
+                    document.getElementById('contactModal').style.display = 'none';
+                });
+            }
             
             // Check URL for referral
             const urlParams = new URLSearchParams(window.location.search);
@@ -3112,14 +3210,6 @@
                 const referralInput = document.getElementById('referralCode');
                 if (referralInput) referralInput.value = ref;
                 showNotification('You were referred by a friend! Get 10% off!', 'info');
-            }
-            
-            // Add dashboard link if logged in
-            if (currentUserId) {
-                const nav = document.getElementById('nav-links');
-                const dashboardLi = document.createElement('li');
-                dashboardLi.innerHTML = '<a href="#" onclick="showDashboardModal(); return false;">Dashboard</a>';
-                nav.insertBefore(dashboardLi, nav.querySelector('.btn-login'));
             }
             
             setupExitIntent();
