@@ -14,7 +14,7 @@
     <!-- Flutterwave -->
     <script src="https://checkout.flutterwave.com/v3.js"></script>
     
-    <!-- Favicon (fixes 404 error) -->
+    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
 
     <style>
@@ -1720,7 +1720,7 @@
             font-size: 0.9rem;
         }
 
-        /* ========== AVATAR PLACEHOLDER STYLES ========== */
+        /* ========== AVATAR PLACEHOLDER ========== */
         .avatar-placeholder {
             width: 60px;
             height: 60px;
@@ -1732,7 +1732,7 @@
             color: white;
             font-weight: bold;
             font-size: 1.5rem;
-            margin-bottom: 10px;
+            margin: 0 auto 10px;
         }
 
         /* ========== RESPONSIVE ========== */
@@ -2576,7 +2576,7 @@
     <!-- Payment Modal -->
     <div id="paymentModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><h2>Payment Methods</h2><p>Choose your preferred payment option</p><div class="payment-method-card"><h3><i class="fas fa-credit-card"></i> Card Payment (Instant)</h3><p>Pay securely with Flutterwave</p><button class="btn-modal" onclick="processFlutterwavePayment()">Pay with Card</button></div><div class="payment-method-card"><h3><i class="fab fa-bitcoin"></i> USDT (TRC20)</h3><p>Network: TRC20</p><div style="background:#f0f0f0;padding:10px;border-radius:5px;word-break:break-all;"><code>TEJiy27SNPB5ADc9bSSMcHMv7i2549rCA7</code></div><button class="copy-address" onclick="copyToClipboard('TEJiy27SNPB5ADc9bSSMcHMv7i2549rCA7')">Copy Address</button></div><div class="payment-method-card"><h3><i class="fas fa-university"></i> Nigeria Bank Transfer</h3><p><strong>Bank:</strong> Parallex Bank</p><p><strong>Account:</strong> 1510096102</p><p><strong>Name:</strong> Atafi Luxury</p><button class="copy-address" onclick="copyToClipboard('1510096102')">Copy Account Number</button></div><p style="color:var(--danger);margin-top:20px;text-align:center;">Important: Use your email as payment reference</p></div></div>
 
-    <!-- Success Stories Modal - FIXED: No external images -->
+    <!-- Success Stories Modal -->
     <div id="successStoriesModal" class="modal">
         <div class="modal-content wide">
             <span class="close-modal">&times;</span>
@@ -2584,25 +2584,20 @@
             <p style="text-align:center;">Real results from real businesses</p>
             
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:30px;">
-                <!-- Story 1 - Using CSS avatar instead of image -->
                 <div style="background:linear-gradient(135deg,#f8f9fa,#e9ecef);padding:20px;border-radius:15px;">
-                    <div class="avatar-placeholder" style="margin:0 auto 10px;">👗</div>
+                    <div class="avatar-placeholder">👗</div>
                     <h3 style="text-align:center;">Blessing's Fashion House</h3>
                     <p style="text-align:center;">"Revenue doubled in 3 months! The brand transformation was incredible."</p>
                     <div style="color:var(--primary);font-weight:bold;text-align:center;">+120% Growth</div>
                 </div>
-
-                <!-- Story 2 - Using CSS avatar -->
                 <div style="background:linear-gradient(135deg,#f8f9fa,#e9ecef);padding:20px;border-radius:15px;">
-                    <div class="avatar-placeholder" style="margin:0 auto 10px;">💻</div>
+                    <div class="avatar-placeholder">💻</div>
                     <h3 style="text-align:center;">Chidi's Tech Solutions</h3>
                     <p style="text-align:center;">"Grew exactly as projected. The roadmap was spot on!"</p>
                     <div style="color:var(--primary);font-weight:bold;text-align:center;">+85% Growth</div>
                 </div>
-
-                <!-- Story 3 - Using CSS avatar -->
                 <div style="background:linear-gradient(135deg,#f8f9fa,#e9ecef);padding:20px;border-radius:15px;">
-                    <div class="avatar-placeholder" style="margin:0 auto 10px;">💄</div>
+                    <div class="avatar-placeholder">💄</div>
                     <h3 style="text-align:center;">Amara Beauty</h3>
                     <p style="text-align:center;">"Best business decision ever. The community support is amazing!"</p>
                     <div style="color:var(--primary);font-weight:bold;text-align:center;">+200% Growth</div>
@@ -2642,7 +2637,7 @@
     <!-- Notification Toast -->
     <div class="notification-toast" id="notificationToast"></div>
 
-    <!-- Main JavaScript - FIXED: No more insertBefore error -->
+    <!-- Main JavaScript -->
     <script>
         // ==================== CONFIGURATION ====================
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyi4YtjtPxvu3TGURhJz3Ef-IJB0gpK-RdMkXSisUE89a46i1jJZ8uSVwGTXWaKEqeh/exec';
@@ -2777,30 +2772,66 @@
                 const results = this.generatePredictions();
                 const data = this.formData;
                 
-                document.getElementById('growthScore').textContent = results.growthScore;
-                document.getElementById('growthScoreMeter').style.width = results.growthScore + '%';
-                document.getElementById('brandStrength').textContent = results.brandStrength + '%';
-                document.getElementById('marketingEfficiency').textContent = results.marketingEfficiency + '%';
-                document.getElementById('salesConversion').textContent = results.salesConversion + '%';
-                document.getElementById('customerTrust').textContent = results.customerTrust + '%';
-                document.getElementById('currentRevenue').textContent = '₦' + data.monthlyRevenue.toLocaleString();
-                document.getElementById('projectedRevenue').textContent = '₦' + results.projectedRevenue.toLocaleString();
-                document.getElementById('leadGrowth').textContent = '+' + results.leadIncrease + '%';
-                document.getElementById('leadGrowthBar').style.width = Math.min(100, results.leadIncrease * 0.33) + '%';
-                document.getElementById('marketVisibility').textContent = results.marketVisibility + '%';
-                document.getElementById('visibilityBar').style.width = results.marketVisibility + '%';
-                document.getElementById('brandAuthority').textContent = results.brandAuthority + '%';
-                document.getElementById('authorityBar').style.width = results.brandAuthority + '%';
+                console.log('Rendering results:', results);
                 
+                // Update all dashboard elements
+                const elements = {
+                    'growthScore': results.growthScore,
+                    'brandStrength': results.brandStrength + '%',
+                    'marketingEfficiency': results.marketingEfficiency + '%',
+                    'salesConversion': results.salesConversion + '%',
+                    'customerTrust': results.customerTrust + '%',
+                    'currentRevenue': '₦' + (data.monthlyRevenue || 0).toLocaleString(),
+                    'projectedRevenue': '₦' + (results.projectedRevenue || 0).toLocaleString(),
+                    'leadGrowth': '+' + (results.leadIncrease || 0) + '%',
+                    'marketVisibility': (results.marketVisibility || 0) + '%',
+                    'brandAuthority': (results.brandAuthority || 0) + '%',
+                    'currentProfit': '₦' + Math.round((data.monthlyRevenue || 0) * 0.3).toLocaleString(),
+                    'projectedProfit': '₦' + Math.round((data.monthlyRevenue || 0) * 0.3 * 3.5).toLocaleString(),
+                    'currentCustomers': Math.round((data.monthlyRevenue || 0) / 50000),
+                    'projectedCustomers': results.projectedCustomers || 3200
+                };
+                
+                // Update text content
+                for (const [id, value] of Object.entries(elements)) {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.textContent = value;
+                    }
+                }
+                
+                // Update meter bars
+                const meters = {
+                    'growthScoreMeter': results.growthScore + '%',
+                    'leadGrowthBar': Math.min(100, (results.leadIncrease || 0) * 0.33) + '%',
+                    'visibilityBar': (results.marketVisibility || 0) + '%',
+                    'authorityBar': (results.brandAuthority || 0) + '%'
+                };
+                
+                for (const [id, value] of Object.entries(meters)) {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.style.width = value;
+                    }
+                }
+                
+                // Update business initials
                 const businessName = data.businessName || 'Your Brand';
                 const initials = businessName.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase();
-                document.getElementById('businessInitials').textContent = initials;
+                const initialsElement = document.getElementById('businessInitials');
+                if (initialsElement) initialsElement.textContent = initials;
                 
+                // Create chart
                 this.createRevenueChart();
             }
 
             createRevenueChart() {
-                const ctx = document.getElementById('revenueChart').getContext('2d');
+                const ctx = document.getElementById('revenueChart')?.getContext('2d');
+                if (!ctx) {
+                    console.warn('Revenue chart canvas not found');
+                    return;
+                }
+                
                 if (window.revenueChart) window.revenueChart.destroy();
                 
                 window.revenueChart = new Chart(ctx, {
@@ -2816,7 +2847,11 @@
                             fill: true
                         }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false }
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
                 });
             }
 
@@ -2838,23 +2873,6 @@
                     currentUserId = this.userId;
                     currentUserEmail = this.formData.email;
                     currentUserName = this.formData.fullName;
-                    
-                    // Safely add dashboard link if logged in - FIXED: Check if element exists first
-                    const navLinks = document.getElementById('nav-links');
-                    if (navLinks && !document.querySelector('[data-dashboard-link="true"]')) {
-                        const dashboardLi = document.createElement('li');
-                        dashboardLi.setAttribute('data-dashboard-link', 'true');
-                        dashboardLi.innerHTML = '<a href="#" onclick="showDashboardModal(); return false;">Dashboard</a>';
-                        
-                        // Find login button to insert before
-                        const loginBtn = navLinks.querySelector('.btn-login');
-                        if (loginBtn && loginBtn.parentNode) {
-                            navLinks.insertBefore(dashboardLi, loginBtn.parentNode);
-                        } else {
-                            // If login button not found, just append
-                            navLinks.appendChild(dashboardLi);
-                        }
-                    }
                 }
                 
                 if (this.userId) {
@@ -2926,7 +2944,11 @@
             document.getElementById('currentStepLabel').textContent = labels[currentStep - 1];
         }
 
+        // ==================== FIXED GENERATE REPORT FUNCTION ====================
         async function generateReport() {
+            console.log('Generate report clicked - starting...');
+            
+            // Get form values
             const businessName = document.getElementById('businessName')?.value;
             const fullName = document.getElementById('fullName')?.value;
             const email = document.getElementById('accountEmail')?.value;
@@ -2934,6 +2956,7 @@
             const confirm = document.getElementById('confirmPassword')?.value;
             const terms = document.getElementById('termsAgree')?.checked;
             
+            // Validate
             if (!businessName) { showNotification('Please enter your business name', 'error'); return; }
             if (!fullName) { showNotification('Please enter your full name', 'error'); return; }
             if (!email) { showNotification('Please enter your email address', 'error'); return; }
@@ -2941,31 +2964,56 @@
             if (password !== confirm) { showNotification('Passwords do not match', 'error'); return; }
             if (!terms) { showNotification('You must agree to the Terms of Service', 'error'); return; }
             
-            document.getElementById('loadingOverlay').style.display = 'flex';
+            // Show loading
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) loadingOverlay.style.display = 'flex';
             
             try {
+                // Create predictor and generate results
                 const predictor = new BrandPredictor();
                 predictor.renderResults();
+                console.log('Results rendered');
                 
-                await predictor.saveToDatabase();
-                await predictor.sendEmails();
+                // Save and send emails (don't await - let them run in background)
+                predictor.saveToDatabase().catch(e => console.warn('Save warning:', e));
+                predictor.sendEmails().catch(e => console.warn('Email warning:', e));
                 
-                document.getElementById('loadingOverlay').style.display = 'none';
-                document.getElementById('predictor').style.display = 'none';
-                document.getElementById('resultsDashboard').style.display = 'block';
-                document.getElementById('resultsDashboard').scrollIntoView({ behavior: 'smooth' });
+                // Hide loading
+                if (loadingOverlay) loadingOverlay.style.display = 'none';
+                
+                // CRITICAL FIX: Hide assessment and show results
+                const assessmentSection = document.getElementById('predictor');
+                const resultsDashboard = document.getElementById('resultsDashboard');
+                
+                if (assessmentSection && resultsDashboard) {
+                    console.log('Hiding assessment, showing results');
+                    assessmentSection.style.display = 'none';
+                    resultsDashboard.style.display = 'block';
+                    resultsDashboard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    console.error('Elements not found:', {
+                        assessment: !!assessmentSection,
+                        results: !!resultsDashboard
+                    });
+                }
+                
+                // Start timer
                 startUrgencyTimer();
-                showNotification('Report generated! Check your email.', 'success');
                 
+                // Show success message
+                showNotification('Report generated successfully!', 'success');
+                
+                // Update counter
                 const liveCounter = document.getElementById('liveBusinesses');
                 if (liveCounter) {
                     let count = parseInt(liveCounter.textContent) || 247;
                     liveCounter.textContent = count + 1;
                 }
+                
             } catch (error) {
-                document.getElementById('loadingOverlay').style.display = 'none';
+                console.error('Generate report error:', error);
+                if (loadingOverlay) loadingOverlay.style.display = 'none';
                 showNotification('Error generating report. Please try again.', 'error');
-                console.error('Error:', error);
             }
         }
 
@@ -3057,10 +3105,15 @@
         }
 
         function closeExitPopup() { document.getElementById('exitPopup').style.display = 'none'; }
+        
         function subscribeExit() {
             const email = document.getElementById('exitEmail').value;
-            if (email) { showNotification('Check your email for the checklist!', 'success'); closeExitPopup(); }
-            else { showNotification('Please enter your email', 'error'); }
+            if (email) { 
+                showNotification('Check your email for the checklist!', 'success'); 
+                closeExitPopup(); 
+            } else { 
+                showNotification('Please enter your email', 'error'); 
+            }
         }
 
         function startUrgencyTimer() {
@@ -3075,7 +3128,10 @@
                     const seconds = Math.floor((distance % 60000) / 1000);
                     timerEl.textContent = String(hours).padStart(2,'0')+':'+String(minutes).padStart(2,'0')+':'+String(seconds).padStart(2,'0');
                 }
-                if (distance < 0) { clearInterval(timer); if (timerEl) timerEl.textContent = 'EXPIRED'; }
+                if (distance < 0) { 
+                    clearInterval(timer); 
+                    if (timerEl) timerEl.textContent = 'EXPIRED'; 
+                }
             }, 1000);
         }
 
@@ -3087,8 +3143,31 @@
             setTimeout(() => toast.style.display = 'none', 4000);
         }
 
+        // ==================== TEST FUNCTION ====================
+        function testResults() {
+            console.log('Testing results display...');
+            const resultsDash = document.getElementById('resultsDashboard');
+            const predictor = document.getElementById('predictor');
+            
+            if (resultsDash && predictor) {
+                predictor.style.display = 'none';
+                resultsDash.style.display = 'block';
+                resultsDash.scrollIntoView({ behavior: 'smooth' });
+                console.log('Test successful - results shown');
+                return true;
+            } else {
+                console.error('Elements not found:', {
+                    resultsDash: !!resultsDash,
+                    predictor: !!predictor
+                });
+                return false;
+            }
+        }
+
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded - initializing...');
+            
             // Mobile menu
             const menuToggle = document.getElementById('mobile-menu');
             const navLinks = document.getElementById('nav-links');
@@ -3142,6 +3221,7 @@
                 });
             }
             
+            // Close modals
             document.querySelectorAll('.close-modal').forEach(btn => {
                 btn.addEventListener('click', function() {
                     document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
@@ -3212,7 +3292,11 @@
                 showNotification('You were referred by a friend! Get 10% off!', 'info');
             }
             
+            // Make test function available globally
+            window.testResults = testResults;
+            
             setupExitIntent();
+            console.log('Initialization complete');
         });
     </script>
 </body>
