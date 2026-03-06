@@ -3196,10 +3196,12 @@
             // Mobile menu
             const menuToggle = document.getElementById('mobile-menu');
             const navLinks = document.getElementById('nav-links');
-            menuToggle.addEventListener('click', function() {
-                this.classList.toggle('active');
-                navLinks.classList.toggle('active');
-            });
+            if (menuToggle && navLinks) {
+                menuToggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    navLinks.classList.toggle('active');
+                });
+            }
             
             // Sliders
             document.getElementById('monthlyRevenue')?.addEventListener('input', function() {
@@ -3216,7 +3218,7 @@
             });
             
             // Modal triggers
-            document.getElementById('loginBtn').addEventListener('click', (e) => {
+            document.getElementById('loginBtn')?.addEventListener('click', (e) => {
                 e.preventDefault();
                 document.getElementById('loginModal').style.display = 'flex';
             });
@@ -3246,7 +3248,7 @@
             });
             
             // Login form
-            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const email = document.getElementById('loginEmail').value;
                 const password = document.getElementById('loginPassword').value;
@@ -3258,7 +3260,7 @@
             });
             
             // Signup form
-            document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            document.getElementById('signupForm')?.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const fullName = document.getElementById('signupFullName').value;
                 const email = document.getElementById('signupEmail').value;
@@ -3283,7 +3285,7 @@
             });
             
             // Contact form
-            document.getElementById('contactForm').addEventListener('submit', (e) => {
+            document.getElementById('contactForm')?.addEventListener('submit', (e) => {
                 e.preventDefault();
                 showNotification('Message sent! We\'ll get back to you soon.', 'success');
                 document.getElementById('contactModal').style.display = 'none';
@@ -3376,14 +3378,6 @@
             document.getElementById('dashboardEmail').textContent = currentUserEmail || '';
             document.getElementById('dashboardAvatar').textContent = (currentUserName || 'U').charAt(0).toUpperCase();
             document.getElementById('referralLink').textContent = `https://atafi-lux.onrender.com/?ref=${currentUserId}`;
-            
-            document.getElementById('statsPredictions').textContent = '3';
-            document.getElementById('statsAvgGrowth').textContent = '78%';
-            document.getElementById('statsLatestScore').textContent = '82';
-            document.getElementById('statsMemberDate').textContent = new Date().getFullYear().toString();
-            document.getElementById('businessNameDisplay').textContent = 'Your Business';
-            document.getElementById('businessIndustry').textContent = 'Retail';
-            document.getElementById('businessRevenue').textContent = '₦1,000,000';
             
             document.getElementById('userDashboardModal').style.display = 'flex';
         }
