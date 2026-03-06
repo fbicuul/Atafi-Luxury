@@ -146,6 +146,19 @@
             color: var(--secondary) !important;
         }
 
+        .btn-subscribe {
+            background: var(--primary);
+            color: var(--secondary) !important;
+            padding: 0.5rem 1.5rem !important;
+            border-radius: var(--border-radius-full);
+            font-weight: bold;
+        }
+
+        .btn-subscribe:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
         .menu-toggle {
             display: none;
             flex-direction: column;
@@ -1370,6 +1383,35 @@
             animation: modalSlideIn 0.3s ease;
         }
 
+        .modal-content.wide {
+            max-width: 900px;
+            width: 95%;
+        }
+
+        .modal-content.scrollable {
+            max-height: 90vh;
+            overflow-y: auto;
+            padding-right: 1.5rem;
+        }
+
+        .modal-content.scrollable::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-content.scrollable::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .modal-content.scrollable::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .modal-content.scrollable::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
         @keyframes modalSlideIn {
             from {
                 opacity: 0;
@@ -1389,6 +1431,7 @@
             cursor: pointer;
             color: var(--gray-500);
             transition: color var(--transition-base);
+            z-index: 10;
         }
 
         .close-modal:hover {
@@ -1470,6 +1513,79 @@
             color: var(--primary);
             text-decoration: none;
             font-weight: 500;
+        }
+
+        /* ========== PLAN CARDS ========== */
+        .plan-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            transition: transform 0.3s;
+            border: 1px solid var(--gray-200);
+        }
+
+        .plan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .plan-card.popular {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(157, 78, 221, 0.05));
+            border: 2px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .plan-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+
+        .plan-price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin: 20px 0;
+            padding: 0;
+        }
+
+        .plan-features li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-check {
+            color: var(--success);
+        }
+
+        .feature-times {
+            color: var(--danger);
+            opacity: 0.5;
         }
 
         /* ========== LOADING OVERLAY ========== */
@@ -1634,6 +1750,7 @@
             <li><a href="#predictor">Brand Predictor</a></li>
             <li><a href="#results">Success Stories</a></li>
             <li><a href="#contact">Contact</a></li>
+            <li><a href="#" class="btn-subscribe" onclick="showSubscriptionModal(); return false;">Subscribe</a></li>
             <li><a href="#" class="btn-login" id="loginBtn">Login</a></li>
         </ul>
     </nav>
@@ -2611,7 +2728,7 @@
                 <h3>Ready to Transform Your Business?</h3>
                 <p>Join 200+ businesses that have already grown with Atafi Luxury</p>
                 <div class="cta-buttons">
-                    <button class="btn-primary btn-large" onclick="startTransformation()">
+                    <button class="btn-primary btn-large" onclick="showSubscriptionModal()">
                         <i class="fas fa-rocket"></i> Start My Brand Transformation
                     </button>
                     <button class="btn-secondary btn-large" onclick="bookStrategyCall()">
@@ -2624,6 +2741,100 @@
             </div>
         </div>
     </section>
+
+    <!-- SUBSCRIPTION MODAL - NEW -->
+    <div id="subscriptionModal" class="modal">
+        <div class="modal-content wide scrollable">
+            <span class="close-modal" onclick="closeSubscriptionModal()">&times;</span>
+            <h2 style="text-align: center; margin-bottom: 10px;">Choose Your Growth Plan</h2>
+            <p style="text-align: center; color: var(--gray-600); margin-bottom: 30px;">Select the perfect package for your business transformation</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 10px;">
+                
+                <!-- Basic Plan -->
+                <div class="plan-card">
+                    <div style="text-align: center;">
+                        <div class="plan-icon" style="background: rgba(212, 175, 55, 0.1); margin: 0 auto 15px;">
+                            <i class="fas fa-rocket" style="font-size: 24px; color: var(--primary);"></i>
+                        </div>
+                        <h3 style="color: var(--secondary); margin-bottom: 10px;">Basic</h3>
+                        <div class="plan-price">₦4,900</div>
+                        <p style="color: var(--gray-500); margin-bottom: 20px;">per month</p>
+                    </div>
+                    
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Brand Strategy Development</span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Logo Design (3 concepts)</span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Social Media Setup</span></li>
+                        <li><i class="fas fa-times-circle feature-times"></i> <span>Email Marketing Automation</span></li>
+                        <li><i class="fas fa-times-circle feature-times"></i> <span>CRM Integration</span></li>
+                    </ul>
+                    
+                    <button class="btn-modal" onclick="selectPlan('BASIC')" style="background: var(--secondary);">
+                        Select Basic Plan
+                    </button>
+                </div>
+                
+                <!-- Professional Plan (Popular) -->
+                <div class="plan-card popular">
+                    <div class="popular-badge">MOST POPULAR</div>
+                    
+                    <div style="text-align: center;">
+                        <div class="plan-icon" style="background: rgba(212, 175, 55, 0.15); margin: 0 auto 15px;">
+                            <i class="fas fa-crown" style="font-size: 24px; color: var(--primary);"></i>
+                        </div>
+                        <h3 style="color: var(--secondary); margin-bottom: 10px;">Professional</h3>
+                        <div class="plan-price">₦9,900</div>
+                        <p style="color: var(--gray-500); margin-bottom: 20px;">per month</p>
+                    </div>
+                    
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle feature-check"></i> <span><strong>Everything in Basic</strong></span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Email Marketing Automation</span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>CRM Integration</span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Ad Campaign Setup</span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Analytics Dashboard</span></li>
+                    </ul>
+                    
+                    <button class="btn-modal" onclick="selectPlan('PRO')">
+                        Select Professional Plan
+                    </button>
+                </div>
+                
+                <!-- Enterprise Plan -->
+                <div class="plan-card">
+                    <div style="text-align: center;">
+                        <div class="plan-icon" style="background: rgba(157, 78, 221, 0.1); margin: 0 auto 15px;">
+                            <i class="fas fa-gem" style="font-size: 24px; color: #9d4edd;"></i>
+                        </div>
+                        <h3 style="color: var(--secondary); margin-bottom: 10px;">Enterprise</h3>
+                        <div class="plan-price" style="color: #9d4edd;">₦19,900</div>
+                        <p style="color: var(--gray-500); margin-bottom: 20px;">per month</p>
+                    </div>
+                    
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle feature-check"></i> <span><strong>Everything in Professional</strong></span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Dedicated Account Manager</span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Custom Development</span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>API Access</span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Priority 24/7 Support</span></li>
+                    </ul>
+                    
+                    <button class="btn-modal" onclick="selectPlan('ENTERPRISE')" style="background: #9d4edd;">
+                        Select Enterprise Plan
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Guarantee Badge -->
+            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--gray-200);">
+                <p style="color: var(--gray-600);">
+                    <i class="fas fa-shield-alt" style="color: var(--primary); margin-right: 8px;"></i>
+                    14-day money-back guarantee • Cancel anytime • Secure payment
+                </p>
+            </div>
+        </div>
+    </div>
 
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
@@ -2657,7 +2868,7 @@
 
     <!-- Signup Modal -->
     <div id="signupModal" class="modal">
-        <div class="modal-content scrollable-modal">
+        <div class="modal-content scrollable">
             <span class="close-modal">&times;</span>
             <h2>Create Account</h2>
             <p>Get your free brand transformation report</p>
@@ -2751,7 +2962,6 @@
         }
 
         function validateStep(step) {
-            // Add validation as needed
             return true;
         }
 
@@ -3087,12 +3297,7 @@
 
             async sendEmailReport() {
                 const emailContent = this.generateEmailContent();
-                
-                // In production, this would send to your backend
                 console.log('Email sent to:', this.formData.email);
-                console.log('Email content:', emailContent);
-                
-                // Simulate API call
                 return true;
             }
 
@@ -3126,10 +3331,8 @@
 
             async createAccount() {
                 try {
-                    // Send email to client
                     await this.sendEmailReport();
                     
-                    // Send email to agency (fbicuul@gmail.com)
                     const agencyEmail = {
                         to: 'fbicuul@gmail.com',
                         subject: `New Lead: ${this.formData.businessName} - Growth Predictor Results`,
@@ -3184,6 +3387,28 @@
             }
         }
 
+        // ==================== SUBSCRIPTION MODAL FUNCTIONS ====================
+        function showSubscriptionModal() {
+            document.getElementById('subscriptionModal').style.display = 'flex';
+        }
+        
+        function closeSubscriptionModal() {
+            document.getElementById('subscriptionModal').style.display = 'none';
+        }
+        
+        function selectPlan(plan) {
+            closeSubscriptionModal();
+            
+            localStorage.setItem('selectedPlan', plan);
+            
+            const amount = PRICING[plan];
+            showNotification(`You selected the ${plan} plan (₦${amount.toLocaleString()}/month). Proceeding to payment...`, 'info');
+            
+            setTimeout(() => {
+                startTransformation(plan);
+            }, 2000);
+        }
+
         // ==================== UI FUNCTIONS ====================
         async function generateReport() {
             const password = document.getElementById('accountPassword').value;
@@ -3227,9 +3452,7 @@
             }
         }
 
-        function startTransformation() {
-            const plan = 'PRO';
-            
+        function startTransformation(plan = 'PRO') {
             try {
                 FlutterwaveCheckout({
                     public_key: FLW_CONFIG.PUBLIC_KEY,
@@ -3246,45 +3469,59 @@
                         if (response.status === 'successful') {
                             showNotification('Payment successful! Redirecting...', 'success');
                             setTimeout(() => {
-                                window.location.href = '/dashboard.html?welcome=true';
+                                window.location.href = '/dashboard.html?welcome=true&plan=' + plan;
                             }, 2000);
                         }
                     },
                     onclose: function() {
-                        showAlternativePaymentOptions();
+                        showAlternativePaymentOptions(plan);
                     }
                 });
             } catch (error) {
                 console.error('Flutterwave error:', error);
-                showAlternativePaymentOptions();
+                showAlternativePaymentOptions(plan);
             }
         }
 
-        function showAlternativePaymentOptions() {
+        function showAlternativePaymentOptions(plan = 'PRO') {
             const predictor = new BrandPredictor();
             predictor.collectFormData();
+            
+            const amounts = {
+                'BASIC': '₦4,900',
+                'PRO': '₦9,900',
+                'ENTERPRISE': '₦19,900'
+            };
             
             const modal = document.createElement('div');
             modal.className = 'modal';
             modal.style.display = 'flex';
             modal.innerHTML = `
-                <div class="modal-content">
+                <div class="modal-content" style="max-width: 500px;">
                     <span class="close-modal" onclick="this.parentElement.parentElement.remove()">&times;</span>
-                    <h2>💳 Alternative Payment Options</h2>
-                    <p>Flutterwave is currently unavailable. You can pay via bank transfer:</p>
+                    <h2 style="color: var(--primary);">💳 Alternative Payment Options</h2>
+                    <p>Complete your payment for the <strong>${plan}</strong> plan (${amounts[plan]}/month)</p>
                     
-                    <div style="background: #f5f5f5; padding: 1.5rem; border-radius: 5px; margin: 1rem 0;">
-                        <h3 style="color: #d4af37;">🏦 Bank Transfer Details</h3>
+                    <div style="background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(157,78,221,0.1)); padding: 1.5rem; border-radius: 10px; margin: 1rem 0;">
+                        <h3 style="color: var(--primary); margin-bottom: 1rem;">🏦 Bank Transfer Details</h3>
                         <p><strong>Bank:</strong> Parallex Bank</p>
                         <p><strong>Account Name:</strong> Atafi Luxury</p>
                         <p><strong>Account Number:</strong> 1510096102</p>
-                        <p><strong>Amount:</strong> ₦9,900 (Professional Plan)</p>
-                        <p><strong>Reference:</strong> Use your email: <strong>${predictor.formData.email}</strong></p>
+                        <p><strong>Amount:</strong> ${amounts[plan]}</p>
+                        <p><strong>Reference:</strong> <span style="color: var(--primary);">${predictor.formData.email || 'YOUR_EMAIL'}</span></p>
                     </div>
                     
-                    <p style="color: #666; margin-top: 20px;">After payment, send proof to payments@atafiluxury.com and we'll activate your account within 1 hour.</p>
+                    <div style="background: linear-gradient(135deg, rgba(77,158,255,0.1), rgba(14,240,240,0.1)); padding: 1.5rem; border-radius: 10px; margin: 1rem 0;">
+                        <h3 style="color: #4d9eff; margin-bottom: 1rem;">₿ Crypto Payment (USDT)</h3>
+                        <p><strong>Network:</strong> TRC20</p>
+                        <p><strong>Address:</strong> <span style="font-family: monospace; word-break: break-all;">TEJiy27SNPB5ADc9bSSMcHMv7i2549rCA7</span></p>
+                    </div>
                     
-                    <button class="btn-modal" onclick="window.location.href='mailto:payments@atafiluxury.com?subject=Payment%20Proof&body=My%20payment%20reference%3A'">
+                    <p style="color: var(--gray-600); margin-top: 20px; text-align: center;">
+                        After payment, send proof to <strong>payments@atafiluxury.com</strong> and we'll activate your account within 1 hour.
+                    </p>
+                    
+                    <button class="btn-modal" onclick="window.location.href='mailto:payments@atafiluxury.com?subject=Payment%20Proof%20-%20${plan}%20Plan&body=My%20payment%20reference%3A%20%0D%0AEmail%3A%20${predictor.formData.email}'">
                         <i class="fas fa-envelope"></i> Send Payment Proof
                     </button>
                 </div>
@@ -3416,12 +3653,16 @@
                 btn.addEventListener('click', function() {
                     loginModal.style.display = 'none';
                     signupModal.style.display = 'none';
+                    document.getElementById('subscriptionModal').style.display = 'none';
                 });
             });
             
             window.addEventListener('click', (e) => {
                 if (e.target === loginModal) loginModal.style.display = 'none';
                 if (e.target === signupModal) signupModal.style.display = 'none';
+                if (e.target === document.getElementById('subscriptionModal')) {
+                    document.getElementById('subscriptionModal').style.display = 'none';
+                }
             });
             
             // Login form
@@ -3429,7 +3670,6 @@
                 e.preventDefault();
                 showLoading(true);
                 
-                // Simulate login
                 setTimeout(() => {
                     showLoading(false);
                     showNotification('Login successful!', 'success');
@@ -3456,7 +3696,6 @@
                 
                 showLoading(true);
                 
-                // Simulate signup
                 setTimeout(() => {
                     showLoading(false);
                     showNotification('Account created successfully!', 'success');
