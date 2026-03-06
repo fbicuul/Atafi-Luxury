@@ -321,6 +321,7 @@
             border-radius: var(--border-radius-full);
             transition: width var(--transition-base);
             margin-bottom: 1rem;
+            width: 12.5%;
         }
 
         .progress-steps {
@@ -2868,30 +2869,7 @@
             <!-- Prediction History -->
             <h3 class="section-title">📈 Your Growth History</h3>
             <div class="predictions-list" id="predictionsList">
-                <div class="prediction-item">
-                    <div class="date">March 1, 2026</div>
-                    <div class="stats">
-                        <div class="stat"><span class="value">82%</span><span class="label">Growth Score</span></div>
-                        <div class="stat"><span class="value">₦2.5M</span><span class="label">Projected</span></div>
-                        <div class="stat"><span class="value">+156%</span><span class="label">Growth</span></div>
-                    </div>
-                </div>
-                <div class="prediction-item">
-                    <div class="date">February 15, 2026</div>
-                    <div class="stats">
-                        <div class="stat"><span class="value">75%</span><span class="label">Growth Score</span></div>
-                        <div class="stat"><span class="value">₦2.1M</span><span class="label">Projected</span></div>
-                        <div class="stat"><span class="value">+142%</span><span class="label">Growth</span></div>
-                    </div>
-                </div>
-                <div class="prediction-item">
-                    <div class="date">February 1, 2026</div>
-                    <div class="stats">
-                        <div class="stat"><span class="value">68%</span><span class="label">Growth Score</span></div>
-                        <div class="stat"><span class="value">₦1.8M</span><span class="label">Projected</span></div>
-                        <div class="stat"><span class="value">+128%</span><span class="label">Growth</span></div>
-                    </div>
-                </div>
+                <!-- Will be populated by JavaScript -->
             </div>
 
             <!-- Referral Section -->
@@ -3053,8 +3031,7 @@
             <span class="close-modal" onclick="closePaymentHistoryModal()">&times;</span>
             <h2 style="text-align: center; margin-bottom: 20px;">Payment History</h2>
             <div id="paymentHistoryList" style="max-height: 60vh; overflow-y: auto;">
-                <div class="prediction-item"><div class="date">March 1, 2026</div><p>₦9,900 - Professional Plan - Completed</p></div>
-                <div class="prediction-item"><div class="date">February 1, 2026</div><p>₦9,900 - Professional Plan - Completed</p></div>
+                <!-- Will be populated by JavaScript -->
             </div>
         </div>
     </div>
@@ -3171,7 +3148,7 @@
     <!-- Main JavaScript -->
     <script>
         // ==================== CONFIGURATION ====================
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyi4YtjtPxvu3TGURhJz3Ef-IJB0gpK-RdMkXSisUE89a46i1jJZ8uSVwGTXWaKEqeh/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwamG5IRUJQ6hFPf_YOpqVFzWzryYg1IdPkHYfTGd93OjzqCF3i0QFd44T86ap4NhMv/exec';
         const FLUTTERWAVE_PUBLIC_KEY = 'FLWPUBK-2139829c2de5b6071f89e39b59e9d9ca-X';
         const FLUTTERWAVE_SUBACCOUNT_ID = 'RS_89D720D484AF8296626AC1C84E2B0044';
         const PRICING = { BASIC: 4900, PRO: 9900, ENTERPRISE: 19900 };
@@ -3185,6 +3162,81 @@
         let currentUserId = localStorage.getItem('atafi_userId');
         let currentUserEmail = localStorage.getItem('atafi_email');
         let currentUserName = localStorage.getItem('atafi_name');
+        let pendingCallbacks = {};
+
+        // ==================== JSONP HELPER FUNCTION ====================
+        function jsonpRequest(action, data, callbackName) {
+            return new Promise((resolve, reject) => {
+                const callbackId = 'callback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                const script = document.createElement('script');
+                
+                // Build URL with parameters
+                let url = APPS_SCRIPT_URL + '?action=' + action + '&callback=' + callbackId;
+                
+                // Add data parameters
+                for (let key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        url += '&' + key + '=' + encodeURIComponent(JSON.stringify(data[key]));
+                    }
+                }
+                
+                // Define callback function
+                window[callbackId] = function(response) {
+                    delete window[callbackId];
+                    document.body.removeChild(script);
+                    if (response && response.success) {
+                        resolve(response);
+                    } else {
+                        reject(response || { error: 'Unknown error' });
+                    }
+                };
+                
+                script.src = url;
+                document.body.appendChild(script);
+                
+                // Timeout after 10 seconds
+                setTimeout(() => {
+                    if (window[callbackId]) {
+                        delete window[callbackId];
+                        document.body.removeChild(script);
+                        reject({ error: 'Request timeout' });
+                    }
+                }, 10000);
+            });
+        }
+
+        // ==================== API FUNCTIONS ====================
+        async function registerUser(userData) {
+            return jsonpRequest('atafi_register', userData);
+        }
+
+        async function loginUser(email, password) {
+            return jsonpRequest('atafi_login', { email, password });
+        }
+
+        async function getUserProfile(userId) {
+            return jsonpRequest('atafi_getUserProfile', { userId });
+        }
+
+        async function savePrediction(userId, predictionData) {
+            return jsonpRequest('atafi_savePrediction', { userId, ...predictionData });
+        }
+
+        async function getDashboardStats(userId) {
+            return jsonpRequest('atafi_getDashboardStats', { userId });
+        }
+
+        async function getPaymentHistory(userId) {
+            return jsonpRequest('atafi_getPaymentHistory', { userId });
+        }
+
+        async function updateUserProfile(userId, profileData) {
+            return jsonpRequest('atafi_updateUserProfile', { userId, ...profileData });
+        }
+
+        async function sendReportEmail(to, subject, htmlBody) {
+            return jsonpRequest('sendReportEmail', { to, subject, htmlBody });
+        }
 
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
@@ -3254,9 +3306,29 @@
                 const password = document.getElementById('loginPassword').value;
                 
                 showLoading(true);
-                setTimeout(() => {
-                    handleLogin(email, password);
-                }, 1000);
+                try {
+                    const response = await loginUser(email, password);
+                    if (response.success) {
+                        currentUserId = response.userId;
+                        currentUserEmail = response.email;
+                        currentUserName = response.fullName;
+                        
+                        localStorage.setItem('atafi_userId', currentUserId);
+                        localStorage.setItem('atafi_email', currentUserEmail);
+                        localStorage.setItem('atafi_name', currentUserName);
+                        
+                        showNotification('Login successful!', 'success');
+                        document.getElementById('loginModal').style.display = 'none';
+                        
+                        updateNavigationForLoggedInUser();
+                        showUserDashboard();
+                    } else {
+                        showNotification(response.error || 'Login failed', 'error');
+                    }
+                } catch (error) {
+                    showNotification('Login failed: ' + (error.error || 'Unknown error'), 'error');
+                }
+                showLoading(false);
             });
             
             // Signup form
@@ -3279,9 +3351,37 @@
                 }
                 
                 showLoading(true);
-                setTimeout(() => {
-                    handleSignup(fullName, email, phone, password, referralCode);
-                }, 1000);
+                try {
+                    const userData = {
+                        email: email,
+                        fullName: fullName,
+                        phone: phone,
+                        password: password,
+                        referralCode: referralCode
+                    };
+                    
+                    const response = await registerUser(userData);
+                    if (response.success) {
+                        currentUserId = response.userId;
+                        currentUserEmail = email;
+                        currentUserName = fullName;
+                        
+                        localStorage.setItem('atafi_userId', currentUserId);
+                        localStorage.setItem('atafi_email', currentUserEmail);
+                        localStorage.setItem('atafi_name', currentUserName);
+                        
+                        showNotification('Account created successfully!', 'success');
+                        document.getElementById('signupModal').style.display = 'none';
+                        
+                        updateNavigationForLoggedInUser();
+                        showUserDashboard();
+                    } else {
+                        showNotification(response.error || 'Registration failed', 'error');
+                    }
+                } catch (error) {
+                    showNotification('Registration failed: ' + (error.error || 'Unknown error'), 'error');
+                }
+                showLoading(false);
             });
             
             // Contact form
@@ -3296,45 +3396,10 @@
             const ref = urlParams.get('ref');
             if (ref) {
                 document.getElementById('referralCode').value = ref;
-                showNotification('You were referred by a friend! Get 10% off!', 'info');
             }
         });
 
         // ==================== AUTH FUNCTIONS ====================
-        function handleLogin(email, password) {
-            currentUserId = 'user_' + Date.now();
-            currentUserEmail = email;
-            currentUserName = email.split('@')[0];
-            
-            localStorage.setItem('atafi_userId', currentUserId);
-            localStorage.setItem('atafi_email', email);
-            localStorage.setItem('atafi_name', currentUserName);
-            
-            showLoading(false);
-            showNotification('Login successful!', 'success');
-            document.getElementById('loginModal').style.display = 'none';
-            
-            updateNavigationForLoggedInUser();
-            showUserDashboard();
-        }
-
-        function handleSignup(fullName, email, phone, password, referralCode) {
-            currentUserId = 'user_' + Date.now();
-            currentUserEmail = email;
-            currentUserName = fullName;
-            
-            localStorage.setItem('atafi_userId', currentUserId);
-            localStorage.setItem('atafi_email', email);
-            localStorage.setItem('atafi_name', fullName);
-            
-            showLoading(false);
-            showNotification('Account created successfully!', 'success');
-            document.getElementById('signupModal').style.display = 'none';
-            
-            updateNavigationForLoggedInUser();
-            showUserDashboard();
-        }
-
         function logout() {
             localStorage.removeItem('atafi_userId');
             localStorage.removeItem('atafi_email');
@@ -3367,18 +3432,77 @@
         }
 
         // ==================== DASHBOARD FUNCTIONS ====================
-        function showUserDashboard() {
+        async function showUserDashboard() {
             if (!currentUserId) {
                 showNotification('Please login first', 'error');
                 document.getElementById('loginModal').style.display = 'flex';
                 return;
             }
             
-            document.getElementById('dashboardUserName').textContent = currentUserName || 'User';
-            document.getElementById('dashboardEmail').textContent = currentUserEmail || '';
-            document.getElementById('dashboardAvatar').textContent = (currentUserName || 'U').charAt(0).toUpperCase();
-            document.getElementById('referralLink').textContent = `https://atafi-lux.onrender.com/?ref=${currentUserId}`;
+            showLoading(true);
             
+            try {
+                const response = await getUserProfile(currentUserId);
+                if (response.success) {
+                    const profile = response.profile;
+                    
+                    document.getElementById('dashboardUserName').textContent = profile.fullName || 'User';
+                    document.getElementById('dashboardEmail').textContent = profile.email || '';
+                    document.getElementById('dashboardAvatar').textContent = (profile.fullName || 'U').charAt(0).toUpperCase();
+                    document.getElementById('dashboardPlan').textContent = profile.plan || 'Basic Plan';
+                    document.getElementById('referralLink').textContent = `https://atafi-lux.onrender.com/?ref=${currentUserId}`;
+                    
+                    // Business info
+                    if (profile.business) {
+                        document.getElementById('businessNameDisplay').textContent = profile.business.businessName || '-';
+                        document.getElementById('businessIndustry').textContent = profile.business.industry || '-';
+                        document.getElementById('businessRevenue').textContent = profile.business.revenue ? '₦' + profile.business.revenue.toLocaleString() : '₦0';
+                    }
+                    
+                    // Stats
+                    document.getElementById('statsPredictions').textContent = profile.predictions?.length || '0';
+                    
+                    // Calculate average growth
+                    if (profile.predictions && profile.predictions.length > 0) {
+                        const totalGrowth = profile.predictions.reduce((sum, p) => sum + (parseFloat(p.growth) || 0), 0);
+                        const avgGrowth = Math.round(totalGrowth / profile.predictions.length);
+                        document.getElementById('statsAvgGrowth').textContent = avgGrowth + '%';
+                        
+                        // Latest score
+                        const latest = profile.predictions[profile.predictions.length - 1];
+                        document.getElementById('statsLatestScore').textContent = latest.growth || '0';
+                        
+                        // Member since
+                        if (profile.createdAt) {
+                            const date = new Date(profile.createdAt);
+                            document.getElementById('statsMemberDate').textContent = date.getFullYear().toString();
+                        }
+                        
+                        // Load predictions list
+                        const predictionsList = document.getElementById('predictionsList');
+                        predictionsList.innerHTML = '';
+                        
+                        profile.predictions.slice().reverse().forEach(pred => {
+                            const date = new Date(pred.date).toLocaleDateString();
+                            predictionsList.innerHTML += `
+                                <div class="prediction-item">
+                                    <div class="date">${date}</div>
+                                    <div class="stats">
+                                        <div class="stat"><span class="value">${pred.growth}%</span><span class="label">Growth Score</span></div>
+                                        <div class="stat"><span class="value">₦${(pred.revenue/1000000).toFixed(1)}M</span><span class="label">Projected</span></div>
+                                        <div class="stat"><span class="value">${pred.customers || 0}</span><span class="label">Customers</span></div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load dashboard:', error);
+                showNotification('Failed to load dashboard data', 'error');
+            }
+            
+            showLoading(false);
             document.getElementById('userDashboardModal').style.display = 'flex';
         }
 
@@ -3393,7 +3517,35 @@
             });
         }
 
-        function showPaymentHistory() {
+        async function showPaymentHistory() {
+            if (!currentUserId) return;
+            
+            showLoading(true);
+            try {
+                const response = await getPaymentHistory(currentUserId);
+                if (response.success) {
+                    const historyList = document.getElementById('paymentHistoryList');
+                    historyList.innerHTML = '';
+                    
+                    if (response.history && response.history.length > 0) {
+                        response.history.forEach(payment => {
+                            const date = new Date(payment.date).toLocaleDateString();
+                            historyList.innerHTML += `
+                                <div class="prediction-item">
+                                    <div class="date">${date}</div>
+                                    <p><strong>${payment.amount}</strong> - ${payment.remark || 'Payment'}</p>
+                                    <p style="font-size:0.85rem; color:var(--gray-500);">Ref: ${payment.paymentId}</p>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        historyList.innerHTML = '<p style="text-align:center; padding:20px;">No payment history found.</p>';
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load payment history:', error);
+            }
+            showLoading(false);
             document.getElementById('paymentHistoryModal').style.display = 'flex';
         }
 
@@ -3477,6 +3629,194 @@
             document.getElementById('currentStepLabel').textContent = labels[currentStep - 1];
         }
 
+        class BrandPredictor {
+            constructor() {
+                this.formData = {};
+                this.results = {};
+            }
+
+            collectFormData() {
+                this.formData = {
+                    businessName: document.getElementById('businessName')?.value || '',
+                    industry: document.getElementById('industry')?.value || 'other',
+                    monthlyRevenue: parseFloat(document.getElementById('monthlyRevenue')?.value) || 1000000,
+                    marketingChannels: Array.from(document.querySelectorAll('input[name="marketingChannels"]:checked')).map(cb => cb.value),
+                    brandingStatus: document.querySelector('input[name="brandingStatus"]:checked')?.value || 'basic',
+                    socialPresence: document.getElementById('socialPresence')?.value || 'none',
+                    seoRanking: document.getElementById('seoRanking')?.value || 'none',
+                    marketingBudget: parseFloat(document.getElementById('marketingBudget')?.value) || 500000,
+                    conversionRate: parseFloat(document.getElementById('conversionRate')?.value) || 2,
+                    customerLTV: parseFloat(document.getElementById('customerLTV')?.value) || 50000,
+                    fullName: document.getElementById('fullName')?.value || '',
+                    email: document.getElementById('accountEmail')?.value || '',
+                    phone: document.getElementById('phone')?.value || ''
+                };
+                return this.formData;
+            }
+
+            calculateGrowthScore() {
+                let score = 50;
+                if (this.formData.monthlyRevenue > 10000000) score += 15;
+                else if (this.formData.monthlyRevenue > 5000000) score += 10;
+                
+                const channelCount = this.formData.marketingChannels.length;
+                score += Math.min(channelCount * 3, 15);
+                
+                if (this.formData.brandingStatus === 'established') score += 10;
+                else if (this.formData.brandingStatus === 'moderate') score += 7;
+                
+                if (this.formData.socialPresence !== 'none') score += 5;
+                if (this.formData.seoRanking !== 'none') score += 5;
+                
+                return Math.min(100, Math.round(score));
+            }
+
+            calculateGrowth() {
+                let growth = 50;
+                if (this.formData.monthlyRevenue < 1000000) growth *= 1.5;
+                if (this.formData.conversionRate < 2) growth *= 1.4;
+                return Math.round(growth * 100) / 100;
+            }
+
+            calculateLeadIncrease() {
+                let increase = 100;
+                if (this.formData.socialPresence === 'none') increase += 150;
+                if (this.formData.seoRanking === 'none') increase += 100;
+                return Math.min(300, Math.round(increase));
+            }
+
+            generatePredictions() {
+                this.collectFormData();
+                const growthScore = this.calculateGrowthScore();
+                const growthPercentage = this.calculateGrowth();
+                const leadIncrease = this.calculateLeadIncrease();
+                const profitGrowth = 250;
+                
+                this.results = {
+                    growthScore: growthScore,
+                    brandStrength: Math.min(100, growthScore + 15),
+                    marketingEfficiency: Math.min(100, growthScore + 10),
+                    salesConversion: Math.min(100, growthScore + 12),
+                    customerTrust: Math.min(100, growthScore + 20),
+                    growthPercentage: growthPercentage,
+                    leadIncrease: leadIncrease,
+                    profitGrowth: profitGrowth,
+                    projectedRevenue: Math.round(this.formData.monthlyRevenue * 2.5),
+                    projectedCustomers: Math.round((this.formData.monthlyRevenue / 50000) * 3),
+                    marketVisibility: 85,
+                    brandAuthority: 92
+                };
+                return this.results;
+            }
+
+            renderResults() {
+                const results = this.generatePredictions();
+                const data = this.formData;
+                
+                document.getElementById('growthScore').textContent = results.growthScore;
+                document.getElementById('growthScoreMeter').style.width = results.growthScore + '%';
+                document.getElementById('brandStrength').textContent = results.brandStrength + '%';
+                document.getElementById('marketingEfficiency').textContent = results.marketingEfficiency + '%';
+                document.getElementById('salesConversion').textContent = results.salesConversion + '%';
+                document.getElementById('customerTrust').textContent = results.customerTrust + '%';
+                document.getElementById('currentRevenue').textContent = '₦' + data.monthlyRevenue.toLocaleString();
+                document.getElementById('projectedRevenue').textContent = '₦' + results.projectedRevenue.toLocaleString();
+                document.getElementById('leadGrowth').textContent = '+' + results.leadIncrease + '%';
+                document.getElementById('leadGrowthBar').style.width = Math.min(100, results.leadIncrease * 0.33) + '%';
+                document.getElementById('marketVisibility').textContent = results.marketVisibility + '%';
+                document.getElementById('visibilityBar').style.width = results.marketVisibility + '%';
+                document.getElementById('brandAuthority').textContent = results.brandAuthority + '%';
+                document.getElementById('authorityBar').style.width = results.brandAuthority + '%';
+                
+                const businessName = data.businessName || 'Your Brand';
+                const initials = businessName.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('businessInitials').textContent = initials;
+                
+                this.createRevenueChart();
+            }
+
+            createRevenueChart() {
+                const ctx = document.getElementById('revenueChart')?.getContext('2d');
+                if (!ctx) return;
+                if (window.revenueChart) window.revenueChart.destroy();
+                
+                window.revenueChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                        datasets: [{
+                            label: 'Weekly Revenue (₦)',
+                            data: [250000, 400000, 700000, 1200000],
+                            borderColor: '#d4af37',
+                            backgroundColor: 'rgba(212,175,55,0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                });
+            }
+
+            async saveToDatabase() {
+                if (!currentUserId) {
+                    // User is not logged in, we can't save prediction
+                    console.log('User not logged in, prediction not saved');
+                    return false;
+                }
+                
+                try {
+                    await savePrediction(currentUserId, {
+                        growthPercentage: this.results.growthPercentage,
+                        projectedRevenue: this.results.projectedRevenue,
+                        projectedCustomers: this.results.projectedCustomers,
+                        projectedROI: this.results.profitGrowth
+                    });
+                    return true;
+                } catch (error) {
+                    console.error('Failed to save prediction:', error);
+                    return false;
+                }
+            }
+
+            async sendEmails() {
+                const data = this.formData;
+                const results = this.results;
+                
+                const clientEmail = `
+                    <div style="font-family:Arial;max-width:600px;margin:0 auto;background:#0a0a0f;padding:40px;border-radius:30px;color:#fff;">
+                        <h1 style="color:#d4af37;">Your Atafi Luxury Growth Report</h1>
+                        <p>Hello ${data.fullName},</p>
+                        <div style="background:rgba(255,255,255,0.1);padding:20px;border-radius:15px;">
+                            <p><strong>Growth Score:</strong> ${results.growthScore}/100</p>
+                            <p><strong>Projected Revenue:</strong> ₦${results.projectedRevenue.toLocaleString()}</p>
+                            <p><strong>Lead Increase:</strong> +${results.leadIncrease}%</p>
+                        </div>
+                        <p>Access your dashboard: <a href="https://atafi-lux.onrender.com/" style="color:#d4af37;">Click here</a></p>
+                    </div>
+                `;
+                
+                const agencyEmail = `
+                    <div style="font-family:Arial;max-width:600px;margin:0 auto;background:#0a0a0f;padding:40px;border-radius:30px;color:#fff;">
+                        <h1 style="color:#ff3b9c;">🚀 NEW LEAD - Atafi Luxury</h1>
+                        <p><strong>Business:</strong> ${data.businessName}</p>
+                        <p><strong>Name:</strong> ${data.fullName}</p>
+                        <p><strong>Email:</strong> ${data.email}</p>
+                        <p><strong>Phone:</strong> ${data.phone || 'Not provided'}</p>
+                        <p><strong>Industry:</strong> ${data.industry}</p>
+                        <p><strong>Revenue:</strong> ₦${data.monthlyRevenue.toLocaleString()}</p>
+                        <p><strong>Growth Score:</strong> ${results.growthScore}</p>
+                    </div>
+                `;
+                
+                try {
+                    await sendReportEmail(data.email, 'Your Atafi Luxury Growth Report', clientEmail);
+                    await sendReportEmail(AGENCY_EMAIL, `New Lead: ${data.businessName}`, agencyEmail);
+                } catch (error) {
+                    console.error('Failed to send emails:', error);
+                }
+            }
+        }
+
         async function generateReport() {
             const businessName = document.getElementById('businessName')?.value;
             const fullName = document.getElementById('fullName')?.value;
@@ -3494,57 +3834,30 @@
             
             showLoading(true);
             
-            setTimeout(() => {
-                const growthScore = Math.floor(Math.random() * 30) + 70;
-                document.getElementById('growthScore').textContent = growthScore;
-                document.getElementById('growthScoreMeter').style.width = growthScore + '%';
-                document.getElementById('brandStrength').textContent = (growthScore + 5) + '%';
-                document.getElementById('marketingEfficiency').textContent = (growthScore - 10) + '%';
-                document.getElementById('salesConversion').textContent = (growthScore - 5) + '%';
-                document.getElementById('customerTrust').textContent = (growthScore + 8) + '%';
-                document.getElementById('currentRevenue').textContent = '₦1,000,000';
-                document.getElementById('projectedRevenue').textContent = '₦2,500,000';
-                document.getElementById('leadGrowth').textContent = '+200%';
-                document.getElementById('leadGrowthBar').style.width = '75%';
-                document.getElementById('marketVisibility').textContent = '85%';
-                document.getElementById('visibilityBar').style.width = '85%';
-                document.getElementById('brandAuthority').textContent = '92%';
-                document.getElementById('authorityBar').style.width = '92%';
+            try {
+                const predictor = new BrandPredictor();
+                predictor.renderResults();
                 
-                const businessName = document.getElementById('businessName')?.value || 'Your Brand';
-                const initials = businessName.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase();
-                document.getElementById('businessInitials').textContent = initials;
+                // If user is logged in, save prediction to their account
+                if (currentUserId) {
+                    await predictor.saveToDatabase();
+                }
                 
-                createRevenueChart();
+                // Send emails
+                await predictor.sendEmails();
                 
                 showLoading(false);
                 document.getElementById('predictor').style.display = 'none';
                 document.getElementById('resultsDashboard').style.display = 'block';
                 document.getElementById('resultsDashboard').scrollIntoView({ behavior: 'smooth' });
                 startUrgencyTimer();
+                
                 showNotification('Report generated successfully!', 'success');
-            }, 2000);
-        }
-
-        function createRevenueChart() {
-            const ctx = document.getElementById('revenueChart')?.getContext('2d');
-            if (!ctx) return;
-            if (window.revenueChart) window.revenueChart.destroy();
-            window.revenueChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                    datasets: [{
-                        label: 'Weekly Revenue (₦)',
-                        data: [250000, 400000, 700000, 1200000],
-                        borderColor: '#d4af37',
-                        backgroundColor: 'rgba(212,175,55,0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
+            } catch (error) {
+                showLoading(false);
+                showNotification('Error generating report: ' + (error.message || 'Unknown error'), 'error');
+                console.error('Generate report error:', error);
+            }
         }
 
         function startUrgencyTimer() {
