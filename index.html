@@ -2079,7 +2079,7 @@
     <!-- Hero Section -->
     <section class="predictor-hero" id="home">
         <div class="hero-content">
-            <h1>Discover Your <span class="gradient-text">30-Day Brand Transformation</span> Potential</h1>
+            <h1>Discover Your <span class="gradient-text">30-Day Brand Transformation</span> Potential (powered by KRO Media)</h1>
             <p class="hero-subtitle">Answer 8 simple questions and see exactly how Atafi Luxury can multiply your revenue, authority, and market presence.</p>
             <div class="hero-stats">
                 <div class="stat">
@@ -3147,7 +3147,7 @@
     <!-- Notification Toast -->
     <div class="notification-toast" id="notificationToast"></div>
 
-    <!-- ========== UPDATED JAVASCRIPT - WORKING INTEGRATION ========== -->
+    <!-- ========== COMPLETE FIXED JAVASCRIPT WITH REAL GOOGLE SHEETS INTEGRATION ========== -->
     <script>
         // ==================== CONFIGURATION ====================
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwIeS5iTDIfOdyfkk8DnuUTuYfsEQ5SwUflN2Km4i3wZlXhOrK68R2EJF-FjijHyR1p/exec';
@@ -3163,53 +3163,122 @@
         let currentUserId = localStorage.getItem('atafi_userId');
         let currentUserEmail = localStorage.getItem('atafi_email');
         let currentUserName = localStorage.getItem('atafi_name');
-        let revenueChart = null; // Store chart instance globally
+        let revenueChart = null;
 
-        // ==================== IMPROVED API FUNCTION ====================
-        async function apiRequest(action, data = {}) {
-            // Create form data for POST request (better for Apps Script)
-            const formData = new FormData();
-            formData.append('action', action);
-            formData.append('data', JSON.stringify(data));
-            
-            try {
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: formData,
-                    mode: 'no-cors' // This is important - with no-cors we can't read response
-                });
+        // ==================== JSONP HELPER FUNCTION ====================
+        function jsonpRequest(action, data) {
+            return new Promise((resolve, reject) => {
+                const callbackId = 'callback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                const script = document.createElement('script');
                 
-                // With no-cors, we assume success
-                // The actual result will be visible in your Google Sheets
-                console.log(`Request sent: ${action}`, data);
-                return { success: true };
+                // Build URL with parameters
+                let url = APPS_SCRIPT_URL + '?action=' + action + '&callback=' + callbackId;
                 
-            } catch (error) {
-                console.error('API Error:', error);
-                // Return success anyway so the UI still works
-                return { success: true, offline: true };
-            }
+                // Add data as JSON string
+                url += '&data=' + encodeURIComponent(JSON.stringify(data));
+                
+                // Define callback function
+                window[callbackId] = function(response) {
+                    delete window[callbackId];
+                    document.body.removeChild(script);
+                    
+                    if (response && response.success) {
+                        resolve(response);
+                    } else {
+                        reject(response || { error: 'Unknown error' });
+                    }
+                };
+                
+                script.src = url;
+                document.body.appendChild(script);
+                
+                // Timeout after 15 seconds
+                setTimeout(() => {
+                    if (window[callbackId]) {
+                        delete window[callbackId];
+                        document.body.removeChild(script);
+                        reject({ error: 'Request timeout' });
+                    }
+                }, 15000);
+            });
         }
 
         // ==================== API FUNCTIONS ====================
         async function registerUser(userData) {
-            return apiRequest('atafi_register', userData);
+            return jsonpRequest('atafi_register', userData);
         }
 
         async function loginUser(email, password) {
-            return apiRequest('atafi_login', { email, password });
+            return jsonpRequest('atafi_login', { email, password });
         }
 
         async function getUserProfile(userId) {
-            return apiRequest('atafi_getUserProfile', { userId });
+            return jsonpRequest('atafi_getUserProfile', { userId });
         }
 
         async function savePrediction(userId, predictionData) {
-            return apiRequest('atafi_savePrediction', { userId, ...predictionData });
+            return jsonpRequest('atafi_savePrediction', { userId, ...predictionData });
         }
 
         async function sendReportEmail(to, subject, htmlBody) {
-            return apiRequest('sendReportEmail', { to, subject, htmlBody });
+            return jsonpRequest('sendReportEmail', { to, subject, htmlBody });
+        }
+
+        // ==================== LOAD USER DATA FROM GOOGLE SHEETS ====================
+        async function loadUserDataFromSheets(userId) {
+            try {
+                const response = await getUserProfile(userId);
+                
+                if (response && response.success) {
+                    const profile = response.profile;
+                    
+                    // Update localStorage with data from Google Sheets
+                    localStorage.setItem('atafi_userId', profile.userId);
+                    localStorage.setItem('atafi_email', profile.email);
+                    localStorage.setItem('atafi_name', profile.fullName);
+                    
+                    if (profile.business) {
+                        localStorage.setItem('atafi_businessName', profile.business.businessName || '');
+                        localStorage.setItem('atafi_industry', profile.business.industry || '');
+                        localStorage.setItem('atafi_revenue', profile.business.revenue ? '₦' + profile.business.revenue.toLocaleString() : '₦0');
+                    }
+                    
+                    if (profile.predictions && profile.predictions.length > 0) {
+                        localStorage.setItem('atafi_predictions', profile.predictions.length.toString());
+                        
+                        // Calculate average growth
+                        const totalGrowth = profile.predictions.reduce((sum, p) => sum + (parseFloat(p.growth) || 0), 0);
+                        const avgGrowth = Math.round(totalGrowth / profile.predictions.length);
+                        localStorage.setItem('atafi_avgGrowth', avgGrowth + '%');
+                        
+                        // Latest score
+                        const latest = profile.predictions[profile.predictions.length - 1];
+                        localStorage.setItem('atafi_latestScore', latest.growth.toString());
+                        
+                        // Build predictions list HTML
+                        let predictionsHtml = '';
+                        profile.predictions.slice().reverse().forEach(pred => {
+                            const date = new Date(pred.date).toLocaleDateString();
+                            predictionsHtml += `
+                                <div class="prediction-item">
+                                    <div class="date">${date}</div>
+                                    <div class="stats">
+                                        <div class="stat"><span class="value">${pred.growth}%</span><span class="label">Growth Score</span></div>
+                                        <div class="stat"><span class="value">₦${(pred.revenue/1000000).toFixed(1)}M</span><span class="label">Projected</span></div>
+                                        <div class="stat"><span class="value">${pred.customers || 0}</span><span class="label">Customers</span></div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        localStorage.setItem('atafi_predictionsList', predictionsHtml);
+                    }
+                    
+                    return true;
+                }
+            } catch (error) {
+                console.error('Failed to load user data from sheets:', error);
+                return false;
+            }
         }
 
         // ==================== INITIALIZATION ====================
@@ -3273,42 +3342,51 @@
                 if (e.target.classList.contains('modal')) e.target.style.display = 'none';
             });
             
-            // Login form - SIMPLIFIED
+            // Login form
             document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
                 
                 showLoading(true);
                 
-                // Simulate successful login (since no-cors prevents reading response)
-                setTimeout(() => {
-                    currentUserId = 'user_' + Date.now();
-                    currentUserEmail = email;
-                    currentUserName = email.split('@')[0];
+                try {
+                    const response = await loginUser(email, password);
                     
-                    localStorage.setItem('atafi_userId', currentUserId);
-                    localStorage.setItem('atafi_email', currentUserEmail);
-                    localStorage.setItem('atafi_name', currentUserName);
-                    
-                    showNotification('Login successful!', 'success');
-                    document.getElementById('loginModal').style.display = 'none';
-                    
-                    updateNavigationForLoggedInUser();
-                    showUserDashboard();
-                    showLoading(false);
-                }, 1500);
+                    if (response && response.success) {
+                        currentUserId = response.userId;
+                        currentUserEmail = response.email;
+                        currentUserName = response.fullName;
+                        
+                        localStorage.setItem('atafi_userId', currentUserId);
+                        localStorage.setItem('atafi_email', currentUserEmail);
+                        localStorage.setItem('atafi_name', currentUserName);
+                        
+                        showNotification('Login successful!', 'success');
+                        document.getElementById('loginModal').style.display = 'none';
+                        
+                        updateNavigationForLoggedInUser();
+                        await loadUserDataFromSheets(currentUserId);
+                        showUserDashboard();
+                    } else {
+                        showNotification(response?.error || 'Login failed', 'error');
+                    }
+                } catch (error) {
+                    showNotification('Login failed: ' + (error.error || error.message || 'Unknown error'), 'error');
+                }
                 
-                // Actually send to Apps Script in background
-                loginUser(email, document.getElementById('loginPassword').value).catch(console.warn);
+                showLoading(false);
             });
             
-            // Signup form - SIMPLIFIED
+            // Signup form
             document.getElementById('signupForm')?.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const fullName = document.getElementById('signupFullName').value;
                 const email = document.getElementById('signupEmail').value;
+                const phone = document.getElementById('signupPhone').value;
                 const password = document.getElementById('signupPassword').value;
                 const confirm = document.getElementById('signupConfirmPassword').value;
+                const referralCode = document.getElementById('signupReferralCode').value;
                 
                 if (password !== confirm) {
                     showNotification('Passwords do not match', 'error');
@@ -3321,31 +3399,40 @@
                 
                 showLoading(true);
                 
-                // Simulate successful signup
-                setTimeout(() => {
-                    currentUserId = 'user_' + Date.now();
-                    currentUserEmail = email;
-                    currentUserName = fullName;
+                try {
+                    const userData = {
+                        email: email,
+                        fullName: fullName,
+                        phone: phone,
+                        password: password,
+                        referralCode: referralCode
+                    };
                     
-                    localStorage.setItem('atafi_userId', currentUserId);
-                    localStorage.setItem('atafi_email', currentUserEmail);
-                    localStorage.setItem('atafi_name', currentUserName);
+                    const response = await registerUser(userData);
                     
-                    showNotification('Account created successfully!', 'success');
-                    document.getElementById('signupModal').style.display = 'none';
-                    
-                    updateNavigationForLoggedInUser();
-                    showUserDashboard();
-                    showLoading(false);
-                }, 1500);
+                    if (response && response.success) {
+                        currentUserId = response.userId;
+                        currentUserEmail = email;
+                        currentUserName = fullName;
+                        
+                        localStorage.setItem('atafi_userId', currentUserId);
+                        localStorage.setItem('atafi_email', currentUserEmail);
+                        localStorage.setItem('atafi_name', currentUserName);
+                        
+                        showNotification('Account created successfully!', 'success');
+                        document.getElementById('signupModal').style.display = 'none';
+                        
+                        updateNavigationForLoggedInUser();
+                        await loadUserDataFromSheets(currentUserId);
+                        showUserDashboard();
+                    } else {
+                        showNotification(response?.error || 'Registration failed', 'error');
+                    }
+                } catch (error) {
+                    showNotification('Registration failed: ' + (error.error || error.message || 'Unknown error'), 'error');
+                }
                 
-                // Actually send to Apps Script in background
-                registerUser({
-                    email: email,
-                    fullName: fullName,
-                    phone: document.getElementById('signupPhone').value,
-                    password: password
-                }).catch(console.warn);
+                showLoading(false);
             });
             
             // Contact form
@@ -3406,41 +3493,35 @@
             showLoading(true);
             
             try {
-                // Show user data from localStorage
-                document.getElementById('dashboardUserName').textContent = currentUserName || 'User';
-                document.getElementById('dashboardEmail').textContent = currentUserEmail || '';
-                document.getElementById('dashboardAvatar').textContent = (currentUserName || 'U').charAt(0).toUpperCase();
+                // First, load fresh data from Google Sheets
+                await loadUserDataFromSheets(currentUserId);
+                
+                // Then display from localStorage (which now has fresh sheet data)
+                document.getElementById('dashboardUserName').textContent = localStorage.getItem('atafi_name') || 'User';
+                document.getElementById('dashboardEmail').textContent = localStorage.getItem('atafi_email') || '';
+                document.getElementById('dashboardAvatar').textContent = (localStorage.getItem('atafi_name') || 'U').charAt(0).toUpperCase();
                 document.getElementById('dashboardPlan').textContent = 'Basic Plan';
                 document.getElementById('referralLink').textContent = `https://atafi-lux.onrender.com/?ref=${currentUserId}`;
                 
-                // Business info (you can make these editable later)
+                // Business info
                 document.getElementById('businessNameDisplay').textContent = localStorage.getItem('atafi_businessName') || 'Your Business';
                 document.getElementById('businessIndustry').textContent = localStorage.getItem('atafi_industry') || 'Retail';
                 document.getElementById('businessRevenue').textContent = localStorage.getItem('atafi_revenue') || '₦1,000,000';
                 
                 // Stats
-                document.getElementById('statsPredictions').textContent = localStorage.getItem('atafi_predictions') || '3';
-                document.getElementById('statsAvgGrowth').textContent = localStorage.getItem('atafi_avgGrowth') || '78%';
-                document.getElementById('statsLatestScore').textContent = localStorage.getItem('atafi_latestScore') || '82';
+                document.getElementById('statsPredictions').textContent = localStorage.getItem('atafi_predictions') || '0';
+                document.getElementById('statsAvgGrowth').textContent = localStorage.getItem('atafi_avgGrowth') || '0%';
+                document.getElementById('statsLatestScore').textContent = localStorage.getItem('atafi_latestScore') || '0';
                 document.getElementById('statsMemberDate').textContent = new Date().getFullYear().toString();
                 
-                // Load predictions list from localStorage
+                // Load predictions list
                 const predictionsList = document.getElementById('predictionsList');
                 const savedPredictions = localStorage.getItem('atafi_predictionsList');
                 
                 if (savedPredictions) {
                     predictionsList.innerHTML = savedPredictions;
                 } else {
-                    predictionsList.innerHTML = `
-                        <div class="prediction-item">
-                            <div class="date">${new Date().toLocaleDateString()}</div>
-                            <div class="stats">
-                                <div class="stat"><span class="value">82%</span><span class="label">Growth Score</span></div>
-                                <div class="stat"><span class="value">₦2.5M</span><span class="label">Projected</span></div>
-                                <div class="stat"><span class="value">+156%</span><span class="label">Growth</span></div>
-                            </div>
-                        </div>
-                    `;
+                    predictionsList.innerHTML = '<p style="text-align:center; padding:20px;">No predictions yet. Generate your first report!</p>';
                 }
             } catch (error) {
                 console.error('Dashboard error:', error);
@@ -3544,11 +3625,6 @@
                     phone: document.getElementById('phone')?.value || ''
                 };
                 
-                // Save business info to localStorage for dashboard
-                localStorage.setItem('atafi_businessName', this.formData.businessName);
-                localStorage.setItem('atafi_industry', this.formData.industry);
-                localStorage.setItem('atafi_revenue', '₦' + this.formData.monthlyRevenue.toLocaleString());
-                
                 return this.formData;
             }
 
@@ -3636,13 +3712,8 @@
                 const ctx = document.getElementById('revenueChart')?.getContext('2d');
                 if (!ctx) return;
                 
-                // Safely destroy existing chart
                 if (revenueChart) {
-                    try {
-                        revenueChart.destroy();
-                    } catch (e) {
-                        console.log('Chart destroy error (ignored):', e);
-                    }
+                    try { revenueChart.destroy(); } catch (e) {}
                     revenueChart = null;
                 }
                 
@@ -3668,36 +3739,55 @@
             }
 
             async saveToDatabase() {
-                if (!currentUserId) return false;
+                if (!currentUserId) {
+                    // Register user first
+                    const userData = {
+                        email: this.formData.email,
+                        fullName: this.formData.fullName,
+                        phone: this.formData.phone,
+                        password: this.formData.password || 'temp_' + Date.now(),
+                        businessName: this.formData.businessName,
+                        industry: this.formData.industry,
+                        monthlyRevenue: this.formData.monthlyRevenue
+                    };
+                    
+                    try {
+                        const response = await registerUser(userData);
+                        if (response && response.success) {
+                            currentUserId = response.userId;
+                            currentUserEmail = this.formData.email;
+                            currentUserName = this.formData.fullName;
+                            
+                            localStorage.setItem('atafi_userId', currentUserId);
+                            localStorage.setItem('atafi_email', currentUserEmail);
+                            localStorage.setItem('atafi_name', currentUserName);
+                        } else {
+                            throw new Error(response?.error || 'Registration failed');
+                        }
+                    } catch (error) {
+                        console.error('Failed to register user:', error);
+                        throw error;
+                    }
+                }
                 
-                // Save to localStorage for dashboard
-                localStorage.setItem('atafi_predictions', '3');
-                localStorage.setItem('atafi_avgGrowth', this.results.growthPercentage + '%');
-                localStorage.setItem('atafi_latestScore', this.results.growthScore.toString());
-                
-                const predictionHtml = `
-                    <div class="prediction-item">
-                        <div class="date">${new Date().toLocaleDateString()}</div>
-                        <div class="stats">
-                            <div class="stat"><span class="value">${this.results.growthScore}%</span><span class="label">Growth Score</span></div>
-                            <div class="stat"><span class="value">₦${(this.results.projectedRevenue/1000000).toFixed(1)}M</span><span class="label">Projected</span></div>
-                            <div class="stat"><span class="value">+${this.results.growthPercentage}%</span><span class="label">Growth</span></div>
-                        </div>
-                    </div>
-                `;
-                
-                const existing = localStorage.getItem('atafi_predictionsList') || '';
-                localStorage.setItem('atafi_predictionsList', predictionHtml + existing);
-                
-                // Send to Apps Script in background
-                savePrediction(currentUserId, {
-                    growthPercentage: this.results.growthPercentage,
-                    projectedRevenue: this.results.projectedRevenue,
-                    projectedCustomers: this.results.projectedCustomers,
-                    projectedROI: this.results.profitGrowth
-                }).catch(console.warn);
-                
-                return true;
+                // Save prediction
+                try {
+                    const response = await savePrediction(currentUserId, {
+                        growthPercentage: this.results.growthPercentage,
+                        projectedRevenue: this.results.projectedRevenue,
+                        projectedCustomers: this.results.projectedCustomers,
+                        projectedROI: this.results.profitGrowth
+                    });
+                    
+                    if (!response || !response.success) {
+                        throw new Error('Failed to save prediction');
+                    }
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Failed to save prediction:', error);
+                    throw error;
+                }
             }
 
             async sendEmails() {
@@ -3730,9 +3820,12 @@
                     </div>
                 `;
                 
-                // Send in background
-                sendReportEmail(data.email, 'Your Atafi Luxury Growth Report', clientEmail).catch(console.warn);
-                sendReportEmail(AGENCY_EMAIL, `New Lead: ${data.businessName}`, agencyEmail).catch(console.warn);
+                try {
+                    await sendReportEmail(data.email, 'Your Atafi Luxury Growth Report', clientEmail);
+                    await sendReportEmail(AGENCY_EMAIL, `New Lead: ${data.businessName}`, agencyEmail);
+                } catch (error) {
+                    console.error('Failed to send emails:', error);
+                }
             }
         }
 
@@ -3757,29 +3850,11 @@
                 const predictor = new BrandPredictor();
                 predictor.renderResults();
                 
-                // If user is logged in, save prediction to their account
-                if (currentUserId) {
-                    await predictor.saveToDatabase();
-                } else {
-                    // Create account automatically
-                    currentUserId = 'user_' + Date.now();
-                    currentUserEmail = email;
-                    currentUserName = fullName;
-                    
-                    localStorage.setItem('atafi_userId', currentUserId);
-                    localStorage.setItem('atafi_email', currentUserEmail);
-                    localStorage.setItem('atafi_name', currentUserName);
-                    
-                    // Save business info
-                    localStorage.setItem('atafi_businessName', businessName);
-                    localStorage.setItem('atafi_industry', document.getElementById('industry')?.value || 'other');
-                    
-                    await predictor.saveToDatabase();
-                    updateNavigationForLoggedInUser();
-                }
+                // Save to Google Sheets (this will also create user account if needed)
+                await predictor.saveToDatabase();
                 
-                // Send emails in background
-                predictor.sendEmails().catch(console.warn);
+                // Send emails
+                await predictor.sendEmails();
                 
                 showLoading(false);
                 document.getElementById('predictor').style.display = 'none';
@@ -3787,10 +3862,10 @@
                 document.getElementById('resultsDashboard').scrollIntoView({ behavior: 'smooth' });
                 startUrgencyTimer();
                 
-                showNotification('Report generated successfully!', 'success');
+                showNotification('Report generated and saved to your account! Check your email.', 'success');
             } catch (error) {
                 showLoading(false);
-                showNotification('Error generating report: ' + error.message, 'error');
+                showNotification('Error: ' + (error.error || error.message || 'Unknown error'), 'error');
                 console.error('Generate report error:', error);
             }
         }
