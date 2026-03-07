@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atafi Luxury - Admin Dashboard</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #d4af37;
+            --primary-dark: #b38f2c;
+            --secondary: #1a1a1a;
+            --dark: #0a0a0f;
+            --light: #f5f5f5;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f0f2f5;
+        }
+
+        /* Login Page */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+        }
+
+        .login-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-card h1 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .login-card p {
+            color: #666;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .login-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: var(--secondary);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212,175,55,0.3);
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100%;
+            background: var(--secondary);
+            color: white;
+            padding: 2rem 1rem;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            text-align: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            color: #ccc;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(212,175,55,0.2);
+            color: var(--primary);
+        }
+
+        .sidebar-menu i {
+            width: 20px;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .page-title h2 {
+            color: var(--secondary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            padding: 0.5rem 1.5rem;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(212,175,55,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .stat-info h3 {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-info .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        /* Tables */
+        .table-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-header h3 {
+            color: var(--secondary);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-box input {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            width: 300px;
+        }
+
+        .search-box button {
+            padding: 0.5rem 1.5rem;
+            background: var(--primary);
+            color: var(--secondary);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem 0.5rem;
+            background: #f8f9fa;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem 0.5rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: rgba(40,167,69,0.1);
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: rgba(255,193,7,0.1);
+            color: var(--warning);
+        }
+
+        .plan-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            background: rgba(212,175,55,0.1);
+            color: var(--primary);
+        }
+
+        .action-btn {
+            padding: 0.3rem 0.8rem;
+            margin: 0 0.2rem;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .edit-btn {
+            background: var(--info);
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background: #138496;
+        }
+
+        .delete-btn {
+            background: var(--danger);
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            color: var(--secondary);
+        }
+
+        .close-modal {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-modal:hover {
+            color: var(--danger);
+        }
+
+        .modal-form .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .modal-form label {
+            display: block;
+            margin-bottom: 0.3rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .modal-form input,
+        .modal-form select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+        }
+
+        .modal-form input:focus,
+        .modal-form select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: var(--secondary);
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        /* Loading */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(212,175,55,0.3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Notification */
+        .notification-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-left: 4px solid var(--primary);
+            display: none;
+            z-index: 3000;
+        }
+
+        .notification-toast.success {
+            border-left-color: var(--success);
+        }
+
+        .notification-toast.error {
+            border-left-color: var(--danger);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div class="login-container" id="loginPage">
+        <div class="login-card">
+            <h1>⚡ Atafi Luxury Admin</h1>
+            <p>Enter your credentials to access the dashboard</p>
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="login-btn">Login to Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <i class="fas fa-crown"></i> Atafi Admin
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" onclick="showSection('overview')"><i class="fas fa-tachometer-alt"></i> Overview</a></li>
+                <li><a href="#" onclick="showSection('users')"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="#" onclick="showSection('predictions')"><i class="fas fa-chart-line"></i> Predictions</a></li>
+                <li><a href="#" onclick="showSection('payments')"><i class="fas fa-credit-card"></i> Payments</a></li>
+                <li><a href="#" onclick="showSection('settings')"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h2 id="pageTitle">Overview</h2>
+                </div>
+                <div class="user-info">
+                    <span><i class="fas fa-user-shield"></i> Admin</span>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <!-- Overview Section -->
+            <div id="overviewSection">
+                <div class="stats-grid" id="statsGrid">
+                    <!-- Stats will be loaded here -->
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <!-- Recent Users -->
+                    <div class="table-container">
+                        <h3>Recent Users</h3>
+                        <table id="recentUsersTable">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Plan</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentUsersBody">
+                                <tr><td colspan="3">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Recent Payments -->
+                    <div class="table-container">
+                        <h3>Recent Payments</h3>
+                        <table id="recentPaymentsTable">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentPaymentsBody">
+                                <tr><td colspan="3">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Section -->
+            <div id="usersSection" style="display: none;">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>All Users</h3>
+                        <div class="search-box">
+                            <input type="text" id="userSearch" placeholder="Search users...">
+                            <button onclick="searchUsers()"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Business</th>
+                                <th>Plan</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersBody">
+                            <tr><td colspan="7">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Predictions Section -->
+            <div id="predictionsSection" style="display: none;">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>All Predictions</h3>
+                    </div>
+                    <table id="predictionsTable">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Growth %</th>
+                                <th>Projected Revenue</th>
+                                <th>Customers</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="predictionsBody">
+                            <tr><td colspan="5">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Payments Section -->
+            <div id="paymentsSection" style="display: none;">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Payment History</h3>
+                    </div>
+                    <table id="paymentsTable">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Amount</th>
+                                <th>Reference</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentsBody">
+                            <tr><td colspan="4">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settingsSection" style="display: none;">
+                <div class="table-container">
+                    <h3>Admin Settings</h3>
+                    <p>Coming soon: Change password, notification settings, etc.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal" id="editUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit User</h3>
+                <span class="close-modal" onclick="closeEditModal()">&times;</span>
+            </div>
+            <form class="modal-form" id="editUserForm">
+                <input type="hidden" id="editUserId">
+                <div class="form-group">
+                    <label>Plan</label>
+                    <select id="editPlan">
+                        <option value="Basic">Basic</option>
+                        <option value="Pro">Professional</option>
+                        <option value="Enterprise">Enterprise</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="editStatus">
+                        <option value="active">Active</option>
+                        <option value="pending">Pending</option>
+                        <option value="suspended">Suspended</option>
+                    </select>
+                </div>
+                <button type="submit" class="save-btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="notification-toast" id="notificationToast"></div>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzbzUMwAbIicxA9T14DKZXZBG5da1UIu2I08bJFrVZxVwTEUK95FgPFWSv2py6B5Pd5/exec'; // Replace with your Apps Script URL
+        let adminLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+
+        // ==================== JSONP HELPER ====================
+        function jsonpRequest(action, data) {
+            return new Promise((resolve, reject) => {
+                const callbackId = 'callback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                const script = document.createElement('script');
+                
+                let url = APPS_SCRIPT_URL + '?action=' + action + '&callback=' + callbackId;
+                url += '&data=' + encodeURIComponent(JSON.stringify(data));
+                
+                window[callbackId] = function(response) {
+                    delete window[callbackId];
+                    document.body.removeChild(script);
+                    
+                    if (response && response.success) {
+                        resolve(response);
+                    } else {
+                        reject(response || { error: 'Unknown error' });
+                    }
+                };
+                
+                script.src = url;
+                document.body.appendChild(script);
+                
+                setTimeout(() => {
+                    if (window[callbackId]) {
+                        delete window[callbackId];
+                        document.body.removeChild(script);
+                        reject({ error: 'Request timeout' });
+                    }
+                }, 15000);
+            });
+        }
+
+        // ==================== API FUNCTIONS ====================
+        async function adminLogin(username, password) {
+            return jsonpRequest('admin_login', { username, password });
+        }
+
+        async function getDashboardStats() {
+            return jsonpRequest('admin_getDashboardStats', {});
+        }
+
+        async function getAllUsers() {
+            return jsonpRequest('admin_getAllUsers', {});
+        }
+
+        async function getAllPredictions() {
+            return jsonpRequest('admin_getAllPredictions', {});
+        }
+
+        async function updateUser(userId, plan, status) {
+            return jsonpRequest('admin_updateUser', { userId, plan, status });
+        }
+
+        async function deleteUser(userId) {
+            return jsonpRequest('admin_deleteUser', { userId });
+        }
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            if (adminLoggedIn) {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadDashboardData();
+            }
+        });
+
+        // ==================== LOGIN ====================
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            showLoading(true);
+            
+            try {
+                const response = await adminLogin(username, password);
+                
+                if (response && response.success) {
+                    localStorage.setItem('adminLoggedIn', 'true');
+                    document.getElementById('loginPage').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    loadDashboardData();
+                    showNotification('Login successful!', 'success');
+                } else {
+                    showNotification(response?.error || 'Login failed', 'error');
+                }
+            } catch (error) {
+                showNotification('Login failed: ' + (error.error || error.message), 'error');
+            }
+            
+            showLoading(false);
+        });
+
+        // ==================== LOGOUT ====================
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'flex';
+            showNotification('Logged out successfully', 'success');
+        }
+
+        // ==================== SECTION NAVIGATION ====================
+        function showSection(section) {
+            document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+            event.target.closest('a').classList.add('active');
+            
+            document.getElementById('overviewSection').style.display = 'none';
+            document.getElementById('usersSection').style.display = 'none';
+            document.getElementById('predictionsSection').style.display = 'none';
+            document.getElementById('paymentsSection').style.display = 'none';
+            document.getElementById('settingsSection').style.display = 'none';
+            
+            document.getElementById(section + 'Section').style.display = 'block';
+            document.getElementById('pageTitle').textContent = section.charAt(0).toUpperCase() + section.slice(1);
+            
+            if (section === 'overview') loadDashboardData();
+            if (section === 'users') loadUsers();
+            if (section === 'predictions') loadPredictions();
+            if (section === 'payments') loadPayments();
+        }
+
+        // ==================== LOAD DASHBOARD DATA ====================
+        async function loadDashboardData() {
+            showLoading(true);
+            
+            try {
+                const response = await getDashboardStats();
+                
+                if (response && response.success) {
+                    const stats = response.stats;
+                    
+                    // Update stats grid
+                    document.getElementById('statsGrid').innerHTML = `
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-users"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Users</h3>
+                                <div class="number">${stats.totalUsers}</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+                            <div class="stat-info">
+                                <h3>Active Users</h3>
+                                <div class="number">${stats.activeUsers}</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                            <div class="stat-info">
+                                <h3>Predictions</h3>
+                                <div class="number">${stats.totalPredictions}</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-credit-card"></i></div>
+                            <div class="stat-info">
+                                <h3>Revenue</h3>
+                                <div class="number">₦${stats.totalRevenue.toLocaleString()}</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Update recent users
+                    let usersHtml = '';
+                    stats.recentUsers.forEach(user => {
+                        usersHtml += `
+                            <tr>
+                                <td>${user.email}</td>
+                                <td><span class="plan-badge">${user.plan}</span></td>
+                                <td>${new Date(user.date).toLocaleDateString()}</td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById('recentUsersBody').innerHTML = usersHtml || '<tr><td colspan="3">No recent users</td></tr>';
+                    
+                    // Update recent payments
+                    let paymentsHtml = '';
+                    stats.recentPayments.forEach(payment => {
+                        paymentsHtml += `
+                            <tr>
+                                <td>${payment.email}</td>
+                                <td>₦${payment.amount}</td>
+                                <td>${new Date(payment.date).toLocaleDateString()}</td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById('recentPaymentsBody').innerHTML = paymentsHtml || '<tr><td colspan="3">No recent payments</td></tr>';
+                }
+            } catch (error) {
+                showNotification('Failed to load dashboard data', 'error');
+            }
+            
+            showLoading(false);
+        }
+
+        // ==================== LOAD USERS ====================
+        async function loadUsers() {
+            showLoading(true);
+            
+            try {
+                const response = await getAllUsers();
+                
+                if (response && response.success) {
+                    let html = '';
+                    response.users.forEach(user => {
+                        const statusClass = user.status === 'active' ? 'status-active' : 
+                                           user.status === 'pending' ? 'status-pending' : '';
+                        
+                        html += `
+                            <tr>
+                                <td>${user.fullName || 'N/A'}</td>
+                                <td>${user.email}</td>
+                                <td>${user.phone || 'N/A'}</td>
+                                <td>${user.business.businessName || 'N/A'}</td>
+                                <td><span class="plan-badge">${user.plan || 'Basic'}</span></td>
+                                <td><span class="status-badge ${statusClass}">${user.status || 'pending'}</span></td>
+                                <td>
+                                    <button class="action-btn edit-btn" onclick="editUser('${user.userId}', '${user.plan}', '${user.status}')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn delete-btn" onclick="deleteUser('${user.userId}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById('usersBody').innerHTML = html || '<tr><td colspan="7">No users found</td></tr>';
+                }
+            } catch (error) {
+                showNotification('Failed to load users', 'error');
+            }
+            
+            showLoading(false);
+        }
+
+        // ==================== LOAD PREDICTIONS ====================
+        async function loadPredictions() {
+            showLoading(true);
+            
+            try {
+                const response = await getAllPredictions();
+                
+                if (response && response.success) {
+                    let html = '';
+                    response.predictions.forEach(pred => {
+                        html += `
+                            <tr>
+                                <td>${pred.email}</td>
+                                <td><strong>${pred.growthPercentage}%</strong></td>
+                                <td>₦${pred.projectedRevenue.toLocaleString()}</td>
+                                <td>${pred.projectedCustomers}</td>
+                                <td>${new Date(pred.date).toLocaleDateString()}</td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById('predictionsBody').innerHTML = html || '<tr><td colspan="5">No predictions found</td></tr>';
+                }
+            } catch (error) {
+                showNotification('Failed to load predictions', 'error');
+            }
+            
+            showLoading(false);
+        }
+
+        // ==================== LOAD PAYMENTS ====================
+        async function loadPayments() {
+            showLoading(true);
+            
+            try {
+                const response = await getAllPredictions(); // We'll enhance this later for payments
+                // For now, show a placeholder
+                document.getElementById('paymentsBody').innerHTML = '<tr><td colspan="4">Payment history coming soon</td></tr>';
+            } catch (error) {
+                showNotification('Failed to load payments', 'error');
+            }
+            
+            showLoading(false);
+        }
+
+        // ==================== EDIT USER ====================
+        function editUser(userId, currentPlan, currentStatus) {
+            document.getElementById('editUserId').value = userId;
+            document.getElementById('editPlan').value = currentPlan;
+            document.getElementById('editStatus').value = currentStatus;
+            document.getElementById('editUserModal').style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editUserModal').style.display = 'none';
+        }
+
+        document.getElementById('editUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userId = document.getElementById('editUserId').value;
+            const plan = document.getElementById('editPlan').value;
+            const status = document.getElementById('editStatus').value;
+            
+            showLoading(true);
+            
+            try {
+                const response = await updateUser(userId, plan, status);
+                
+                if (response && response.success) {
+                    showNotification('User updated successfully', 'success');
+                    closeEditModal();
+                    loadUsers(); // Reload users table
+                } else {
+                    showNotification(response?.error || 'Update failed', 'error');
+                }
+            } catch (error) {
+                showNotification('Update failed', 'error');
+            }
+            
+            showLoading(false);
+        });
+
+        // ==================== DELETE USER ====================
+        async function deleteUser(userId) {
+            if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                const response = await deleteUser(userId);
+                
+                if (response && response.success) {
+                    showNotification('User deleted successfully', 'success');
+                    loadUsers(); // Reload users table
+                } else {
+                    showNotification(response?.error || 'Delete failed', 'error');
+                }
+            } catch (error) {
+                showNotification('Delete failed', 'error');
+            }
+            
+            showLoading(false);
+        }
+
+        // ==================== SEARCH USERS ====================
+        function searchUsers() {
+            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#usersBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+        }
+
+        function showNotification(message, type = 'info') {
+            const toast = document.getElementById('notificationToast');
+            toast.textContent = message;
+            toast.className = 'notification-toast ' + type;
+            toast.style.display = 'block';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
