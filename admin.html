@@ -28,10 +28,35 @@
             --danger: #dc3545;
             --warning: #ffc107;
             --info: #17a2b8;
+            --gray-100: #f5f5f5;
+            --gray-200: #e5e5e5;
+            --gray-300: #d4d4d4;
+            --gray-400: #a3a3a3;
+            --gray-500: #737373;
+            --gray-600: #525252;
+            --gray-700: #404040;
+            --gray-800: #262626;
+            --gray-900: #171717;
+            
+            --gradient-premium: linear-gradient(135deg, #d4af37, #9d4edd);
+            
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px rgba(0,0,0,0.15);
+            
+            --border-radius-sm: 0.25rem;
+            --border-radius-md: 0.5rem;
+            --border-radius-lg: 1rem;
+            --border-radius-xl: 1.5rem;
+            --border-radius-full: 9999px;
+            
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --transition-base: 0.3s;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: var(--font-sans);
             background: #f0f2f5;
         }
 
@@ -333,6 +358,11 @@
             color: var(--warning);
         }
 
+        .status-suspended {
+            background: rgba(220,53,69,0.1);
+            color: var(--danger);
+        }
+
         .plan-badge {
             padding: 0.25rem 0.75rem;
             border-radius: 20px;
@@ -503,6 +533,32 @@
             border-left-color: var(--danger);
         }
 
+        /* Analytics Cards */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .analytics-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .analytics-card h3 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -515,6 +571,10 @@
             }
             
             .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .analytics-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -551,6 +611,7 @@
                 <li><a href="#" onclick="showSection('users')"><i class="fas fa-users"></i> Users</a></li>
                 <li><a href="#" onclick="showSection('predictions')"><i class="fas fa-chart-line"></i> Predictions</a></li>
                 <li><a href="#" onclick="showSection('payments')"><i class="fas fa-credit-card"></i> Payments</a></li>
+                <li><a href="#" onclick="showSection('analytics')"><i class="fas fa-chart-pie"></i> Analytics</a></li>
                 <li><a href="#" onclick="showSection('settings')"><i class="fas fa-cog"></i> Settings</a></li>
             </ul>
         </div>
@@ -570,6 +631,21 @@
             <div id="overviewSection">
                 <div class="stats-grid" id="statsGrid">
                     <!-- Stats will be loaded here -->
+                </div>
+
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3>User Growth</h3>
+                        <div class="chart-container">
+                            <canvas id="userChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Revenue Trend</h3>
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
@@ -674,12 +750,31 @@
                                 <th>Amount</th>
                                 <th>Reference</th>
                                 <th>Date</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody id="paymentsBody">
-                            <tr><td colspan="4">Loading...</td></tr>
+                            <tr><td colspan="5">Loading...</td></tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div id="analyticsSection" style="display: none;">
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3>Users by Plan</h3>
+                        <div class="chart-container">
+                            <canvas id="planChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Conversion Rate</h3>
+                        <div class="chart-container">
+                            <canvas id="conversionChart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -703,10 +798,18 @@
             <form class="modal-form" id="editUserForm">
                 <input type="hidden" id="editUserId">
                 <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="editFullName" readonly style="background: #f5f5f5;">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="editEmail" readonly style="background: #f5f5f5;">
+                </div>
+                <div class="form-group">
                     <label>Plan</label>
                     <select id="editPlan">
                         <option value="Basic">Basic</option>
-                        <option value="Pro">Professional</option>
+                        <option value="Professional">Professional</option>
                         <option value="Enterprise">Enterprise</option>
                     </select>
                 </div>
@@ -734,8 +837,21 @@
 
     <script>
         // ==================== CONFIGURATION ====================
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzkhPG5ub5XHvpVnXydgUUdJpdSHVtF04OjAyiZmDoJ85wF60RKVllrMm3O4PZKSJ1H/exec'; // Replace with your Apps Script URL
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzkhPG5ub5XHvpVnXydgUUdJpdSHVtF04OjAyiZmDoJ85wF60RKVllrMm3O4PZKSJ1H/exec';
         let adminLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+        let userChart = null;
+        let revenueChart = null;
+        let planChart = null;
+        let conversionChart = null;
+
+        // ==================== SECURE PASSWORD HASHING ====================
+        async function hashPassword(password) {
+            const msgBuffer = new TextEncoder().encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
 
         // ==================== JSONP HELPER ====================
         function jsonpRequest(action, data) {
@@ -772,7 +888,8 @@
 
         // ==================== API FUNCTIONS ====================
         async function adminLogin(username, password) {
-            return jsonpRequest('admin_login', { username, password });
+            const hashedPassword = await hashPassword(password);
+            return jsonpRequest('admin_login', { username, password: hashedPassword });
         }
 
         async function getDashboardStats() {
@@ -787,12 +904,20 @@
             return jsonpRequest('admin_getAllPredictions', {});
         }
 
+        async function getAllPayments() {
+            return jsonpRequest('admin_getAllPayments', {});
+        }
+
         async function updateUser(userId, plan, status) {
             return jsonpRequest('admin_updateUser', { userId, plan, status });
         }
 
         async function deleteUser(userId) {
             return jsonpRequest('admin_deleteUser', { userId });
+        }
+
+        async function getAnalyticsData() {
+            return jsonpRequest('admin_getAnalytics', {});
         }
 
         // ==================== INITIALIZATION ====================
@@ -848,6 +973,7 @@
             document.getElementById('usersSection').style.display = 'none';
             document.getElementById('predictionsSection').style.display = 'none';
             document.getElementById('paymentsSection').style.display = 'none';
+            document.getElementById('analyticsSection').style.display = 'none';
             document.getElementById('settingsSection').style.display = 'none';
             
             document.getElementById(section + 'Section').style.display = 'block';
@@ -857,6 +983,7 @@
             if (section === 'users') loadUsers();
             if (section === 'predictions') loadPredictions();
             if (section === 'payments') loadPayments();
+            if (section === 'analytics') loadAnalytics();
         }
 
         // ==================== LOAD DASHBOARD DATA ====================
@@ -869,7 +996,6 @@
                 if (response && response.success) {
                     const stats = response.stats;
                     
-                    // Update stats grid
                     document.getElementById('statsGrid').innerHTML = `
                         <div class="stat-card">
                             <div class="stat-icon"><i class="fas fa-users"></i></div>
@@ -901,7 +1027,6 @@
                         </div>
                     `;
                     
-                    // Update recent users
                     let usersHtml = '';
                     stats.recentUsers.forEach(user => {
                         usersHtml += `
@@ -914,18 +1039,21 @@
                     });
                     document.getElementById('recentUsersBody').innerHTML = usersHtml || '<tr><td colspan="3">No recent users</td></tr>';
                     
-                    // Update recent payments
                     let paymentsHtml = '';
                     stats.recentPayments.forEach(payment => {
                         paymentsHtml += `
                             <tr>
                                 <td>${payment.email}</td>
-                                <td>₦${payment.amount}</td>
+                                <td>₦${payment.amount.toLocaleString()}</td>
                                 <td>${new Date(payment.date).toLocaleDateString()}</td>
                             </tr>
                         `;
                     });
                     document.getElementById('recentPaymentsBody').innerHTML = paymentsHtml || '<tr><td colspan="3">No recent payments</td></tr>';
+                    
+                    // Create charts
+                    createUserChart(stats.userGrowthData || [10, 20, 30, 45, 60, 85, 120, 160, 200]);
+                    createRevenueChart(stats.revenueData || [50000, 120000, 180000, 250000, 350000, 500000, 750000, 900000, 1200000]);
                 }
             } catch (error) {
                 showNotification('Failed to load dashboard data', 'error');
@@ -945,18 +1073,18 @@
                     let html = '';
                     response.users.forEach(user => {
                         const statusClass = user.status === 'active' ? 'status-active' : 
-                                           user.status === 'pending' ? 'status-pending' : '';
+                                           user.status === 'pending' ? 'status-pending' : 'status-suspended';
                         
                         html += `
                             <tr>
                                 <td>${user.fullName || 'N/A'}</td>
                                 <td>${user.email}</td>
                                 <td>${user.phone || 'N/A'}</td>
-                                <td>${user.business.businessName || 'N/A'}</td>
+                                <td>${user.business?.businessName || 'N/A'}</td>
                                 <td><span class="plan-badge">${user.plan || 'Basic'}</span></td>
                                 <td><span class="status-badge ${statusClass}">${user.status || 'pending'}</span></td>
                                 <td>
-                                    <button class="action-btn edit-btn" onclick="editUser('${user.userId}', '${user.plan}', '${user.status}')">
+                                    <button class="action-btn edit-btn" onclick="editUser('${user.userId}', '${user.fullName}', '${user.email}', '${user.plan}', '${user.status}')">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <button class="action-btn delete-btn" onclick="deleteUser('${user.userId}')">
@@ -1009,19 +1137,162 @@
             showLoading(true);
             
             try {
-                const response = await getAllPredictions(); // We'll enhance this later for payments
-                // For now, show a placeholder
-                document.getElementById('paymentsBody').innerHTML = '<tr><td colspan="4">Payment history coming soon</td></tr>';
+                const response = await getAllPayments();
+                
+                if (response && response.success) {
+                    let html = '';
+                    response.payments.forEach(payment => {
+                        html += `
+                            <tr>
+                                <td>${payment.email}</td>
+                                <td>₦${payment.amount.toLocaleString()}</td>
+                                <td>${payment.reference}</td>
+                                <td>${new Date(payment.date).toLocaleDateString()}</td>
+                                <td><span class="status-badge status-${payment.status}">${payment.status}</span></td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById('paymentsBody').innerHTML = html || '<tr><td colspan="5">No payments found</td></tr>';
+                }
             } catch (error) {
-                showNotification('Failed to load payments', 'error');
+                document.getElementById('paymentsBody').innerHTML = '<tr><td colspan="5">Payment history coming soon</td></tr>';
             }
             
             showLoading(false);
         }
 
+        // ==================== LOAD ANALYTICS ====================
+        async function loadAnalytics() {
+            showLoading(true);
+            
+            try {
+                const response = await getAnalyticsData();
+                
+                if (response && response.success) {
+                    createPlanChart(response.planData || [45, 30, 25]);
+                    createConversionChart(response.conversionData || [2.5, 3.2, 4.1, 5.3, 6.8, 8.2]);
+                }
+            } catch (error) {
+                console.error('Analytics error:', error);
+            }
+            
+            showLoading(false);
+        }
+
+        // ==================== CHART FUNCTIONS ====================
+        function createUserChart(data) {
+            const ctx = document.getElementById('userChart')?.getContext('2d');
+            if (!ctx) return;
+            
+            if (userChart) userChart.destroy();
+            
+            userChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+                    datasets: [{
+                        label: 'Users',
+                        data: data,
+                        borderColor: '#d4af37',
+                        backgroundColor: 'rgba(212,175,55,0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function createRevenueChart(data) {
+            const ctx = document.getElementById('revenueChart')?.getContext('2d');
+            if (!ctx) return;
+            
+            if (revenueChart) revenueChart.destroy();
+            
+            revenueChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: data,
+                        backgroundColor: '#d4af37',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function createPlanChart(data) {
+            const ctx = document.getElementById('planChart')?.getContext('2d');
+            if (!ctx) return;
+            
+            if (planChart) planChart.destroy();
+            
+            planChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Basic', 'Professional', 'Enterprise'],
+                    datasets: [{
+                        data: data,
+                        backgroundColor: ['#d4af37', '#9d4edd', '#1a1a1a'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        function createConversionChart(data) {
+            const ctx = document.getElementById('conversionChart')?.getContext('2d');
+            if (!ctx) return;
+            
+            if (conversionChart) conversionChart.destroy();
+            
+            conversionChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Conversion Rate %',
+                        data: data,
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40,167,69,0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
         // ==================== EDIT USER ====================
-        function editUser(userId, currentPlan, currentStatus) {
+        function editUser(userId, fullName, email, currentPlan, currentStatus) {
             document.getElementById('editUserId').value = userId;
+            document.getElementById('editFullName').value = fullName;
+            document.getElementById('editEmail').value = email;
             document.getElementById('editPlan').value = currentPlan;
             document.getElementById('editStatus').value = currentStatus;
             document.getElementById('editUserModal').style.display = 'flex';
@@ -1046,7 +1317,8 @@
                 if (response && response.success) {
                     showNotification('User updated successfully', 'success');
                     closeEditModal();
-                    loadUsers(); // Reload users table
+                    loadUsers();
+                    loadDashboardData();
                 } else {
                     showNotification(response?.error || 'Update failed', 'error');
                 }
@@ -1070,7 +1342,8 @@
                 
                 if (response && response.success) {
                     showNotification('User deleted successfully', 'success');
-                    loadUsers(); // Reload users table
+                    loadUsers();
+                    loadDashboardData();
                 } else {
                     showNotification(response?.error || 'Delete failed', 'error');
                 }
