@@ -1,0 +1,22 @@
+# ========== SECURITY HEADERS ==========
+# Block access to all hidden files (starting with .)
+RedirectMatch 404 /\..*$
+
+# Specifically block .DS_Store
+<FilesMatch "\.(DS_Store|localized|Spotlight-V100|Trashes|apdisk)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Disable directory browsing
+Options -Indexes
+
+# Protect sensitive files
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql|bak|config|yml|json|lock)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# ========== IF YOU USE RENDER ==========
+# Render.com uses Nginx - you'll need to add these in your
+# build settings or use a custom nginx.conf file
