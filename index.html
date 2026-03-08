@@ -698,7 +698,7 @@
             box-shadow: var(--shadow-lg);
         }
 
-        /* ========== RESULTS DASHBOARD ========== */
+        /* ========== RESULTS DASHBOARD (Original Beautiful Version) ========== */
         .results-dashboard {
             padding: 5rem 5%;
             background: var(--dark);
@@ -712,13 +712,9 @@
             margin: 0 auto;
         }
 
-        .results-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
         .results-title {
             font-size: 2.5rem;
+            text-align: center;
             margin-bottom: 0.5rem;
             background: var(--gradient-premium);
             -webkit-background-clip: text;
@@ -727,7 +723,9 @@
         }
 
         .results-subtitle {
+            text-align: center;
             color: var(--gray-400);
+            margin-bottom: 3rem;
             font-size: 1.1rem;
         }
 
@@ -1344,6 +1342,224 @@
             margin-right: 0.5rem;
         }
 
+        /* ========== MODAL STYLES ========== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: var(--border-radius-lg);
+            max-width: 900px;
+            width: 95%;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: sticky;
+            top: 0;
+            float: right;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--gray-500);
+            transition: color var(--transition-base);
+            z-index: 10;
+            background: white;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: -10px -10px 0 0;
+        }
+
+        .close-modal:hover {
+            color: var(--danger);
+            background: #f0f0f0;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-modal {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient-premium);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            font-size: 1rem;
+        }
+
+        .btn-modal:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .plan-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            transition: transform 0.3s;
+            border: 1px solid var(--gray-200);
+        }
+
+        .plan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .plan-card.popular {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(157, 78, 221, 0.05));
+            border: 2px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .plan-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+
+        .plan-price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin: 20px 0;
+            padding: 0;
+        }
+
+        .plan-features li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-check {
+            color: var(--success);
+        }
+
+        .feature-times {
+            color: var(--danger);
+            opacity: 0.5;
+        }
+
+        /* ========== LOADING OVERLAY ========== */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: var(--white);
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(212,175,55,0.3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========== NOTIFICATION TOAST ========== */
+        .notification-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            color: var(--secondary);
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-xl);
+            z-index: 10001;
+            border-left: 4px solid var(--primary);
+            animation: slideInRight 0.3s ease;
+            display: none;
+        }
+
+        .notification-toast.success {
+            border-left-color: var(--success);
+        }
+
+        .notification-toast.error {
+            border-left-color: var(--danger);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
         /* ========== RESPONSIVE ========== */
         @media (max-width: 968px) {
             .menu-toggle {
@@ -1900,7 +2116,7 @@
                     </div>
                 </div>
 
-                <!-- STEP 8: REVIEW & GENERATE (Removed account creation) -->
+                <!-- STEP 8: READY TO SEE YOUR GROWTH -->
                 <div class="form-step" id="step8">
                     <h2 class="step-title">📊 Ready to See Your Growth</h2>
                     <p class="step-description">Click the button below to generate your personalized growth report</p>
@@ -1935,11 +2151,13 @@
 
     <!-- RESULTS DASHBOARD (Hidden initially) -->
     <section class="results-dashboard" id="resultsDashboard">
-        <!-- Results will be dynamically populated by JavaScript -->
+        <div class="results-container">
+            <!-- Results will be dynamically populated by JavaScript -->
+        </div>
     </section>
 
-    <!-- SUBSCRIPTION MODAL (Keep for future use) -->
-    <div id="subscriptionModal" class="modal" style="display: none;">
+    <!-- SUBSCRIPTION MODAL -->
+    <div id="subscriptionModal" class="modal">
         <div class="modal-content wide scrollable">
             <span class="close-modal" onclick="closeSubscriptionModal()">&times;</span>
             <h2 style="text-align: center; margin-bottom: 10px;">Choose Your Growth Plan</h2>
@@ -2030,845 +2248,520 @@
     <!-- Notification Toast -->
     <div class="notification-toast" id="notificationToast"></div>
 
-    <style>
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            overflow-y: auto;
-            padding: 20px;
-        }
+    <script>
+        // ==================== GLOBAL VARIABLES ====================
+        let currentStep = 1;
+        const totalSteps = 8;
+        let revenueChart = null;
 
-        .modal-content {
-            background: white;
-            padding: 2.5rem;
-            border-radius: var(--border-radius-lg);
-            max-width: 900px;
-            width: 95%;
-            position: relative;
-            animation: modalSlideIn 0.3s ease;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .close-modal {
-            position: sticky;
-            top: 0;
-            float: right;
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: var(--gray-500);
-            transition: color var(--transition-base);
-            z-index: 10;
-            background: white;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            margin: -10px -10px 0 0;
-        }
-
-        .close-modal:hover {
-            color: var(--danger);
-            background: #f0f0f0;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .btn-modal {
-            width: 100%;
-            padding: 1rem;
-            background: var(--gradient-premium);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius-md);
-            font-weight: bold;
-            cursor: pointer;
-            transition: all var(--transition-base);
-            font-size: 1rem;
-        }
-
-        .btn-modal:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .plan-card {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border-radius: 15px;
-            padding: 25px;
-            position: relative;
-            transition: transform 0.3s;
-            border: 1px solid var(--gray-200);
-        }
-
-        .plan-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .plan-card.popular {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(157, 78, 221, 0.05));
-            border: 2px solid var(--primary);
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
-        }
-
-        .popular-badge {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--primary);
-            color: white;
-            padding: 5px 20px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
-
-        .plan-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-        }
-
-        .plan-price {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--primary);
-            margin-bottom: 5px;
-        }
-
-        .plan-features {
-            list-style: none;
-            margin: 20px 0;
-            padding: 0;
-        }
-
-        .plan-features li {
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .feature-check {
-            color: var(--success);
-        }
-
-        .feature-times {
-            color: var(--danger);
-            opacity: 0.5;
-        }
-
-        /* Loading Overlay */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            color: var(--white);
-        }
-
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(212,175,55,0.3);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Notification Toast */
-        .notification-toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            color: var(--secondary);
-            padding: 1rem 2rem;
-            border-radius: var(--border-radius-md);
-            box-shadow: var(--shadow-xl);
-            z-index: 10001;
-            border-left: 4px solid var(--primary);
-            animation: slideInRight 0.3s ease;
-            display: none;
-        }
-
-        .notification-toast.success {
-            border-left-color: var(--success);
-        }
-
-        .notification-toast.error {
-            border-left-color: var(--danger);
-        }
-
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(100%);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-    </style>
-
-<script>
-    // ==================== GLOBAL VARIABLES ====================
-    let currentStep = 1;
-    const totalSteps = 8;
-    let revenueChart = null;
-
-    // ==================== LIVE ACTIVITY FUNCTIONS ====================
-    function startLiveActivity() {
-        const activities = [
-            { name: 'John from Lagos', action: 'just started the assessment' },
-            { name: 'Sarah from Abuja', action: 'received her growth report' },
-            { name: 'Michael from Port Harcourt', action: 'subscribed to Pro plan' },
-            { name: 'Amara from Enugu', action: 'viewed brand preview' },
-            { name: 'David from Kano', action: 'downloaded his roadmap' },
-            { name: 'Grace from Ibadan', action: 'upgraded to Enterprise' }
-        ];
-        
-        // Update the viewer count randomly
-        setInterval(() => {
-            const liveActivity = document.getElementById('liveActivity');
-            if (liveActivity) {
+        // ==================== LIVE ACTIVITY FUNCTIONS ====================
+        function startLiveActivity() {
+            const activities = [
+                { name: 'John from Lagos', action: 'just started the assessment' },
+                { name: 'Sarah from Abuja', action: 'received her growth report' },
+                { name: 'Michael from Port Harcourt', action: 'subscribed to Pro plan' },
+                { name: 'Amara from Enugu', action: 'viewed brand preview' },
+                { name: 'David from Kano', action: 'downloaded his roadmap' },
+                { name: 'Grace from Ibadan', action: 'upgraded to Enterprise' }
+            ];
+            
+            setInterval(() => {
                 const viewers = Math.floor(Math.random() * 8) + 3;
-                liveActivity.innerHTML = `<i class="fas fa-users"></i> ${viewers} people are viewing this page right now`;
+                document.getElementById('liveActivity').innerHTML = 
+                    `<i class="fas fa-users"></i> ${viewers} people are viewing this page right now`;
+            }, 30000);
+            
+            setInterval(() => {
+                const activity = activities[Math.floor(Math.random() * activities.length)];
+                showLiveToast(`${activity.name} ${activity.action}`);
+            }, 45000);
+        }
+
+        function showLiveToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'live-toast';
+            toast.innerHTML = `<i class="fas fa-bell"></i> ${message}`;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 4000);
+        }
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('mobile-menu');
+            const navLinks = document.getElementById('nav-links');
+            if (menuToggle && navLinks) {
+                menuToggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    navLinks.classList.toggle('active');
+                });
             }
-        }, 30000);
-        
-        // Show random activity toasts
-        setInterval(() => {
-            const activity = activities[Math.floor(Math.random() * activities.length)];
-            showLiveToast(`${activity.name} ${activity.action}`);
-        }, 45000);
-    }
-
-    function showLiveToast(message) {
-        const toast = document.createElement('div');
-        toast.className = 'live-toast';
-        toast.innerHTML = `<i class="fas fa-bell"></i> ${message}`;
-        document.body.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.remove();
-        }, 4000);
-    }
-
-    // ==================== INITIALIZATION ====================
-    document.addEventListener('DOMContentLoaded', function() {
-        // Mobile menu
-        const menuToggle = document.getElementById('mobile-menu');
-        const navLinks = document.getElementById('nav-links');
-        if (menuToggle && navLinks) {
-            menuToggle.addEventListener('click', function() {
-                this.classList.toggle('active');
-                navLinks.classList.toggle('active');
+            
+            document.getElementById('monthlyRevenue')?.addEventListener('input', function() {
+                document.getElementById('revenueValue').textContent = parseInt(this.value).toLocaleString();
             });
+            
+            document.getElementById('marketingBudget')?.addEventListener('input', function() {
+                document.getElementById('budgetValue').textContent = parseInt(this.value).toLocaleString();
+            });
+            
+            document.getElementById('conversionRate')?.addEventListener('input', function() {
+                document.getElementById('conversionValue').textContent = this.value;
+            });
+            
+            document.getElementById('revenueGoal')?.addEventListener('input', function() {
+                document.getElementById('revenueGoalValue').textContent = parseInt(this.value).toLocaleString();
+            });
+            
+            startLiveActivity();
+        });
+
+        // ==================== MODAL FUNCTIONS ====================
+        function showSubscriptionModal() { 
+            document.getElementById('subscriptionModal').style.display = 'flex'; 
         }
         
-        // Sliders
-        const monthlyRevenue = document.getElementById('monthlyRevenue');
-        if (monthlyRevenue) {
-            monthlyRevenue.addEventListener('input', function() {
-                const revenueValue = document.getElementById('revenueValue');
-                if (revenueValue) revenueValue.textContent = parseInt(this.value).toLocaleString();
-            });
+        function closeSubscriptionModal() { 
+            document.getElementById('subscriptionModal').style.display = 'none'; 
         }
-        
-        const marketingBudget = document.getElementById('marketingBudget');
-        if (marketingBudget) {
-            marketingBudget.addEventListener('input', function() {
-                const budgetValue = document.getElementById('budgetValue');
-                if (budgetValue) budgetValue.textContent = parseInt(this.value).toLocaleString();
-            });
+
+        // ==================== PREDICTOR FUNCTIONS ====================
+        function startAssessment() {
+            document.getElementById('predictor').scrollIntoView({ behavior: 'smooth' });
         }
-        
-        const conversionRate = document.getElementById('conversionRate');
-        if (conversionRate) {
-            conversionRate.addEventListener('input', function() {
-                const conversionValue = document.getElementById('conversionValue');
-                if (conversionValue) conversionValue.textContent = this.value;
-            });
+
+        function nextStep(step) {
+            document.getElementById(`step${step}`).classList.remove('active');
+            currentStep = step + 1;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            updateProgress();
         }
-        
-        const revenueGoal = document.getElementById('revenueGoal');
-        if (revenueGoal) {
-            revenueGoal.addEventListener('input', function() {
-                const revenueGoalValue = document.getElementById('revenueGoalValue');
-                if (revenueGoalValue) revenueGoalValue.textContent = parseInt(this.value).toLocaleString();
-            });
+
+        function prevStep(step) {
+            document.getElementById(`step${step}`).classList.remove('active');
+            currentStep = step - 1;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            updateProgress();
         }
-        
-        // Start live activity
-        startLiveActivity();
-    });
 
-    // ==================== MODAL FUNCTIONS ====================
-    function showSubscriptionModal() { 
-        const modal = document.getElementById('subscriptionModal');
-        if (modal) modal.style.display = 'flex'; 
-    }
-    
-    function closeSubscriptionModal() { 
-        const modal = document.getElementById('subscriptionModal');
-        if (modal) modal.style.display = 'none'; 
-    }
-
-    // ==================== PREDICTOR FUNCTIONS ====================
-    function startAssessment() {
-        const predictor = document.getElementById('predictor');
-        if (predictor) predictor.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function nextStep(step) {
-        const currentStepEl = document.getElementById(`step${step}`);
-        const nextStepEl = document.getElementById(`step${step + 1}`);
-        
-        if (currentStepEl) currentStepEl.classList.remove('active');
-        if (nextStepEl) nextStepEl.classList.add('active');
-        
-        currentStep = step + 1;
-        updateProgress();
-    }
-
-    function prevStep(step) {
-        const currentStepEl = document.getElementById(`step${step}`);
-        const prevStepEl = document.getElementById(`step${step - 1}`);
-        
-        if (currentStepEl) currentStepEl.classList.remove('active');
-        if (prevStepEl) prevStepEl.classList.add('active');
-        
-        currentStep = step - 1;
-        updateProgress();
-    }
-
-    function updateProgress() {
-        const progressBar = document.getElementById('progressBar');
-        if (progressBar) {
+        function updateProgress() {
             const progress = (currentStep / totalSteps) * 100;
-            progressBar.style.width = progress + '%';
-        }
-        
-        document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
-        const currentStepEl = document.querySelector(`.step[data-step="${currentStep}"]`);
-        if (currentStepEl) currentStepEl.classList.add('active');
-        
-        const stepLabel = document.getElementById('currentStepLabel');
-        const labels = ['Business Foundation','Market & Customers','Brand Strategy','Digital Presence','Marketing Performance','Sales System','Goals & Vision','Generate Report'];
-        if (stepLabel) stepLabel.textContent = labels[currentStep - 1];
-    }
-
-    class BrandPredictor {
-        constructor() {
-            this.formData = {};
-            this.results = {};
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+            const labels = ['Business Foundation','Market & Customers','Brand Strategy','Digital Presence','Marketing Performance','Sales System','Goals & Vision','Generate Report'];
+            document.getElementById('currentStepLabel').textContent = labels[currentStep - 1];
         }
 
-        collectFormData() {
-            this.formData = {
-                businessName: document.getElementById('businessName')?.value || 'Your Business',
-                industry: document.getElementById('industry')?.value || 'other',
-                monthlyRevenue: parseFloat(document.getElementById('monthlyRevenue')?.value) || 1000000,
-                marketingChannels: Array.from(document.querySelectorAll('input[name="marketingChannels"]:checked')).map(cb => cb.value),
-                brandingStatus: document.querySelector('input[name="brandingStatus"]:checked')?.value || 'basic',
-                socialPresence: document.getElementById('socialPresence')?.value || 'none',
-                seoRanking: document.getElementById('seoRanking')?.value || 'none',
-                marketingBudget: parseFloat(document.getElementById('marketingBudget')?.value) || 500000,
-                conversionRate: parseFloat(document.getElementById('conversionRate')?.value) || 2,
-                customerLTV: parseFloat(document.getElementById('customerLTV')?.value) || 50000,
-                leadsPerMonth: this.getLeadsNumber()
-            };
-            
-            return this.formData;
-        }
-
-        getLeadsNumber() {
-            const leadsValue = document.getElementById('leadsPerMonth')?.value || '50-200';
-            if (leadsValue === '0-10') return 5;
-            if (leadsValue === '10-50') return 30;
-            if (leadsValue === '50-200') return 125;
-            if (leadsValue === '200-1000') return 600;
-            if (leadsValue === '1000+') return 1500;
-            return 100;
-        }
-
-        calculateGrowthScore() {
-            let score = 50;
-            if (this.formData.monthlyRevenue > 10000000) score += 15;
-            else if (this.formData.monthlyRevenue > 5000000) score += 10;
-            
-            const channelCount = this.formData.marketingChannels.length;
-            score += Math.min(channelCount * 3, 15);
-            
-            if (this.formData.brandingStatus === 'established') score += 10;
-            else if (this.formData.brandingStatus === 'moderate') score += 7;
-            
-            if (this.formData.socialPresence !== 'none') score += 5;
-            if (this.formData.seoRanking !== 'none') score += 5;
-            
-            return Math.min(100, Math.round(score));
-        }
-
-        calculateLeadIncrease() {
-            let increase = 100;
-            if (this.formData.socialPresence === 'none') increase += 150;
-            if (this.formData.seoRanking === 'none') increase += 100;
-            return Math.min(300, Math.round(increase));
-        }
-
-        generatePredictions() {
-            this.collectFormData();
-            const growthScore = this.calculateGrowthScore();
-            const leadIncrease = this.calculateLeadIncrease();
-            
-            this.results = {
-                growthScore: growthScore,
-                brandStrength: Math.min(100, growthScore + 15),
-                marketingEfficiency: Math.min(100, growthScore + 10),
-                salesConversion: Math.min(100, growthScore + 12),
-                customerTrust: Math.min(100, growthScore + 20),
-                leadIncrease: leadIncrease,
-                profitGrowth: 250,
-                projectedRevenue: Math.round(this.formData.monthlyRevenue * 2.5),
-                projectedCustomers: Math.round((this.formData.monthlyRevenue / 50000) * 3),
-                marketVisibility: 85,
-                brandAuthority: 92,
-                projectedLeads: Math.round(this.formData.leadsPerMonth * (1 + leadIncrease/100)),
-                currentLeads: this.formData.leadsPerMonth
-            };
-            return this.results;
-        }
-
-        renderResults() {
-            const results = this.generatePredictions();
-            const data = this.formData;
-            
-            // Get the results container
-            const resultsContainer = document.querySelector('.results-container');
-            if (!resultsContainer) {
-                console.error('Results container not found');
-                return;
+        class BrandPredictor {
+            constructor() {
+                this.formData = {};
+                this.results = {};
             }
-            
-            // Build the results HTML
-            const resultsHTML = `
-                <div class="results-header">
-                    <h2 class="results-title">${data.businessName} - 30-Day Brand Transformation Forecast</h2>
+
+            collectFormData() {
+                this.formData = {
+                    businessName: document.getElementById('businessName')?.value || 'Your Business',
+                    industry: document.getElementById('industry')?.value || 'other',
+                    monthlyRevenue: parseFloat(document.getElementById('monthlyRevenue')?.value) || 1000000,
+                    marketingChannels: Array.from(document.querySelectorAll('input[name="marketingChannels"]:checked')).map(cb => cb.value),
+                    brandingStatus: document.querySelector('input[name="brandingStatus"]:checked')?.value || 'basic',
+                    socialPresence: document.getElementById('socialPresence')?.value || 'none',
+                    seoRanking: document.getElementById('seoRanking')?.value || 'none',
+                    leadsPerMonth: this.getLeadsNumber()
+                };
+                
+                return this.formData;
+            }
+
+            getLeadsNumber() {
+                const leadsValue = document.getElementById('leadsPerMonth')?.value || '50-200';
+                if (leadsValue === '0-10') return 5;
+                if (leadsValue === '10-50') return 30;
+                if (leadsValue === '50-200') return 125;
+                if (leadsValue === '200-1000') return 600;
+                if (leadsValue === '1000+') return 1500;
+                return 100;
+            }
+
+            calculateGrowthScore() {
+                let score = 50;
+                if (this.formData.monthlyRevenue > 10000000) score += 15;
+                else if (this.formData.monthlyRevenue > 5000000) score += 10;
+                
+                const channelCount = this.formData.marketingChannels.length;
+                score += Math.min(channelCount * 3, 15);
+                
+                if (this.formData.brandingStatus === 'established') score += 10;
+                else if (this.formData.brandingStatus === 'moderate') score += 7;
+                
+                if (this.formData.socialPresence !== 'none') score += 5;
+                if (this.formData.seoRanking !== 'none') score += 5;
+                
+                return Math.min(100, Math.round(score));
+            }
+
+            calculateLeadIncrease() {
+                let increase = 100;
+                if (this.formData.socialPresence === 'none') increase += 150;
+                if (this.formData.seoRanking === 'none') increase += 100;
+                return Math.min(300, Math.round(increase));
+            }
+
+            generatePredictions() {
+                this.collectFormData();
+                const growthScore = this.calculateGrowthScore();
+                const leadIncrease = this.calculateLeadIncrease();
+                
+                this.results = {
+                    growthScore: growthScore,
+                    brandStrength: Math.min(100, growthScore + 15),
+                    marketingEfficiency: Math.min(100, growthScore + 10),
+                    salesConversion: Math.min(100, growthScore + 12),
+                    customerTrust: Math.min(100, growthScore + 20),
+                    leadIncrease: leadIncrease,
+                    profitGrowth: 250,
+                    projectedRevenue: Math.round(this.formData.monthlyRevenue * 2.5),
+                    projectedCustomers: Math.round((this.formData.monthlyRevenue / 50000) * 3),
+                    marketVisibility: 85,
+                    brandAuthority: 92,
+                    projectedLeads: Math.round(this.formData.leadsPerMonth * (1 + leadIncrease/100)),
+                    currentLeads: this.formData.leadsPerMonth
+                };
+                return this.results;
+            }
+
+            renderResults() {
+                const results = this.generatePredictions();
+                const data = this.formData;
+                
+                const resultsContainer = document.querySelector('.results-container');
+                if (!resultsContainer) return;
+                
+                const businessInitials = data.businessName.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase();
+                
+                resultsContainer.innerHTML = `
+                    <h2 class="results-title" id="resultBusinessName">${data.businessName} - 30-Day Brand Transformation Forecast</h2>
                     <p class="results-subtitle">Based on your business data, here's what Atafi Luxury can achieve for you</p>
-                </div>
 
-                <!-- Growth Score Card -->
-                <div class="growth-score-card">
-                    <div class="score-header">
-                        <span class="score-label">Business Growth Score</span>
-                        <span class="score-value">${results.growthScore}</span>
-                    </div>
-                    <div class="score-meter">
-                        <div class="meter-fill" style="width: ${results.growthScore}%"></div>
-                    </div>
-                    <div class="score-interpretation">${results.growthScore >= 80 ? 'Exceptional growth potential' : results.growthScore >= 60 ? 'Strong growth potential' : results.growthScore >= 40 ? 'Moderate growth potential' : 'Significant transformation needed'}</div>
-                </div>
-
-                <!-- Metrics Grid -->
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-icon"><i class="fas fa-chart-line"></i></div>
-                        <div class="metric-label">Brand Strength</div>
-                        <div class="metric-value">${results.brandStrength}%</div>
-                        <div class="metric-trend up">+${results.brandStrength - 40}%</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-icon"><i class="fas fa-bullhorn"></i></div>
-                        <div class="metric-label">Marketing Efficiency</div>
-                        <div class="metric-value">${results.marketingEfficiency}%</div>
-                        <div class="metric-trend up">+${results.marketingEfficiency - 35}%</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-icon"><i class="fas fa-dollar-sign"></i></div>
-                        <div class="metric-label">Sales Conversion</div>
-                        <div class="metric-value">${results.salesConversion}%</div>
-                        <div class="metric-trend up">+${results.salesConversion - 30}%</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-icon"><i class="fas fa-users"></i></div>
-                        <div class="metric-label">Customer Trust</div>
-                        <div class="metric-value">${results.customerTrust}%</div>
-                        <div class="metric-trend up">+${results.customerTrust - 32}%</div>
-                    </div>
-                </div>
-
-                <!-- Projected Revenue Chart -->
-                <div class="chart-card">
-                    <h3>30-Day Revenue Projection</h3>
-                    <div class="chart-container">
-                        <canvas id="revenueChart"></canvas>
-                    </div>
-                    <div class="projected-numbers">
-                        <div class="projected-item">
-                            <span class="label">Current Monthly Revenue</span>
-                            <span class="value">₦${data.monthlyRevenue.toLocaleString()}</span>
+                    <div class="growth-score-card">
+                        <div class="score-header">
+                            <span class="score-label">Business Growth Score</span>
+                            <span class="score-value" id="growthScore">${results.growthScore}</span>
                         </div>
-                        <div class="projected-arrow"><i class="fas fa-arrow-right"></i></div>
-                        <div class="projected-item highlight">
-                            <span class="label">Projected Revenue (30 Days)</span>
-                            <span class="value">₦${results.projectedRevenue.toLocaleString()}</span>
+                        <div class="score-meter">
+                            <div class="meter-fill" id="growthScoreMeter" style="width: ${results.growthScore}%"></div>
+                        </div>
+                        <div class="score-interpretation">${results.growthScore >= 80 ? 'Exceptional growth potential' : results.growthScore >= 60 ? 'Strong growth potential' : results.growthScore >= 40 ? 'Moderate growth potential' : 'Significant transformation needed'}</div>
+                    </div>
+
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon"><i class="fas fa-chart-line"></i></div>
+                            <div class="metric-label">Brand Strength</div>
+                            <div class="metric-value" id="brandStrength">${results.brandStrength}%</div>
+                            <div class="metric-trend up">+34%</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon"><i class="fas fa-bullhorn"></i></div>
+                            <div class="metric-label">Marketing Efficiency</div>
+                            <div class="metric-value" id="marketingEfficiency">${results.marketingEfficiency}%</div>
+                            <div class="metric-trend up">+28%</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon"><i class="fas fa-dollar-sign"></i></div>
+                            <div class="metric-label">Sales Conversion</div>
+                            <div class="metric-value" id="salesConversion">${results.salesConversion}%</div>
+                            <div class="metric-trend up">+42%</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon"><i class="fas fa-users"></i></div>
+                            <div class="metric-label">Customer Trust</div>
+                            <div class="metric-value" id="customerTrust">${results.customerTrust}%</div>
+                            <div class="metric-trend up">+56%</div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Lead Growth & Market Visibility -->
-                <div class="insights-grid">
-                    <div class="insight-card">
-                        <h4>Lead Growth</h4>
-                        <div class="insight-value">+${results.leadIncrease}%</div>
-                        <div class="insight-bar"><div class="bar-fill" style="width: ${Math.min(100, results.leadIncrease * 0.33)}%"></div></div>
-                        <div style="color: var(--gray-500); margin-top: 0.5rem;">${results.currentLeads} → ${results.projectedLeads} leads/month</div>
-                    </div>
-                    <div class="insight-card">
-                        <h4>Market Visibility</h4>
-                        <div class="insight-value">${results.marketVisibility}%</div>
-                        <div class="insight-bar"><div class="bar-fill" style="width: ${results.marketVisibility}%"></div></div>
-                    </div>
-                    <div class="insight-card">
-                        <h4>Brand Authority</h4>
-                        <div class="insight-value">${results.brandAuthority}%</div>
-                        <div class="insight-bar"><div class="bar-fill" style="width: ${results.brandAuthority}%"></div></div>
-                    </div>
-                </div>
-
-                <!-- Future Brand Visualization -->
-                <div class="future-brand-section">
-                    <h3>Your Future Brand Preview</h3>
-                    <div class="brand-preview-grid">
-                        <div class="logo-preview">
-                            <h4>Logo Concept</h4>
-                            <div class="logo-display"><div class="logo-circle"><span>${data.businessName.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase()}</span></div></div>
+                    <div class="chart-card">
+                        <h3>30-Day Revenue Projection</h3>
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
                         </div>
-                        <div class="color-palette">
-                            <h4>Brand Colors</h4>
-                            <div class="colors">
-                                <div class="color-swatch" style="background: #d4af37"></div>
-                                <div class="color-swatch" style="background: #1a1a1a"></div>
-                                <div class="color-swatch" style="background: #f5f5f5"></div>
-                                <div class="color-swatch" style="background: #9d4edd"></div>
+                        <div class="projected-numbers">
+                            <div class="projected-item">
+                                <span class="label">Current Monthly Revenue</span>
+                                <span class="value" id="currentRevenue">₦${data.monthlyRevenue.toLocaleString()}</span>
+                            </div>
+                            <div class="projected-arrow"><i class="fas fa-arrow-right"></i></div>
+                            <div class="projected-item highlight">
+                                <span class="label">Projected Revenue (30 Days)</span>
+                                <span class="value" id="projectedRevenue">₦${results.projectedRevenue.toLocaleString()}</span>
                             </div>
                         </div>
-                        <div class="website-preview">
-                            <h4>Website Style</h4>
-                            <div class="website-mock"><div class="mock-header"></div><div class="mock-content"></div><div class="mock-footer"></div></div>
+                    </div>
+
+                    <div class="insights-grid">
+                        <div class="insight-card">
+                            <h4>Lead Growth</h4>
+                            <div class="insight-value" id="leadGrowth">+${results.leadIncrease}%</div>
+                            <div class="insight-bar"><div class="bar-fill" id="leadGrowthBar" style="width: ${Math.min(100, results.leadIncrease * 0.33)}%"></div></div>
                         </div>
-                        <div class="social-preview">
-                            <h4>Social Media</h4>
-                            <div class="social-mock"><div class="social-post"></div><div class="social-post"></div></div>
+                        <div class="insight-card">
+                            <h4>Market Visibility</h4>
+                            <div class="insight-value" id="marketVisibility">${results.marketVisibility}%</div>
+                            <div class="insight-bar"><div class="bar-fill" id="visibilityBar" style="width: ${results.marketVisibility}%"></div></div>
+                        </div>
+                        <div class="insight-card">
+                            <h4>Brand Authority</h4>
+                            <div class="insight-value" id="brandAuthority">${results.brandAuthority}%</div>
+                            <div class="insight-bar"><div class="bar-fill" id="authorityBar" style="width: ${results.brandAuthority}%"></div></div>
                         </div>
                     </div>
-                </div>
 
-                <!-- 30-Day Roadmap -->
-                <div class="roadmap-section">
-                    <h3>Your 30-Day Growth Roadmap</h3>
-                    <div class="roadmap-timeline">
-                        <div class="timeline-item"><div class="timeline-week">Week 1</div><div class="timeline-content"><h4>Brand Strategy Development</h4><p>Market research, competitor analysis, positioning strategy</p></div></div>
-                        <div class="timeline-item"><div class="timeline-week">Week 2</div><div class="timeline-content"><h4>Brand Identity Creation</h4><p>Logo design, color palette, typography, brand guidelines</p></div></div>
-                        <div class="timeline-item"><div class="timeline-week">Week 3</div><div class="timeline-content"><h4>Marketing System Launch</h4><p>Social media setup, content strategy, ad campaigns</p></div></div>
-                        <div class="timeline-item"><div class="timeline-week">Week 4</div><div class="timeline-content"><h4>Sales Funnel Activation</h4><p>Email sequences, CRM setup, referral program launch</p></div></div>
-                    </div>
-                </div>
-
-                <!-- Emotional Conversion Section -->
-                <div class="transformation-section">
-                    <h2>Your Business Could Look Like This in 30 Days</h2>
-                    <div class="transformation-grid">
-                        <div class="transformation-card">
-                            <div class="transformation-icon"><i class="fas fa-chart-pie"></i></div>
-                            <div class="transformation-value">₦${Math.round(results.projectedRevenue * 0.35).toLocaleString()}</div>
-                            <div class="transformation-label">Projected Monthly Profit</div>
-                            <div class="transformation-compare"><span class="current">Current: ₦${Math.round(data.monthlyRevenue * 0.25).toLocaleString()}</span><span class="increase">+${results.profitGrowth}%</span></div>
-                        </div>
-                        <div class="transformation-card">
-                            <div class="transformation-icon"><i class="fas fa-crown"></i></div>
-                            <div class="transformation-value">Top 5%</div>
-                            <div class="transformation-label">Market Authority Rank</div>
-                            <div class="transformation-compare"><span class="current">Current: Bottom 50%</span><span class="increase">+45 positions</span></div>
-                        </div>
-                        <div class="transformation-card">
-                            <div class="transformation-icon"><i class="fas fa-users"></i></div>
-                            <div class="transformation-value">${results.projectedCustomers.toLocaleString()}</div>
-                            <div class="transformation-label">Monthly Customers</div>
-                            <div class="transformation-compare"><span class="current">Current: ${Math.round(data.monthlyRevenue / 50000).toLocaleString()}</span><span class="increase">+300%</span></div>
-                        </div>
-                        <div class="transformation-card">
-                            <div class="transformation-icon"><i class="fas fa-trophy"></i></div>
-                            <div class="transformation-value">#1 Choice</div>
-                            <div class="transformation-label">Competitive Position</div>
-                            <div class="transformation-compare"><span class="current">Current: #5</span><span class="increase">+4 positions</span></div>
+                    <div class="future-brand-section">
+                        <h3>Your Future Brand Preview</h3>
+                        <div class="brand-preview-grid">
+                            <div class="logo-preview">
+                                <h4>Logo Concept</h4>
+                                <div class="logo-display" id="logoPreview"><div class="logo-circle"><span id="businessInitials">${businessInitials}</span></div></div>
+                            </div>
+                            <div class="color-palette">
+                                <h4>Brand Colors</h4>
+                                <div class="colors">
+                                    <div class="color-swatch" style="background: #d4af37"></div>
+                                    <div class="color-swatch" style="background: #1a1a1a"></div>
+                                    <div class="color-swatch" style="background: #f5f5f5"></div>
+                                    <div class="color-swatch" style="background: #9d4edd"></div>
+                                </div>
+                            </div>
+                            <div class="website-preview">
+                                <h4>Website Style</h4>
+                                <div class="website-mock"><div class="mock-header"></div><div class="mock-content"></div><div class="mock-footer"></div></div>
+                            </div>
+                            <div class="social-preview">
+                                <h4>Social Media</h4>
+                                <div class="social-mock"><div class="social-post"></div><div class="social-post"></div></div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Before/After Comparison -->
-                <div class="comparison-section">
-                    <h3>Before & After: Your Brand Transformation</h3>
-                    <div class="comparison-grid">
-                        <div class="comparison-card before">
-                            <h4>Before Atafi Luxury</h4>
-                            <ul>
-                                <li><i class="fas fa-times-circle"></i> Inconsistent branding</li>
-                                <li><i class="fas fa-times-circle"></i> Low market visibility</li>
-                                <li><i class="fas fa-times-circle"></i> Manual marketing</li>
-                                <li><i class="fas fa-times-circle"></i> Wasted ad spend</li>
-                                <li><i class="fas fa-times-circle"></i> Low customer trust</li>
-                            </ul>
-                        </div>
-                        <div class="comparison-arrow"><i class="fas fa-arrow-right"></i></div>
-                        <div class="comparison-card after">
-                            <h4>After Atafi Luxury</h4>
-                            <ul>
-                                <li><i class="fas fa-check-circle"></i> Premium brand identity</li>
-                                <li><i class="fas fa-check-circle"></i> Market leadership</li>
-                                <li><i class="fas fa-check-circle"></i> Automated systems</li>
-                                <li><i class="fas fa-check-circle"></i> Optimized campaigns</li>
-                                <li><i class="fas fa-check-circle"></i> High customer loyalty</li>
-                            </ul>
+                    <div class="roadmap-section">
+                        <h3>Your 30-Day Growth Roadmap</h3>
+                        <div class="roadmap-timeline">
+                            <div class="timeline-item"><div class="timeline-week">Week 1</div><div class="timeline-content"><h4>Brand Strategy Development</h4><p>Market research, competitor analysis, positioning strategy</p></div></div>
+                            <div class="timeline-item"><div class="timeline-week">Week 2</div><div class="timeline-content"><h4>Brand Identity Creation</h4><p>Logo design, color palette, typography, brand guidelines</p></div></div>
+                            <div class="timeline-item"><div class="timeline-week">Week 3</div><div class="timeline-content"><h4>Marketing System Launch</h4><p>Social media setup, content strategy, ad campaigns</p></div></div>
+                            <div class="timeline-item"><div class="timeline-week">Week 4</div><div class="timeline-content"><h4>Sales Funnel Activation</h4><p>Email sequences, CRM setup, referral program launch</p></div></div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Urgency Timer -->
-                <div class="urgency-section">
-                    <div class="timer-card">
-                        <i class="fas fa-clock"></i>
-                        <div class="timer-content"><h4>Limited Time Offer</h4><p>Complete your brand transformation before rates increase</p></div>
-                        <div class="timer" id="offerTimer">23:59:59</div>
+                    <div class="transformation-section">
+                        <h2>Your Business Could Look Like This in 30 Days</h2>
+                        <div class="transformation-grid">
+                            <div class="transformation-card">
+                                <div class="transformation-icon"><i class="fas fa-chart-pie"></i></div>
+                                <div class="transformation-value" id="projectedProfit">₦${Math.round(results.projectedRevenue * 0.35).toLocaleString()}</div>
+                                <div class="transformation-label">Projected Monthly Profit</div>
+                                <div class="transformation-compare"><span class="current">Current: <span id="currentProfit">₦${Math.round(data.monthlyRevenue * 0.25).toLocaleString()}</span></span><span class="increase">+${results.profitGrowth}%</span></div>
+                            </div>
+                            <div class="transformation-card">
+                                <div class="transformation-icon"><i class="fas fa-crown"></i></div>
+                                <div class="transformation-value">Top 5%</div>
+                                <div class="transformation-label">Market Authority Rank</div>
+                                <div class="transformation-compare"><span class="current">Current: Bottom 50%</span><span class="increase">+45 positions</span></div>
+                            </div>
+                            <div class="transformation-card">
+                                <div class="transformation-icon"><i class="fas fa-users"></i></div>
+                                <div class="transformation-value" id="projectedCustomers">${results.projectedCustomers.toLocaleString()}</div>
+                                <div class="transformation-label">Monthly Customers</div>
+                                <div class="transformation-compare"><span class="current">Current: <span id="currentCustomers">${Math.round(data.monthlyRevenue / 50000).toLocaleString()}</span></span><span class="increase">+300%</span></div>
+                            </div>
+                            <div class="transformation-card">
+                                <div class="transformation-icon"><i class="fas fa-trophy"></i></div>
+                                <div class="transformation-value">#1 Choice</div>
+                                <div class="transformation-label">Competitive Position</div>
+                                <div class="transformation-compare"><span class="current">Current: #5</span><span class="increase">+4 positions</span></div>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Final CTA -->
-                <div class="final-cta-section">
-                    <h3>Ready to Transform Your Business?</h3>
-                    <p>Join 200+ businesses that have already grown with Atafi Luxury</p>
-                    <div class="cta-buttons">
-                        <button class="btn-primary btn-large" onclick="showSubscriptionModal()"><i class="fas fa-rocket"></i> Start My Brand Transformation</button>
-                        <button class="btn-secondary btn-large" onclick="bookStrategyCall()"><i class="fas fa-phone"></i> Book Strategy Call</button>
+                    <div class="comparison-section">
+                        <h3>Before & After: Your Brand Transformation</h3>
+                        <div class="comparison-grid">
+                            <div class="comparison-card before">
+                                <h4>Before Atafi Luxury</h4>
+                                <ul>
+                                    <li><i class="fas fa-times-circle"></i> Inconsistent branding</li>
+                                    <li><i class="fas fa-times-circle"></i> Low market visibility</li>
+                                    <li><i class="fas fa-times-circle"></i> Manual marketing</li>
+                                    <li><i class="fas fa-times-circle"></i> Wasted ad spend</li>
+                                    <li><i class="fas fa-times-circle"></i> Low customer trust</li>
+                                </ul>
+                            </div>
+                            <div class="comparison-arrow"><i class="fas fa-arrow-right"></i></div>
+                            <div class="comparison-card after">
+                                <h4>After Atafi Luxury</h4>
+                                <ul>
+                                    <li><i class="fas fa-check-circle"></i> Premium brand identity</li>
+                                    <li><i class="fas fa-check-circle"></i> Market leadership</li>
+                                    <li><i class="fas fa-check-circle"></i> Automated systems</li>
+                                    <li><i class="fas fa-check-circle"></i> Optimized campaigns</li>
+                                    <li><i class="fas fa-check-circle"></i> High customer loyalty</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <p class="guarantee"><i class="fas fa-shield-alt"></i> 7-Day Money-Back Guarantee</p>
-                </div>
-            `;
-            
-            // Insert the results HTML
-            resultsContainer.innerHTML = resultsHTML;
-            
-            // Create the chart
-            this.createRevenueChart();
-            
-            // Start urgency timer
-            startUrgencyTimer();
-        }
 
-        createRevenueChart() {
-            // Wait a tiny bit for the canvas to be created
-            setTimeout(() => {
-                const ctx = document.getElementById('revenueChart')?.getContext('2d');
-                if (!ctx) {
-                    console.error('Revenue chart canvas not found');
-                    return;
-                }
+                    <div class="urgency-section">
+                        <div class="timer-card">
+                            <i class="fas fa-clock"></i>
+                            <div class="timer-content"><h4>Limited Time Offer</h4><p>Complete your brand transformation before rates increase</p></div>
+                            <div class="timer" id="offerTimer">23:59:59</div>
+                        </div>
+                    </div>
+
+                    <div class="final-cta-section">
+                        <h3>Ready to Transform Your Business?</h3>
+                        <p>Join 200+ businesses that have already grown with Atafi Luxury</p>
+                        <div class="cta-buttons">
+                            <button class="btn-primary btn-large" onclick="showSubscriptionModal()"><i class="fas fa-rocket"></i> Start My Brand Transformation</button>
+                            <button class="btn-secondary btn-large" onclick="bookStrategyCall()"><i class="fas fa-phone"></i> Book Strategy Call</button>
+                        </div>
+                        <p class="guarantee"><i class="fas fa-shield-alt"></i> 7-Day Money-Back Guarantee</p>
+                    </div>
+                `;
                 
-                if (revenueChart) {
-                    try { revenueChart.destroy(); } catch (e) {}
-                    revenueChart = null;
-                }
-                
-                // Check if Chart is defined
-                if (typeof Chart === 'undefined') {
-                    console.error('Chart.js not loaded');
-                    return;
-                }
-                
-                const weeklyData = [
-                    Math.round(this.formData.monthlyRevenue * 0.25),
-                    Math.round(this.formData.monthlyRevenue * 0.4),
-                    Math.round(this.formData.monthlyRevenue * 0.7),
-                    Math.round(this.formData.monthlyRevenue * 1.2)
-                ];
-                
-                revenueChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                        datasets: [{
-                            label: 'Weekly Revenue (₦)',
-                            data: weeklyData,
-                            borderColor: '#d4af37',
-                            backgroundColor: 'rgba(212,175,55,0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }]
-                    },
-                    options: { 
-                        responsive: true, 
-                        maintainAspectRatio: false, 
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: {
-                                ticks: {
-                                    callback: function(value) {
-                                        return '₦' + (value / 1000000).toFixed(1) + 'M';
-                                    }
-                                }
-                            }
-                        }
+                this.createRevenueChart();
+                startUrgencyTimer();
+            }
+
+            createRevenueChart() {
+                setTimeout(() => {
+                    const ctx = document.getElementById('revenueChart')?.getContext('2d');
+                    if (!ctx) return;
+                    
+                    if (revenueChart) {
+                        try { revenueChart.destroy(); } catch (e) {}
                     }
-                });
-            }, 100);
+                    
+                    if (typeof Chart === 'undefined') return;
+                    
+                    const weeklyData = [
+                        Math.round(this.formData.monthlyRevenue * 0.25),
+                        Math.round(this.formData.monthlyRevenue * 0.4),
+                        Math.round(this.formData.monthlyRevenue * 0.7),
+                        Math.round(this.formData.monthlyRevenue * 1.2)
+                    ];
+                    
+                    revenueChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                            datasets: [{
+                                label: 'Weekly Revenue (₦)',
+                                data: weeklyData,
+                                borderColor: '#d4af37',
+                                backgroundColor: 'rgba(212,175,55,0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }]
+                        },
+                        options: { 
+                            responsive: true, 
+                            maintainAspectRatio: false, 
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                }, 100);
+            }
         }
-    }
 
-    async function generateReport() {
-        const businessName = document.getElementById('businessName')?.value;
-        
-        if (!businessName) { 
-            showNotification('Please enter your business name', 'error'); 
-            return; 
-        }
-        
-        showLoading(true);
-        
-        try {
-            // Small delay to show loading
-            await new Promise(resolve => setTimeout(resolve, 500));
+        async function generateReport() {
+            const businessName = document.getElementById('businessName')?.value;
             
-            const predictor = new BrandPredictor();
-            predictor.collectFormData();
-            predictor.generatePredictions();
+            if (!businessName) { 
+                showNotification('Please enter your business name', 'error'); 
+                return; 
+            }
             
-            // Hide assessment, show results
-            const predictorSection = document.getElementById('predictor');
-            const resultsSection = document.getElementById('resultsDashboard');
+            showLoading(true);
             
-            if (predictorSection) predictorSection.style.display = 'none';
-            if (resultsSection) {
-                resultsSection.style.display = 'block';
+            try {
+                await new Promise(resolve => setTimeout(resolve, 500));
                 
-                // Render the results
+                const predictor = new BrandPredictor();
+                predictor.collectFormData();
+                predictor.generatePredictions();
+                
+                document.getElementById('predictor').style.display = 'none';
+                document.getElementById('resultsDashboard').style.display = 'block';
+                
                 predictor.renderResults();
                 
-                // Scroll to results
-                resultsSection.scrollIntoView({ behavior: 'smooth' });
-            } else {
-                console.error('Results section not found');
+                document.getElementById('resultsDashboard').scrollIntoView({ behavior: 'smooth' });
+                
+                showLoading(false);
+                showNotification('Your growth report is ready!', 'success');
+            } catch (error) {
+                showLoading(false);
+                showNotification('Error: ' + (error.message || 'Unknown error'), 'error');
+                console.error('Generate report error:', error);
             }
-            
-            showLoading(false);
-            showNotification('Your growth report is ready!', 'success');
-        } catch (error) {
-            showLoading(false);
-            showNotification('Error: ' + (error.message || 'Unknown error'), 'error');
-            console.error('Generate report error:', error);
         }
-    }
 
-    function startUrgencyTimer() {
-        const endTime = new Date().getTime() + (24 * 60 * 60 * 1000);
-        const timer = setInterval(() => {
-            const now = new Date().getTime();
-            const distance = endTime - now;
-            const timerEl = document.getElementById('offerTimer');
-            if (timerEl) {
-                const hours = Math.floor((distance % (86400000)) / 3600000);
-                const minutes = Math.floor((distance % 3600000) / 60000);
-                const seconds = Math.floor((distance % 60000) / 1000);
-                timerEl.textContent = String(hours).padStart(2,'0')+':'+String(minutes).padStart(2,'0')+':'+String(seconds).padStart(2,'0');
-            }
-            if (distance < 0) { 
-                clearInterval(timer); 
-                if (timerEl) timerEl.textContent = 'EXPIRED'; 
-            }
-        }, 1000);
-    }
+        function startUrgencyTimer() {
+            const endTime = new Date().getTime() + (24 * 60 * 60 * 1000);
+            const timer = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = endTime - now;
+                const timerEl = document.getElementById('offerTimer');
+                if (timerEl) {
+                    const hours = Math.floor((distance % (86400000)) / 3600000);
+                    const minutes = Math.floor((distance % 3600000) / 60000);
+                    const seconds = Math.floor((distance % 60000) / 1000);
+                    timerEl.textContent = String(hours).padStart(2,'0')+':'+String(minutes).padStart(2,'0')+':'+String(seconds).padStart(2,'0');
+                }
+                if (distance < 0) { 
+                    clearInterval(timer); 
+                    if (timerEl) timerEl.textContent = 'EXPIRED'; 
+                }
+            }, 1000);
+        }
 
-    // ==================== PAYMENT FUNCTIONS ====================
-    function selectPlan(plan) {
-        closeSubscriptionModal();
-        showNotification(`You selected the ${plan} plan. This feature will be available soon.`, 'info');
-    }
+        // ==================== PAYMENT FUNCTIONS ====================
+        function selectPlan(plan) {
+            closeSubscriptionModal();
+            showNotification(`You selected the ${plan} plan. This feature will be available soon.`, 'info');
+        }
 
-    function bookStrategyCall() {
-        window.open('https://calendly.com/fbicuul/atafi-luxury', '_blank');
-        showNotification('Check your email for confirmation!', 'success');
-    }
+        function bookStrategyCall() {
+            window.open('https://calendly.com/fbicuul/atafi-luxury', '_blank');
+            showNotification('Check your email for confirmation!', 'success');
+        }
 
-    // ==================== SUCCESS STORIES & CONTACT ====================
-    function showSuccessStoriesModal() {
-        showNotification('Success stories feature coming soon!', 'info');
-    }
+        // ==================== SUCCESS STORIES & CONTACT ====================
+        function showSuccessStoriesModal() {
+            showNotification('Success stories feature coming soon!', 'info');
+        }
 
-    function showContactModal() {
-        showNotification('Contact feature coming soon!', 'info');
-    }
+        function showContactModal() {
+            showNotification('Contact feature coming soon!', 'info');
+        }
 
-    // ==================== UTILITY FUNCTIONS ====================
-    function showLoading(show) {
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        if (loadingOverlay) loadingOverlay.style.display = show ? 'flex' : 'none';
-    }
+        // ==================== UTILITY FUNCTIONS ====================
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+        }
 
-    function showNotification(message, type = 'info') {
-        const toast = document.getElementById('notificationToast');
-        if (toast) {
+        function showNotification(message, type = 'info') {
+            const toast = document.getElementById('notificationToast');
             toast.textContent = message;
             toast.className = 'notification-toast ' + type;
             toast.style.display = 'block';
             setTimeout(() => toast.style.display = 'none', 4000);
         }
-    }
-
-    // Chart.js fallback check
-    window.addEventListener('load', function() {
-        if (typeof Chart === 'undefined') {
-            console.error('Chart.js failed to load');
-        }
-    });
-</script>
+    </script>
 </body>
 </html>
