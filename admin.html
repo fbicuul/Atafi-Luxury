@@ -8,8 +8,19 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js - Using multiple fallback CDNs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Fallback Chart.js -->
+    <script>
+        window.addEventListener('error', function(e) {
+            if (e.target.tagName === 'SCRIPT' && e.target.src.includes('chart.js')) {
+                console.log('Chart.js failed to load, loading fallback...');
+                const fallbackScript = document.createElement('script');
+                fallbackScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js';
+                document.head.appendChild(fallbackScript);
+            }
+        }, true);
+    </script>
     
     <style>
         * {
@@ -844,15 +855,6 @@
         let planChart = null;
         let conversionChart = null;
 
-        // ==================== SECURE PASSWORD HASHING ====================
-        async function hashPassword(password) {
-            const msgBuffer = new TextEncoder().encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            return hashHex;
-        }
-
         // ==================== JSONP HELPER ====================
         function jsonpRequest(action, data) {
             return new Promise((resolve, reject) => {
@@ -888,8 +890,7 @@
 
         // ==================== API FUNCTIONS ====================
         async function adminLogin(username, password) {
-            const hashedPassword = await hashPassword(password);
-            return jsonpRequest('admin_login', { username, password: hashedPassword });
+            return jsonpRequest('admin_login', { username, password });
         }
 
         async function getDashboardStats() {
@@ -1052,8 +1053,10 @@
                     document.getElementById('recentPaymentsBody').innerHTML = paymentsHtml || '<tr><td colspan="3">No recent payments</td></tr>';
                     
                     // Create charts
-                    createUserChart(stats.userGrowthData || [10, 20, 30, 45, 60, 85, 120, 160, 200]);
-                    createRevenueChart(stats.revenueData || [50000, 120000, 180000, 250000, 350000, 500000, 750000, 900000, 1200000]);
+                    if (typeof Chart !== 'undefined') {
+                        createUserChart(stats.userGrowthData || [10, 20, 30, 45, 60, 85, 120, 160, 200]);
+                        createRevenueChart(stats.revenueData || [50000, 120000, 180000, 250000, 350000, 500000, 750000, 900000, 1200000]);
+                    }
                 }
             } catch (error) {
                 showNotification('Failed to load dashboard data', 'error');
@@ -1142,13 +1145,14 @@
                 if (response && response.success) {
                     let html = '';
                     response.payments.forEach(payment => {
+                        const statusClass = payment.status === 'successful' ? 'status-active' : 'status-pending';
                         html += `
                             <tr>
                                 <td>${payment.email}</td>
                                 <td>₦${payment.amount.toLocaleString()}</td>
                                 <td>${payment.reference}</td>
                                 <td>${new Date(payment.date).toLocaleDateString()}</td>
-                                <td><span class="status-badge status-${payment.status}">${payment.status}</span></td>
+                                <td><span class="status-badge ${statusClass}">${payment.status}</span></td>
                             </tr>
                         `;
                     });
@@ -1169,8 +1173,10 @@
                 const response = await getAnalyticsData();
                 
                 if (response && response.success) {
-                    createPlanChart(response.planData || [45, 30, 25]);
-                    createConversionChart(response.conversionData || [2.5, 3.2, 4.1, 5.3, 6.8, 8.2]);
+                    if (typeof Chart !== 'undefined') {
+                        createPlanChart(response.planData || [45, 30, 25]);
+                        createConversionChart(response.conversionData || [2.5, 3.2, 4.1, 5.3, 6.8, 8.2]);
+                    }
                 }
             } catch (error) {
                 console.error('Analytics error:', error);
@@ -1380,6 +1386,16 @@
                 toast.style.display = 'none';
             }, 4000);
         }
+
+        // Chart.js fallback check
+        window.addEventListener('load', function() {
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js failed to load - using fallback');
+                window.Chart = function() {
+                    console.warn('Chart.js not available');
+                };
+            }
+        });
     </script>
 </body>
 </html>
