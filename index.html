@@ -1526,6 +1526,7 @@
             justify-content: center;
             overflow-y: auto;
             padding: 20px;
+            cursor: pointer; /* Indicates clicking outside closes */
         }
 
         .checklist-container {
@@ -1537,12 +1538,36 @@
             position: relative;
             border: 1px solid rgba(212,175,55,0.3);
             box-shadow: var(--shadow-2xl);
+            max-height: 90vh;
+            overflow-y: auto;
+            cursor: default; /* Normal cursor for content */
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--gray-800);
+        }
+
+        /* Custom scrollbar for checklist container */
+        .checklist-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .checklist-container::-webkit-scrollbar-track {
+            background: var(--gray-800);
+            border-radius: 10px;
+        }
+
+        .checklist-container::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .checklist-container::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
         }
 
         .checklist-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
+            position: sticky;
+            top: 0;
+            float: right;
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -1555,6 +1580,8 @@
             cursor: pointer;
             transition: all var(--transition-base);
             border: 1px solid rgba(212,175,55,0.3);
+            z-index: 10;
+            margin-bottom: 1rem;
         }
 
         .checklist-close:hover {
@@ -1565,6 +1592,7 @@
         .checklist-header {
             text-align: center;
             margin-bottom: 3rem;
+            padding-right: 40px; /* Space for close button */
         }
 
         .checklist-header h2 {
@@ -1778,7 +1806,7 @@
             margin-right: 0.5rem;
         }
 
-        /* ========== MODAL STYLES ========== */
+        /* ========== MODAL STYLES (Updated for scrollability) ========== */
         .modal {
             display: none;
             position: fixed;
@@ -1792,6 +1820,7 @@
             justify-content: center;
             overflow-y: auto;
             padding: 20px;
+            cursor: pointer; /* Indicates clicking outside closes */
         }
 
         .modal-content {
@@ -1802,8 +1831,30 @@
             width: 95%;
             position: relative;
             animation: modalSlideIn 0.3s ease;
-            max-height: 90vh;
+            max-height: 85vh;
             overflow-y: auto;
+            cursor: default; /* Normal cursor for content */
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--gray-200);
+        }
+
+        /* Custom scrollbar for modal content */
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: var(--gray-200);
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
         }
 
         .close-modal {
@@ -1822,7 +1873,7 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            margin: -10px -10px 0 0;
+            margin: -10px -10px 10px 0;
         }
 
         .close-modal:hover {
@@ -2087,6 +2138,10 @@
 
             .checklist-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .checklist-container {
+                padding: 2rem 1.5rem;
             }
         }
     </style>
@@ -2628,9 +2683,9 @@
         </div>
     </section>
 
-    <!-- CHECKLIST MODAL (New) -->
-    <div class="checklist-modal" id="checklistModal">
-        <div class="checklist-container">
+    <!-- CHECKLIST MODAL -->
+    <div class="checklist-modal" id="checklistModal" onclick="closeModalOnOutsideClick(event, 'checklistModal')">
+        <div class="checklist-container" onclick="event.stopPropagation()">
             <div class="checklist-close" onclick="closeChecklistModal()">
                 <i class="fas fa-times"></i>
             </div>
@@ -2734,8 +2789,86 @@
     </div>
 
     <!-- SUBSCRIPTION MODAL (Keep for reference but will be replaced by checklist) -->
-    <div id="subscriptionModal" class="modal" style="display: none;">
-        <!-- ... existing subscription modal content ... -->
+    <div id="subscriptionModal" class="modal" onclick="closeModalOnOutsideClick(event, 'subscriptionModal')">
+        <div class="modal-content wide scrollable" onclick="event.stopPropagation()">
+            <span class="close-modal" onclick="closeSubscriptionModal()">&times;</span>
+            <h2 style="text-align: center; margin-bottom: 10px;">Choose Your Growth Plan</h2>
+            <p style="text-align: center; color: var(--gray-600); margin-bottom: 30px;">Select the perfect package for your business transformation</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 10px;">
+                
+                <!-- Basic Plan -->
+                <div class="plan-card">
+                    <div style="text-align: center;">
+                        <div class="plan-icon" style="background: rgba(212, 175, 55, 0.1); margin: 0 auto 15px;">
+                            <i class="fas fa-rocket" style="font-size: 24px; color: var(--primary);"></i>
+                        </div>
+                        <h3 style="color: var(--secondary); margin-bottom: 10px;">Basic</h3>
+                        <div class="plan-price">₦50,000</div>
+                        <p style="color: var(--gray-500); margin-bottom: 20px;">Service Fee</p>
+                    </div>
+                    
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Brand Strategy Development</span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Logo Design (3 concepts)</span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Social Media Setup</span></li>
+                        <li><i class="fas fa-times-circle feature-times"></i> <span>Email Marketing Automation</span></li>
+                        <li><i class="fas fa-times-circle feature-times"></i> <span>CRM Integration</span></li>
+                    </ul>
+                    
+                    <button class="btn-modal" onclick="selectPlan('BASIC')" style="background: var(--secondary);">Select Basic Plan</button>
+                </div>
+                
+                <!-- Professional Plan (Popular) -->
+                <div class="plan-card popular">
+                    <div class="popular-badge">MOST POPULAR</div>
+                    
+                    <div style="text-align: center;">
+                        <div class="plan-icon" style="background: rgba(212, 175, 55, 0.15); margin: 0 auto 15px;">
+                            <i class="fas fa-crown" style="font-size: 24px; color: var(--primary);"></i>
+                        </div>
+                        <h3 style="color: var(--secondary); margin-bottom: 10px;">Professional</h3>
+                        <div class="plan-price">₦80,000</div>
+                        <p style="color: var(--gray-500); margin-bottom: 20px;">Service Fee</p>
+                    </div>
+                    
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle feature-check"></i> <span><strong>Everything in Basic</strong></span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Email Marketing Automation</span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>CRM Integration</span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Ad Campaign Setup</span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Analytics Dashboard</span></li>
+                    </ul>
+                    
+                    <button class="btn-modal" onclick="selectPlan('PRO')">Select Professional Plan</button>
+                </div>
+                
+                <!-- Enterprise Plan -->
+                <div class="plan-card">
+                    <div style="text-align: center;">
+                        <div class="plan-icon" style="background: rgba(157, 78, 221, 0.1); margin: 0 auto 15px;">
+                            <i class="fas fa-gem" style="font-size: 24px; color: #9d4edd;"></i>
+                        </div>
+                        <h3 style="color: var(--secondary); margin-bottom: 10px;">Enterprise</h3>
+                        <div class="plan-price" style="color: #9d4edd;">₦150,000</div>
+                        <p style="color: var(--gray-500); margin-bottom: 20px;">Service Fee</p>
+                    </div>
+                    
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle feature-check"></i> <span><strong>Everything in Professional</strong></span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Dedicated Account Manager</span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Custom Development</span></li>
+                        <li><i class="fas fa-check-circle feature-check"></i> <span>Priority 24/7 Support</span></li>
+                    </ul>
+                    
+                    <button class="btn-modal" onclick="selectPlan('ENTERPRISE')" style="background: #9d4edd;">Select Enterprise Plan</button>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--gray-200);">
+                <p style="color: var(--gray-600);"><i class="fas fa-shield-alt" style="color: var(--primary); margin-right: 8px;"></i>7-day money-back guarantee • Secure payment</p>
+            </div>
+        </div>
     </div>
 
     <!-- Loading Overlay -->
@@ -2819,6 +2952,17 @@
             });
         }
 
+        // ==================== MODAL CLOSE ON OUTSIDE CLICK ====================
+        function closeModalOnOutsideClick(event, modalId) {
+            if (event.target.id === modalId) {
+                if (modalId === 'checklistModal') {
+                    closeChecklistModal();
+                } else if (modalId === 'subscriptionModal') {
+                    closeSubscriptionModal();
+                }
+            }
+        }
+
         // ==================== GLOBAL VARIABLES ====================
         let currentStep = 1;
         const totalSteps = 8;
@@ -2827,15 +2971,16 @@
         // ==================== CHECKLIST MODAL FUNCTIONS ====================
         function showChecklistModal() {
             document.getElementById('checklistModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
         }
 
         function closeChecklistModal() {
             document.getElementById('checklistModal').style.display = 'none';
+            document.body.style.overflow = ''; // Restore scrolling
         }
 
         function handleChecklistClick(type) {
             if (type === 'free') {
-                // Generate and download free checklist PDF (simulated)
                 showNotification('Downloading your free checklist...', 'info');
                 setTimeout(() => {
                     showNotification('Free checklist downloaded!', 'success');
@@ -2844,7 +2989,6 @@
         }
 
         function handleLockedClick(plan) {
-            // Show payment modal for the selected plan
             startFlutterwavePayment(plan);
         }
 
@@ -2860,13 +3004,12 @@
                 subaccounts: [{ id: FLUTTERWAVE_SUBACCOUNT_ID }],
                 payment_options: 'card, banktransfer, ussd',
                 customer: {
-                    email: 'customer@example.com', // You can collect this via a mini-form
+                    email: 'customer@example.com',
                     name: 'Business Owner',
                     phone_number: '08000000000'
                 },
                 callback: function(response) {
                     if (response.status === 'successful') {
-                        // Unlock the corresponding checklist
                         unlockChecklist(plan);
                         showNotification(`${plan} plan activated! Your checklist is now unlocked.`, 'success');
                     }
@@ -2885,16 +3028,13 @@
             
             const checklist = document.getElementById(checklistId);
             if (checklist) {
-                // Remove lock overlay and locked class
                 const lockOverlay = checklist.querySelector('.lock-overlay');
                 if (lockOverlay) lockOverlay.remove();
                 checklist.classList.remove('locked');
                 
-                // Add success animation
                 checklist.style.borderColor = 'var(--success)';
                 checklist.style.boxShadow = '0 0 30px rgba(40, 167, 69, 0.3)';
                 
-                // Add an unlock button
                 const unlockBtn = document.createElement('button');
                 unlockBtn.className = 'btn-checklist';
                 unlockBtn.innerHTML = '<i class="fas fa-check"></i> View Checklist';
@@ -2971,12 +3111,12 @@
 
         // ==================== MODAL FUNCTIONS ====================
         function showSubscriptionModal() { 
-            // Redirect to checklist modal instead
-            showChecklistModal();
+            showChecklistModal(); // Redirect to checklist modal
         }
         
         function closeSubscriptionModal() { 
             document.getElementById('subscriptionModal').style.display = 'none'; 
+            document.body.style.overflow = ''; // Restore scrolling
         }
 
         // ==================== PREDICTOR FUNCTIONS ====================
@@ -3384,7 +3524,6 @@
 
         // ==================== PAYMENT FUNCTIONS ====================
         function selectPlan(plan) {
-            // This is now handled by the checklist modal
             startFlutterwavePayment(plan);
         }
 
