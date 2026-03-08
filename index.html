@@ -251,54 +251,6 @@
             margin-right: auto;
         }
 
-        /* ========== LIVE ACTIVITY FEED ========== */
-        .live-activity-feed {
-            background: rgba(212, 175, 55, 0.1);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: var(--border-radius-full);
-            padding: 0.75rem 1.5rem;
-            margin-bottom: 2rem;
-            display: inline-block;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
-        }
-
-        .live-toast {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            background: var(--secondary);
-            color: var(--white);
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--border-radius-full);
-            box-shadow: var(--shadow-lg);
-            border-left: 4px solid var(--primary);
-            animation: slideUp 0.3s ease;
-            z-index: 9998;
-            font-size: 0.9rem;
-        }
-
-        .live-toast i {
-            color: var(--primary);
-            margin-right: 0.5rem;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         .hero-stats {
             display: flex;
             justify-content: center;
@@ -1481,10 +1433,6 @@
             max-width: 800px;
         }
 
-        .modal-content.scrollable {
-            overflow-y: auto;
-        }
-
         .modal-content::-webkit-scrollbar {
             width: 8px;
         }
@@ -2134,12 +2082,6 @@
             <h1>Discover Your <span class="gradient-text">30-Day Brand Transformation</span> Potential</h1>
             <h3 class="gradient-text">(powered by KRO Media)</h3>
             <p class="hero-subtitle">Answer 8 simple questions and see exactly how Atafi Luxury can multiply your revenue, authority, and market presence.</p>
-            
-            <!-- Live Activity Feed -->
-            <div class="live-activity-feed" id="liveActivity">
-                <i class="fas fa-users"></i> 3 people are viewing this page right now
-            </div>
-            
             <div class="hero-stats">
                 <div class="stat">
                     <span class="stat-value">200+</span>
@@ -3206,7 +3148,7 @@
     <!-- Notification Toast -->
     <div class="notification-toast" id="notificationToast"></div>
 
-    <!-- ========== JAVASCRIPT ========== -->
+    <!-- ========== COMPLETE FIXED JAVASCRIPT WITH REAL GOOGLE SHEETS INTEGRATION ========== -->
     <script>
         // ==================== CONFIGURATION ====================
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzkhPG5ub5XHvpVnXydgUUdJpdSHVtF04OjAyiZmDoJ85wF60RKVllrMm3O4PZKSJ1H/exec';
@@ -3230,9 +3172,13 @@
                 const callbackId = 'callback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
                 const script = document.createElement('script');
                 
+                // Build URL with parameters
                 let url = APPS_SCRIPT_URL + '?action=' + action + '&callback=' + callbackId;
+                
+                // Add data as JSON string
                 url += '&data=' + encodeURIComponent(JSON.stringify(data));
                 
+                // Define callback function
                 window[callbackId] = function(response) {
                     delete window[callbackId];
                     document.body.removeChild(script);
@@ -3247,6 +3193,7 @@
                 script.src = url;
                 document.body.appendChild(script);
                 
+                // Timeout after 15 seconds
                 setTimeout(() => {
                     if (window[callbackId]) {
                         delete window[callbackId];
@@ -3286,6 +3233,7 @@
                 if (response && response.success) {
                     const profile = response.profile;
                     
+                    // Update localStorage with data from Google Sheets
                     localStorage.setItem('atafi_userId', profile.userId);
                     localStorage.setItem('atafi_email', profile.email);
                     localStorage.setItem('atafi_name', profile.fullName);
@@ -3299,13 +3247,16 @@
                     if (profile.predictions && profile.predictions.length > 0) {
                         localStorage.setItem('atafi_predictions', profile.predictions.length.toString());
                         
+                        // Calculate average growth
                         const totalGrowth = profile.predictions.reduce((sum, p) => sum + (parseFloat(p.growth) || 0), 0);
                         const avgGrowth = Math.round(totalGrowth / profile.predictions.length);
                         localStorage.setItem('atafi_avgGrowth', avgGrowth + '%');
                         
+                        // Latest score
                         const latest = profile.predictions[profile.predictions.length - 1];
                         localStorage.setItem('atafi_latestScore', latest.growth.toString());
                         
+                        // Build predictions list HTML
                         let predictionsHtml = '';
                         profile.predictions.slice().reverse().forEach(pred => {
                             const date = new Date(pred.date).toLocaleDateString();
@@ -3331,44 +3282,9 @@
             }
         }
 
-        // ==================== LIVE ACTIVITY FUNCTIONS ====================
-        function startLiveActivity() {
-            const activities = [
-                { name: 'John from Lagos', action: 'just started the assessment' },
-                { name: 'Sarah from Abuja', action: 'received her growth report' },
-                { name: 'Michael from Port Harcourt', action: 'subscribed to Pro plan' },
-                { name: 'Amara from Enugu', action: 'viewed brand preview' },
-                { name: 'David from Kano', action: 'downloaded his roadmap' },
-                { name: 'Grace from Ibadan', action: 'upgraded to Enterprise' }
-            ];
-            
-            // Update the viewer count randomly
-            setInterval(() => {
-                const viewers = Math.floor(Math.random() * 8) + 3; // Random between 3-10
-                document.getElementById('liveActivity').innerHTML = 
-                    `<i class="fas fa-users"></i> ${viewers} people are viewing this page right now`;
-            }, 30000); // Update every 30 seconds
-            
-            // Show random activity toasts
-            setInterval(() => {
-                const activity = activities[Math.floor(Math.random() * activities.length)];
-                showLiveToast(`${activity.name} ${activity.action}`);
-            }, 45000); // Show every 45 seconds
-        }
-
-        function showLiveToast(message) {
-            const toast = document.createElement('div');
-            toast.className = 'live-toast';
-            toast.innerHTML = `<i class="fas fa-bell"></i> ${message}`;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.remove();
-            }, 4000);
-        }
-
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
             if (currentUserId) {
                 updateNavigationForLoggedInUser();
             }
@@ -3533,9 +3449,6 @@
             if (ref) {
                 document.getElementById('referralCode').value = ref;
             }
-            
-            // Start live activity
-            startLiveActivity();
         });
 
         // ==================== AUTH FUNCTIONS ====================
@@ -3581,23 +3494,28 @@
             showLoading(true);
             
             try {
+                // First, load fresh data from Google Sheets
                 await loadUserDataFromSheets(currentUserId);
                 
+                // Then display from localStorage (which now has fresh sheet data)
                 document.getElementById('dashboardUserName').textContent = localStorage.getItem('atafi_name') || 'User';
                 document.getElementById('dashboardEmail').textContent = localStorage.getItem('atafi_email') || '';
                 document.getElementById('dashboardAvatar').textContent = (localStorage.getItem('atafi_name') || 'U').charAt(0).toUpperCase();
                 document.getElementById('dashboardPlan').textContent = 'Basic Plan';
                 document.getElementById('referralLink').textContent = `https://atafi-lux.onrender.com/?ref=${currentUserId}`;
                 
+                // Business info
                 document.getElementById('businessNameDisplay').textContent = localStorage.getItem('atafi_businessName') || 'Your Business';
                 document.getElementById('businessIndustry').textContent = localStorage.getItem('atafi_industry') || 'Retail';
                 document.getElementById('businessRevenue').textContent = localStorage.getItem('atafi_revenue') || '₦1,000,000';
                 
+                // Stats
                 document.getElementById('statsPredictions').textContent = localStorage.getItem('atafi_predictions') || '0';
                 document.getElementById('statsAvgGrowth').textContent = localStorage.getItem('atafi_avgGrowth') || '0%';
                 document.getElementById('statsLatestScore').textContent = localStorage.getItem('atafi_latestScore') || '0';
                 document.getElementById('statsMemberDate').textContent = new Date().getFullYear().toString();
                 
+                // Load predictions list
                 const predictionsList = document.getElementById('predictionsList');
                 const savedPredictions = localStorage.getItem('atafi_predictionsList');
                 
@@ -3823,6 +3741,7 @@
 
             async saveToDatabase() {
                 if (!currentUserId) {
+                    // Register user first
                     const userData = {
                         email: this.formData.email,
                         fullName: this.formData.fullName,
@@ -3852,6 +3771,7 @@
                     }
                 }
                 
+                // Save prediction
                 try {
                     const response = await savePrediction(currentUserId, {
                         growthPercentage: this.results.growthPercentage,
@@ -3931,7 +3851,10 @@
                 const predictor = new BrandPredictor();
                 predictor.renderResults();
                 
+                // Save to Google Sheets (this will also create user account if needed)
                 await predictor.saveToDatabase();
+                
+                // Send emails
                 await predictor.sendEmails();
                 
                 showLoading(false);
