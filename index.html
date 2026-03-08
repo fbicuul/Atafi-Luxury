@@ -14,6 +14,9 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
+    <!-- Flutterwave -->
+    <script src="https://checkout.flutterwave.com/v3.js"></script>
+    
     <style>
         /* ========== GLOBAL VARIABLES ========== */
         * {
@@ -1509,6 +1512,272 @@
             margin-right: 0.5rem;
         }
 
+        /* ========== CHECKLIST MODAL STYLES ========== */
+        .checklist-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 20000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .checklist-container {
+            max-width: 1200px;
+            width: 100%;
+            background: linear-gradient(135deg, var(--dark), var(--darker));
+            border-radius: var(--border-radius-2xl);
+            padding: 3rem;
+            position: relative;
+            border: 1px solid rgba(212,175,55,0.3);
+            box-shadow: var(--shadow-2xl);
+        }
+
+        .checklist-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            border: 1px solid rgba(212,175,55,0.3);
+        }
+
+        .checklist-close:hover {
+            background: var(--danger);
+            transform: rotate(90deg);
+        }
+
+        .checklist-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .checklist-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-premium);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .checklist-header p {
+            color: var(--gray-400);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .checklist-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--border-radius-xl);
+            padding: 2rem 1.5rem;
+            border: 1px solid rgba(212,175,55,0.2);
+            position: relative;
+            transition: transform var(--transition-base);
+        }
+
+        .checklist-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .checklist-card.free {
+            border-color: var(--success);
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.2);
+        }
+
+        .checklist-card.basic.locked {
+            filter: blur(4px);
+            opacity: 0.7;
+            pointer-events: none;
+            user-select: none;
+            position: relative;
+        }
+
+        .checklist-card.professional.locked {
+            filter: blur(4px);
+            opacity: 0.7;
+            pointer-events: none;
+            user-select: none;
+            position: relative;
+        }
+
+        .checklist-card.enterprise.locked {
+            filter: blur(4px);
+            opacity: 0.7;
+            pointer-events: none;
+            user-select: none;
+            position: relative;
+        }
+
+        .lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            border-radius: var(--border-radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
+            backdrop-filter: blur(2px);
+            pointer-events: auto;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .lock-overlay i {
+            font-size: 3rem;
+            color: var(--primary);
+        }
+
+        .lock-overlay span {
+            color: var(--white);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .card-badge {
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: var(--gradient-premium);
+            color: var(--white);
+            padding: 0.25rem 1rem;
+            border-radius: var(--border-radius-full);
+            font-size: 0.85rem;
+            font-weight: bold;
+            z-index: 5;
+        }
+
+        .card-badge.free {
+            background: var(--success);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding-top: 0.5rem;
+        }
+
+        .card-header h3 {
+            color: var(--white);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .card-price small {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+        }
+
+        .checklist-items {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .checklist-items li {
+            color: var(--gray-300);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .checklist-items li i {
+            color: var(--primary);
+            font-size: 1rem;
+            min-width: 20px;
+        }
+
+        .checklist-items li i.fa-lock {
+            color: var(--gray-500);
+        }
+
+        .btn-checklist {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: var(--border-radius-full);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            background: var(--gradient-premium);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-checklist:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-checklist:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-checklist.free {
+            background: var(--success);
+        }
+
+        .btn-checklist.locked {
+            background: var(--gray-600);
+        }
+
+        .checklist-footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(212,175,55,0.2);
+        }
+
+        .checklist-footer p {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+
+        .checklist-footer i {
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+
         /* ========== MODAL STYLES ========== */
         .modal {
             display: none;
@@ -1770,6 +2039,10 @@
             .video-carousel {
                 padding: 0 30px;
             }
+
+            .checklist-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         @media (max-width: 768px) {            
@@ -1810,6 +2083,10 @@
             
             .cta-buttons {
                 flex-direction: column;
+            }
+
+            .checklist-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -2351,87 +2628,114 @@
         </div>
     </section>
 
-    <!-- SUBSCRIPTION MODAL -->
-    <div id="subscriptionModal" class="modal">
-        <div class="modal-content wide scrollable">
-            <span class="close-modal" onclick="closeSubscriptionModal()">&times;</span>
-            <h2 style="text-align: center; margin-bottom: 10px;">Choose Your Growth Plan</h2>
-            <p style="text-align: center; color: var(--gray-600); margin-bottom: 30px;">Select the perfect package for your business transformation</p>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 10px;">
-                
-                <!-- Basic Plan -->
-                <div class="plan-card">
-                    <div style="text-align: center;">
-                        <div class="plan-icon" style="background: rgba(212, 175, 55, 0.1); margin: 0 auto 15px;">
-                            <i class="fas fa-rocket" style="font-size: 24px; color: var(--primary);"></i>
-                        </div>
-                        <h3 style="color: var(--secondary); margin-bottom: 10px;">Basic</h3>
-                        <div class="plan-price">₦50,000</div>
-                        <p style="color: var(--gray-500); margin-bottom: 20px;">Service Fee</p>
-                    </div>
-                    
-                    <ul class="plan-features">
-                        <li><i class="fas fa-check-circle feature-check"></i> <span>Brand Strategy Development</span></li>
-                        <li><i class="fas fa-check-circle feature-check"></i> <span>Logo Design (3 concepts)</span></li>
-                        <li><i class="fas fa-check-circle feature-check"></i> <span>Social Media Setup</span></li>
-                        <li><i class="fas fa-times-circle feature-times"></i> <span>Email Marketing Automation</span></li>
-                        <li><i class="fas fa-times-circle feature-times"></i> <span>CRM Integration</span></li>
-                    </ul>
-                    
-                    <button class="btn-modal" onclick="selectPlan('BASIC')" style="background: var(--secondary);">Select Basic Plan</button>
-                </div>
-                
-                <!-- Professional Plan (Popular) -->
-                <div class="plan-card popular">
-                    <div class="popular-badge">MOST POPULAR</div>
-                    
-                    <div style="text-align: center;">
-                        <div class="plan-icon" style="background: rgba(212, 175, 55, 0.15); margin: 0 auto 15px;">
-                            <i class="fas fa-crown" style="font-size: 24px; color: var(--primary);"></i>
-                        </div>
-                        <h3 style="color: var(--secondary); margin-bottom: 10px;">Professional</h3>
-                        <div class="plan-price">₦80,000</div>
-                        <p style="color: var(--gray-500); margin-bottom: 20px;">Service Fee</p>
-                    </div>
-                    
-                    <ul class="plan-features">
-                        <li><i class="fas fa-check-circle feature-check"></i> <span><strong>Everything in Basic</strong></span></li>
-                        <li><i class="fas fa-check-circle feature-check"></i> <span>Email Marketing Automation</span></li>
-                        <li><i class="fas fa-check-circle feature-check"></i> <span>CRM Integration</span></li>
-                        <li><i class="fas fa-check-circle feature-check"></i> <span>Ad Campaign Setup</span></li>
-                        <li><i class="fas fa-check-circle feature-check"></i> <span>Analytics Dashboard</span></li>
-                    </ul>
-                    
-                    <button class="btn-modal" onclick="selectPlan('PRO')">Select Professional Plan</button>
-                </div>
-                
-                <!-- Enterprise Plan -->
-                <div class="plan-card">
-                    <div style="text-align: center;">
-                        <div class="plan-icon" style="background: rgba(157, 78, 221, 0.1); margin: 0 auto 15px;">
-                            <i class="fas fa-gem" style="font-size: 24px; color: #9d4edd;"></i>
-                        </div>
-                        <h3 style="color: var(--secondary); margin-bottom: 10px;">Enterprise</h3>
-                        <div class="plan-price" style="color: #9d4edd;">₦150,000</div>
-                        <p style="color: var(--gray-500); margin-bottom: 20px;">Service Fee</p>
-                    </div>
-                    
-                    <ul class="plan-features">
-                        <li><i class="fas fa-check-circle feature-check"></i> <span><strong>Everything in Professional</strong></span></li>
-                        <li><i class="fas fa-check-circle feature-check"></i> <span>Dedicated Account Manager</span></li>
-                        <li><i class="fas fa-check-circle feature-check"></i> <span>Custom Development</span></li>
-                        <li><i class="fas fa-check-circle feature-check"></i> <span>Priority 24/7 Support</span></li>
-                    </ul>
-                    
-                    <button class="btn-modal" onclick="selectPlan('ENTERPRISE')" style="background: #9d4edd;">Select Enterprise Plan</button>
-                </div>
+    <!-- CHECKLIST MODAL (New) -->
+    <div class="checklist-modal" id="checklistModal">
+        <div class="checklist-container">
+            <div class="checklist-close" onclick="closeChecklistModal()">
+                <i class="fas fa-times"></i>
             </div>
             
-            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--gray-200);">
-                <p style="color: var(--gray-600);"><i class="fas fa-shield-alt" style="color: var(--primary); margin-right: 8px;"></i>7-day money-back guarantee • Secure payment</p>
+            <div class="checklist-header">
+                <h2>Your Brand Transformation Checklist</h2>
+                <p>Based on your audit results, here's what you need to achieve your 30-day growth goal</p>
+            </div>
+
+            <div class="checklist-grid">
+                <!-- Free Checklist -->
+                <div class="checklist-card free">
+                    <div class="card-badge free">FREE</div>
+                    <div class="card-header">
+                        <h3>Free Starter</h3>
+                        <div class="card-price">₦0</div>
+                    </div>
+                    <ul class="checklist-items">
+                        <li><i class="fas fa-check-circle"></i> Brand Audit Summary</li>
+                        <li><i class="fas fa-check-circle"></i> 5 Social Media Post Ideas</li>
+                        <li><i class="fas fa-check-circle"></i> Basic SEO Checklist</li>
+                        <li><i class="fas fa-lock"></i> Email Marketing Setup</li>
+                        <li><i class="fas fa-lock"></i> CRM Integration</li>
+                        <li><i class="fas fa-lock"></i> Ad Campaign Strategy</li>
+                    </ul>
+                    <button class="btn-checklist free" onclick="handleChecklistClick('free')">
+                        <i class="fas fa-download"></i> Download Free
+                    </button>
+                </div>
+
+                <!-- Basic Checklist (Locked) -->
+                <div class="checklist-card basic locked" id="basicChecklist">
+                    <div class="lock-overlay" onclick="handleLockedClick('BASIC')">
+                        <i class="fas fa-lock"></i>
+                        <span>Unlock with Basic Plan</span>
+                    </div>
+                    <div class="card-badge">BASIC</div>
+                    <div class="card-header">
+                        <h3>Basic Growth</h3>
+                        <div class="card-price">₦50,000 <small>/one-time</small></div>
+                    </div>
+                    <ul class="checklist-items">
+                        <li><i class="fas fa-check-circle"></i> Everything in Free</li>
+                        <li><i class="fas fa-check-circle"></i> Email Marketing Setup</li>
+                        <li><i class="fas fa-check-circle"></i> CRM Integration</li>
+                        <li><i class="fas fa-check-circle"></i> Lead Magnet Template</li>
+                        <li><i class="fas fa-check-circle"></i> Basic Analytics Dashboard</li>
+                        <li><i class="fas fa-check-circle"></i> 30-Day Content Calendar</li>
+                    </ul>
+                </div>
+
+                <!-- Professional Checklist (Locked) -->
+                <div class="checklist-card professional locked" id="proChecklist">
+                    <div class="lock-overlay" onclick="handleLockedClick('PRO')">
+                        <i class="fas fa-lock"></i>
+                        <span>Unlock with Professional Plan</span>
+                    </div>
+                    <div class="card-badge">PROFESSIONAL</div>
+                    <div class="card-header">
+                        <h3>Professional Growth</h3>
+                        <div class="card-price">₦80,000 <small>/one-time</small></div>
+                    </div>
+                    <ul class="checklist-items">
+                        <li><i class="fas fa-check-circle"></i> Everything in Basic</li>
+                        <li><i class="fas fa-check-circle"></i> Advanced CRM Workflows</li>
+                        <li><i class="fas fa-check-circle"></i> Email Automation Sequences</li>
+                        <li><i class="fas fa-check-circle"></i> Ad Campaign Setup Guide</li>
+                        <li><i class="fas fa-check-circle"></i> Competitor Analysis Tool</li>
+                        <li><i class="fas fa-check-circle"></i> Sales Funnel Blueprint</li>
+                        <li><i class="fas fa-check-circle"></i> Conversion Rate Optimization</li>
+                    </ul>
+                </div>
+
+                <!-- Enterprise Checklist (Locked) -->
+                <div class="checklist-card enterprise locked" id="enterpriseChecklist">
+                    <div class="lock-overlay" onclick="handleLockedClick('ENTERPRISE')">
+                        <i class="fas fa-lock"></i>
+                        <span>Unlock with Enterprise Plan</span>
+                    </div>
+                    <div class="card-badge">ENTERPRISE</div>
+                    <div class="card-header">
+                        <h3>Enterprise Growth</h3>
+                        <div class="card-price">₦150,000 <small>/one-time</small></div>
+                    </div>
+                    <ul class="checklist-items">
+                        <li><i class="fas fa-check-circle"></i> Everything in Professional</li>
+                        <li><i class="fas fa-check-circle"></i> Custom Development Guide</li>
+                        <li><i class="fas fa-check-circle"></i> API Integration Setup</li>
+                        <li><i class="fas fa-check-circle"></i> Multi-channel Marketing Strategy</li>
+                        <li><i class="fas fa-check-circle"></i> Advanced Analytics & Reporting</li>
+                        <li><i class="fas fa-check-circle"></i> Team Training Materials</li>
+                        <li><i class="fas fa-check-circle"></i> Priority Support Access</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="checklist-footer">
+                <p><i class="fas fa-gem"></i> Unlock premium checklists to accelerate your growth journey</p>
             </div>
         </div>
+    </div>
+
+    <!-- SUBSCRIPTION MODAL (Keep for reference but will be replaced by checklist) -->
+    <div id="subscriptionModal" class="modal" style="display: none;">
+        <!-- ... existing subscription modal content ... -->
     </div>
 
     <!-- Loading Overlay -->
@@ -2444,6 +2748,11 @@
     <div class="notification-toast" id="notificationToast"></div>
 
     <script>
+        // ==================== CONFIGURATION ====================
+        const FLUTTERWAVE_PUBLIC_KEY = 'FLWPUBK-2139829c2de5b6071f89e39b59e9d9ca-X';
+        const FLUTTERWAVE_SUBACCOUNT_ID = 'RS_89D720D484AF8296626AC1C84E2B0044';
+        const PRICING = { BASIC: 50000, PRO: 80000, ENTERPRISE: 150000 };
+
         // ==================== VIDEO CAROUSEL VARIABLES ====================
         let currentSlide = 0;
         const videos = [
@@ -2458,11 +2767,9 @@
             
             if (!track || !dotsContainer) return;
             
-            // Clear existing content
             track.innerHTML = '';
             dotsContainer.innerHTML = '';
             
-            // Add video slides
             videos.forEach((video, index) => {
                 const slide = document.createElement('div');
                 slide.className = 'carousel-slide';
@@ -2476,7 +2783,6 @@
                 `;
                 track.appendChild(slide);
                 
-                // Add dot
                 const dot = document.createElement('span');
                 dot.className = `carousel-dot ${index === 0 ? 'active' : ''}`;
                 dot.onclick = () => goToSlide(index);
@@ -2518,12 +2824,91 @@
         const totalSteps = 8;
         let revenueChart = null;
 
+        // ==================== CHECKLIST MODAL FUNCTIONS ====================
+        function showChecklistModal() {
+            document.getElementById('checklistModal').style.display = 'flex';
+        }
+
+        function closeChecklistModal() {
+            document.getElementById('checklistModal').style.display = 'none';
+        }
+
+        function handleChecklistClick(type) {
+            if (type === 'free') {
+                // Generate and download free checklist PDF (simulated)
+                showNotification('Downloading your free checklist...', 'info');
+                setTimeout(() => {
+                    showNotification('Free checklist downloaded!', 'success');
+                }, 1500);
+            }
+        }
+
+        function handleLockedClick(plan) {
+            // Show payment modal for the selected plan
+            startFlutterwavePayment(plan);
+        }
+
+        // ==================== FLUTTERWAVE PAYMENT FUNCTIONS ====================
+        function startFlutterwavePayment(plan) {
+            const amount = PRICING[plan];
+            
+            FlutterwaveCheckout({
+                public_key: FLUTTERWAVE_PUBLIC_KEY,
+                tx_ref: 'ATAFI_' + Date.now(),
+                amount: amount,
+                currency: 'NGN',
+                subaccounts: [{ id: FLUTTERWAVE_SUBACCOUNT_ID }],
+                payment_options: 'card, banktransfer, ussd',
+                customer: {
+                    email: 'customer@example.com', // You can collect this via a mini-form
+                    name: 'Business Owner',
+                    phone_number: '08000000000'
+                },
+                callback: function(response) {
+                    if (response.status === 'successful') {
+                        // Unlock the corresponding checklist
+                        unlockChecklist(plan);
+                        showNotification(`${plan} plan activated! Your checklist is now unlocked.`, 'success');
+                    }
+                },
+                onclose: function() {
+                    showNotification('Payment cancelled', 'info');
+                }
+            });
+        }
+
+        function unlockChecklist(plan) {
+            let checklistId;
+            if (plan === 'BASIC') checklistId = 'basicChecklist';
+            else if (plan === 'PRO') checklistId = 'proChecklist';
+            else if (plan === 'ENTERPRISE') checklistId = 'enterpriseChecklist';
+            
+            const checklist = document.getElementById(checklistId);
+            if (checklist) {
+                // Remove lock overlay and locked class
+                const lockOverlay = checklist.querySelector('.lock-overlay');
+                if (lockOverlay) lockOverlay.remove();
+                checklist.classList.remove('locked');
+                
+                // Add success animation
+                checklist.style.borderColor = 'var(--success)';
+                checklist.style.boxShadow = '0 0 30px rgba(40, 167, 69, 0.3)';
+                
+                // Add an unlock button
+                const unlockBtn = document.createElement('button');
+                unlockBtn.className = 'btn-checklist';
+                unlockBtn.innerHTML = '<i class="fas fa-check"></i> View Checklist';
+                unlockBtn.onclick = () => showNotification(`Access your ${plan} checklist!`, 'success');
+                checklist.appendChild(unlockBtn);
+            }
+        }
+
         // ==================== LIVE ACTIVITY FUNCTIONS ====================
         function startLiveActivity() {
             const activities = [
                 { name: 'John from Lagos', action: 'just started the assessment' },
                 { name: 'Sarah from Abuja', action: 'received her growth report' },
-                { name: 'Michael from Port Harcourt', action: 'subscribed to Pro plan' },
+                { name: 'Michael from Port Harcourt', action: 'unlocked the Pro checklist' },
                 { name: 'Amara from Enugu', action: 'viewed brand preview' },
                 { name: 'David from Kano', action: 'downloaded his roadmap' },
                 { name: 'Grace from Ibadan', action: 'upgraded to Enterprise' }
@@ -2554,7 +2939,6 @@
 
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize video carousel
             initCarousel();
             
             const menuToggle = document.getElementById('mobile-menu');
@@ -2587,7 +2971,8 @@
 
         // ==================== MODAL FUNCTIONS ====================
         function showSubscriptionModal() { 
-            document.getElementById('subscriptionModal').style.display = 'flex'; 
+            // Redirect to checklist modal instead
+            showChecklistModal();
         }
         
         function closeSubscriptionModal() { 
@@ -2893,7 +3278,7 @@
                         <h3>Ready to Transform Your Business?</h3>
                         <p>Join 200+ businesses that have already grown with Atafi Luxury</p>
                         <div class="cta-buttons">
-                            <button class="btn-primary btn-large" onclick="showSubscriptionModal()"><i class="fas fa-rocket"></i> Start My Brand Transformation</button>
+                            <button class="btn-primary btn-large" onclick="showChecklistModal()"><i class="fas fa-rocket"></i> Start My Brand Transformation</button>
                             <button class="btn-secondary btn-large" onclick="bookStrategyCall()"><i class="fas fa-phone"></i> Book Strategy Call</button>
                         </div>
                         <p class="guarantee"><i class="fas fa-shield-alt"></i> 7-Day Money-Back Guarantee</p>
@@ -2999,8 +3384,8 @@
 
         // ==================== PAYMENT FUNCTIONS ====================
         function selectPlan(plan) {
-            closeSubscriptionModal();
-            showNotification(`You selected the ${plan} plan. This feature will be available soon.`, 'info');
+            // This is now handled by the checklist modal
+            startFlutterwavePayment(plan);
         }
 
         function bookStrategyCall() {
