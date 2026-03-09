@@ -1980,11 +1980,16 @@
             font-weight: bold;
         }
 
-        /* Terminal Screen Styles */
+        .profile-content {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--border-radius-xl);
+            padding: 2rem;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+
+        /* Full-width Terminal Screen */
         .terminal-section {
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(212,175,55,0.3);
+            margin-bottom: 2rem;
         }
 
         .terminal-header {
@@ -1994,36 +1999,16 @@
             margin-bottom: 1rem;
         }
 
-        .terminal-header h4 {
+        .terminal-header h3 {
             color: var(--white);
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .terminal-header h4 i {
+        .terminal-header h3 i {
             color: var(--terminal-green);
-        }
-
-        .btn-gift {
-            background: var(--gradient-premium);
-            color: var(--white);
-            border: none;
-            padding: 0.5rem 1.5rem;
-            border-radius: var(--border-radius-full);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-base);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .btn-gift:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
         }
 
         .terminal-screen {
@@ -2034,10 +2019,12 @@
             color: var(--terminal-green);
             border: 1px solid var(--primary);
             box-shadow: inset 0 0 10px rgba(0,255,0,0.1);
-            max-height: 150px;
+            min-height: 120px;
+            max-height: 200px;
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: var(--primary) var(--terminal-bg);
+            width: 100%;
         }
 
         .terminal-screen::-webkit-scrollbar {
@@ -2072,111 +2059,6 @@
         @keyframes blink {
             0%, 50% { opacity: 1; }
             51%, 100% { opacity: 0; }
-        }
-
-        .profile-content {
-            background: rgba(255,255,255,0.05);
-            border-radius: var(--border-radius-xl);
-            padding: 2rem;
-            border: 1px solid rgba(212,175,55,0.2);
-        }
-
-        .content-section {
-            margin-bottom: 2rem;
-        }
-
-        .content-section h3 {
-            color: var(--white);
-            font-size: 1.3rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .content-section h3 i {
-            color: var(--primary);
-        }
-
-        .audit-summary {
-            background: rgba(212,175,55,0.1);
-            border-radius: var(--border-radius-lg);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid rgba(212,175,55,0.2);
-        }
-
-        .summary-item:last-child {
-            border-bottom: none;
-        }
-
-        .summary-item .label {
-            color: var(--gray-300);
-        }
-
-        .summary-item .value {
-            color: var(--primary);
-            font-weight: bold;
-        }
-
-        .ideas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .idea-card {
-            background: rgba(255,255,255,0.03);
-            border-radius: var(--border-radius-lg);
-            padding: 1.5rem;
-            border: 1px solid rgba(212,175,55,0.2);
-        }
-
-        .idea-card h4 {
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .idea-card p {
-            color: var(--gray-300);
-            font-size: 0.9rem;
-        }
-
-        .seo-checklist {
-            background: rgba(255,255,255,0.03);
-            border-radius: var(--border-radius-lg);
-            padding: 1.5rem;
-        }
-
-        .seo-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid rgba(212,175,55,0.1);
-        }
-
-        .seo-item:last-child {
-            border-bottom: none;
-        }
-
-        .seo-item input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-
-        .seo-item span {
-            color: var(--gray-300);
-            flex: 1;
         }
 
         /* Email Input Section */
@@ -2231,7 +2113,7 @@
             color: var(--white);
         }
 
-        .btn-email-action.comment {
+        .btn-email-action.feedback {
             background: transparent;
             color: var(--white);
             border: 2px solid var(--primary);
@@ -3276,119 +3158,34 @@
                             <span class="value" id="profileDate">Mar 8, 2026</span>
                         </div>
                     </div>
-
-                    <!-- Terminal Section -->
-                    <div class="terminal-section">
-                        <div class="terminal-header">
-                            <h4><i class="fas fa-terminal"></i> Daily Gift Terminal</h4>
-                            <button class="btn-gift" onclick="showDailyGift()">
-                                <i class="fas fa-gift"></i> Today's Gift
-                            </button>
-                        </div>
-                        <div class="terminal-screen" id="terminalScreen">
-                            <div class="terminal-content" id="terminalContent">
-                                > Welcome to your daily gift terminal<br>
-                                > Click the gift button to receive your daily surprise<span class="cursor"></span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Main Content -->
                 <div class="profile-content">
-                    <!-- Brand Audit Summary -->
-                    <div class="content-section">
-                        <h3><i class="fas fa-clipboard-list"></i> Brand Audit Summary</h3>
-                        <div class="audit-summary">
-                            <div class="summary-item">
-                                <span class="label">Brand Strength</span>
-                                <span class="value" id="auditBrandStrength">82%</span>
-                            </div>
-                            <div class="summary-item">
-                                <span class="label">Marketing Efficiency</span>
-                                <span class="value" id="auditMarketingEfficiency">65%</span>
-                            </div>
-                            <div class="summary-item">
-                                <span class="label">Sales Conversion</span>
-                                <span class="value" id="auditSalesConversion">71%</span>
-                            </div>
-                            <div class="summary-item">
-                                <span class="label">Customer Trust</span>
-                                <span class="value" id="auditCustomerTrust">88%</span>
+                    <!-- Full-width Terminal Screen -->
+                    <div class="terminal-section">
+                        <div class="terminal-header">
+                            <h3><i class="fas fa-terminal"></i> Terminal</h3>
+                        </div>
+                        <div class="terminal-screen" id="terminalScreen">
+                            <div class="terminal-content" id="terminalContent">
+                                > Welcome! Enter your email and click the update button to get your update and receive today's gift<span class="cursor"></span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 5 Social Media Post Ideas -->
-                    <div class="content-section">
-                        <h3><i class="fas fa-lightbulb"></i> 5 Social Media Post Ideas</h3>
-                        <div class="ideas-grid">
-                            <div class="idea-card">
-                                <h4>Behind the Scenes</h4>
-                                <p>Show your production process to build trust</p>
-                            </div>
-                            <div class="idea-card">
-                                <h4>Customer Spotlight</h4>
-                                <p>Feature a happy customer's success story</p>
-                            </div>
-                            <div class="idea-card">
-                                <h4>Product Tips</h4>
-                                <p>Share 3 ways to use your product</p>
-                            </div>
-                            <div class="idea-card">
-                                <h4>Industry News</h4>
-                                <p>Comment on latest industry trends</p>
-                            </div>
-                            <div class="idea-card">
-                                <h4>Team Introduction</h4>
-                                <p>Introduce your team members</p>
-                            </div>
+                    <!-- Email Input Section -->
+                    <div class="email-section">
+                        <div class="email-input-group">
+                            <input type="email" class="email-input" id="userEmail" placeholder="Enter your email for updates...">
+                            <button class="btn-email-action update" onclick="giveMeUpdate()">
+                                <i class="fas fa-bell"></i> Give Me Update
+                            </button>
+                            <button class="btn-email-action feedback" onclick="giveFeedback()">
+                                <i class="fas fa-comment"></i> Feedback
+                            </button>
                         </div>
                     </div>
-
-                    <!-- Basic SEO Checklist -->
-                    <div class="content-section">
-                        <h3><i class="fas fa-search"></i> Basic SEO Checklist</h3>
-                        <div class="seo-checklist">
-                            <div class="seo-item">
-                                <input type="checkbox" id="seo1">
-                                <span>Optimize meta titles and descriptions</span>
-                            </div>
-                            <div class="seo-item">
-                                <input type="checkbox" id="seo2">
-                                <span>Add alt text to all images</span>
-                            </div>
-                            <div class="seo-item">
-                                <input type="checkbox" id="seo3">
-                                <span>Create XML sitemap</span>
-                            </div>
-                            <div class="seo-item">
-                                <input type="checkbox" id="seo4">
-                                <span>Research and use primary keywords</span>
-                            </div>
-                            <div class="seo-item">
-                                <input type="checkbox" id="seo5">
-                                <span>Ensure mobile responsiveness</span>
-                            </div>
-                            <div class="seo-item">
-                                <input type="checkbox" id="seo6">
-                                <span>Improve page load speed</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Email Input Section -->
-            <div class="email-section">
-                <div class="email-input-group">
-                    <input type="email" class="email-input" id="userEmail" placeholder="Enter your email for updates...">
-                    <button class="btn-email-action update" onclick="giveMeUpdate()">
-                        <i class="fas fa-bell"></i> Give Me Update
-                    </button>
-                    <button class="btn-email-action comment" onclick="addComment()">
-                        <i class="fas fa-comment"></i> Comment
-                    </button>
                 </div>
             </div>
         </div>
@@ -3510,22 +3307,6 @@
             customerTrust: 0,
             monthlyRevenue: 0
         };
-
-        // Daily gift messages
-        const dailyGifts = [
-            "Your daily gift is loading...",
-            "✨ Today's gift: Free brand consultation call!",
-            "🎁 Unlocked: 10% off your first package!",
-            "📚 Bonus: Download our free ebook '30 Days to Brand Authority'",
-            "🎯 Special: Free SEO audit for your website",
-            "💡 Tip of the day: Consistency is key to brand recognition",
-            "🚀 Gift: Early access to our new brand templates",
-            "⭐ Unlocked: Premium social media strategy guide",
-            "🎨 Bonus: Free color palette generator access",
-            "📊 Gift: Custom analytics dashboard preview"
-        ];
-
-        let lastGiftIndex = -1;
 
         // ==================== VIDEO CAROUSEL FUNCTIONS ====================
         function initCarousel() {
@@ -3653,29 +3434,14 @@
             // Set audit values from the predictor if available
             if (userData.growthScore) {
                 document.getElementById('profileGrowthScore').textContent = userData.growthScore;
-                document.getElementById('auditBrandStrength').textContent = userData.brandStrength + '%';
-                document.getElementById('auditMarketingEfficiency').textContent = userData.marketingEfficiency + '%';
-                document.getElementById('auditSalesConversion').textContent = userData.salesConversion + '%';
-                document.getElementById('auditCustomerTrust').textContent = userData.customerTrust + '%';
             }
         }
 
-        // Terminal function for daily gift
-        function showDailyGift() {
+        // Terminal function to show message when email is submitted
+        function showTerminalMessage(message) {
             const terminal = document.getElementById('terminalContent');
-            
-            // Get a random gift that's different from the last one
-            let randomIndex;
-            do {
-                randomIndex = Math.floor(Math.random() * dailyGifts.length);
-            } while (randomIndex === lastGiftIndex && dailyGifts.length > 1);
-            
-            lastGiftIndex = randomIndex;
-            const giftMessage = dailyGifts[randomIndex];
-            
-            // Clear terminal and show typing effect
             terminal.innerHTML = '';
-            typeWriterEffect(terminal, giftMessage, 0, 50);
+            typeWriterEffect(terminal, message, 0, 50);
         }
 
         function typeWriterEffect(element, text, index, speed) {
@@ -3693,27 +3459,37 @@
         function giveMeUpdate() {
             const email = document.getElementById('userEmail').value;
             if (!email) {
+                showTerminalMessage('> Error: Please enter your email address');
                 showNotification('Please enter your email address', 'error');
                 return;
             }
             if (!validateEmail(email)) {
+                showTerminalMessage('> Error: Invalid email format. Please check and try again.');
                 showNotification('Please enter a valid email address', 'error');
                 return;
             }
+            
+            // Show success message in terminal with today's gift
+            const giftMessage = "✨ Today's gift: Free brand strategy template! Check your email for download link.";
+            showTerminalMessage(`> Success! You're now subscribed for updates at ${email}\n> ${giftMessage}`);
             showNotification('You will receive updates at ' + email, 'success');
         }
 
-        function addComment() {
+        function giveFeedback() {
             const email = document.getElementById('userEmail').value;
             if (!email) {
-                showNotification('Please enter your email to comment', 'error');
+                showTerminalMessage('> Error: Please enter your email to provide feedback');
+                showNotification('Please enter your email to provide feedback', 'error');
                 return;
             }
             if (!validateEmail(email)) {
+                showTerminalMessage('> Error: Invalid email format. Please check and try again.');
                 showNotification('Please enter a valid email address', 'error');
                 return;
             }
-            showNotification('Comment feature coming soon! We\'ll notify you at ' + email, 'info');
+            
+            showTerminalMessage('> Thank you for your interest! Our team will reach out to you shortly for feedback.');
+            showNotification('Feedback feature coming soon! We\'ll contact you at ' + email, 'info');
         }
 
         function validateEmail(email) {
