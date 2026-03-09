@@ -3285,6 +3285,7 @@
 
     <script>
         // ==================== CONFIGURATION ====================
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxeLA1nBi3PFZL76dwazFcyo4D5110Vo7aI73jL9NMyJnJEFJSMK2CvFL5RtcQQAFIp/exec';
         const FLUTTERWAVE_PUBLIC_KEY = 'FLWPUBK-2139829c2de5b6071f89e39b59e9d9ca-X';
         const FLUTTERWAVE_SUBACCOUNT_ID = 'RS_89D720D484AF8296626AC1C84E2B0044';
         const PRICING = { BASIC: 50000, PRO: 80000, ENTERPRISE: 150000 };
@@ -3307,6 +3308,56 @@
             customerTrust: 0,
             monthlyRevenue: 0
         };
+
+        // ==================== JSONP HELPER FUNCTION ====================
+        function jsonpRequest(action, data) {
+            return new Promise((resolve, reject) => {
+                const callbackId = 'callback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                const script = document.createElement('script');
+                
+                let url = APPS_SCRIPT_URL + '?action=' + action + '&callback=' + callbackId;
+                url += '&data=' + encodeURIComponent(JSON.stringify(data));
+                
+                window[callbackId] = function(response) {
+                    delete window[callbackId];
+                    document.body.removeChild(script);
+                    
+                    if (response && response.success) {
+                        resolve(response);
+                    } else {
+                        reject(response || { error: 'Unknown error' });
+                    }
+                };
+                
+                script.src = url;
+                document.body.appendChild(script);
+                
+                setTimeout(() => {
+                    if (window[callbackId]) {
+                        delete window[callbackId];
+                        document.body.removeChild(script);
+                        reject({ error: 'Request timeout' });
+                    }
+                }, 15000);
+            });
+        }
+
+        // ==================== NEW API FUNCTIONS ====================
+        async function saveBrandAudit(auditData) {
+            return jsonpRequest('atafi_saveBrandAudit', auditData);
+        }
+
+        async function getUserData(email) {
+            return jsonpRequest('atafi_getUserData', { email: email });
+        }
+
+        async function getDailyUpdate(email) {
+            return jsonpRequest('atafi_getDailyUpdate', { email: email });
+        }
+
+        async function savePrediction(userId, predictionData) {
+            return jsonpRequest('atafi_savePrediction', { userId, ...predictionData });
+        }
 
         // ==================== VIDEO CAROUSEL FUNCTIONS ====================
         function initCarousel() {
@@ -3456,7 +3507,7 @@
         }
 
         // Email action functions
-        function giveMeUpdate() {
+        async function giveMeUpdate() {
             const email = document.getElementById('userEmail').value;
             if (!email) {
                 showTerminalMessage('> Error: Please enter your email address');
@@ -3469,10 +3520,54 @@
                 return;
             }
             
-            // Show success message in terminal with today's gift
-            const giftMessage = "✨ Today's gift: Free brand strategy template! Check your email for download link.";
-            showTerminalMessage(`> Success! You're now subscribed for updates at ${email}\n> ${giftMessage}`);
-            showNotification('You will receive updates at ' + email, 'success');
+            showLoading(true);
+            
+            try {
+                // First, get user data
+                const userResponse = await getUserData(email);
+                
+                let terminalMessage = '';
+                
+                if (userResponse && userResponse.success) {
+                    // Display user's brand audit data
+                    const user = userResponse.userData;
+                    terminalMessage = `> Welcome back, ${user.businessName}!\n`;
+                    terminalMessage += `> Industry: ${user.industry}\n`;
+                    terminalMessage += `> Monthly Revenue: ₦${user.monthlyRevenue.toLocaleString()}\n`;
+                    terminalMessage += `> Years in Operation: ${user.yearsOperation}\n`;
+                    terminalMessage += `> Marketing Channels: ${user.marketingChannels.length} channels\n`;
+                    terminalMessage += `> Branding Status: ${user.brandingStatus}\n`;
+                    terminalMessage += `> Growth Score: ${userData.growthScore || '78'}\n`;
+                    terminalMessage += `> ─────────────────\n`;
+                } else {
+                    terminalMessage = `> Welcome! We couldn't find your audit data. Please complete the brand audit first.\n`;
+                    terminalMessage += `> ─────────────────\n`;
+                }
+                
+                // Then get daily update
+                const updateResponse = await getDailyUpdate(email);
+                
+                if (updateResponse && updateResponse.success) {
+                    if (updateResponse.hasUpdate) {
+                        terminalMessage += `> 📢 Today's Update:\n> ${updateResponse.message}\n`;
+                        terminalMessage += `> ✨ Today's gift: Free brand strategy template! Check your email for download link.`;
+                    } else {
+                        terminalMessage += `> ${updateResponse.message}`;
+                    }
+                } else {
+                    terminalMessage += `> Sorry, no update at the moment.`;
+                }
+                
+                showTerminalMessage(terminalMessage);
+                showNotification('Update retrieved successfully!', 'success');
+                
+            } catch (error) {
+                showTerminalMessage('> Error: Failed to retrieve updates. Please try again.');
+                showNotification('Failed to retrieve updates', 'error');
+                console.error('Update error:', error);
+            }
+            
+            showLoading(false);
         }
 
         function giveFeedback() {
@@ -3660,14 +3755,57 @@
 
             collectFormData() {
                 this.formData = {
-                    businessName: document.getElementById('businessName')?.value || 'Your Business',
-                    industry: document.getElementById('industry')?.value || 'other',
-                    monthlyRevenue: parseFloat(document.getElementById('monthlyRevenue')?.value) || 1000000,
+                    // Business Foundation
+                    businessName: document.getElementById('businessName')?.value || '',
+                    industry: document.getElementById('industry')?.value || '',
+                    yearsOperation: document.getElementById('yearsOperation')?.value || '',
+                    monthlyRevenue: parseFloat(document.getElementById('monthlyRevenue')?.value) || 0,
+                    employees: document.getElementById('employees')?.value || '',
                     marketingChannels: Array.from(document.querySelectorAll('input[name="marketingChannels"]:checked')).map(cb => cb.value),
-                    brandingStatus: document.querySelector('input[name="brandingStatus"]:checked')?.value || 'basic',
-                    socialPresence: document.getElementById('socialPresence')?.value || 'none',
-                    seoRanking: document.getElementById('seoRanking')?.value || 'none',
-                    leadsPerMonth: this.getLeadsNumber()
+                    brandingStatus: document.querySelector('input[name="brandingStatus"]:checked')?.value || '',
+                    
+                    // Market & Customers
+                    targetAge: document.getElementById('targetAge')?.value || '',
+                    incomeLevel: document.getElementById('incomeLevel')?.value || '',
+                    location: document.getElementById('location')?.value || '',
+                    customerProblems: Array.from(document.querySelectorAll('input[name="customerProblems"]:checked')).map(cb => cb.value),
+                    purchaseFrequency: document.getElementById('purchaseFrequency')?.value || '',
+                    customerLTV: parseFloat(document.getElementById('customerLTV')?.value) || 0,
+                    
+                    // Brand Strategy
+                    personality: Array.from(document.querySelectorAll('input[name="personality"]:checked')).map(cb => cb.value),
+                    positioning: document.getElementById('positioning')?.value || '',
+                    usp: document.getElementById('usp')?.value || '',
+                    competitiveAdvantage: document.getElementById('competitiveAdvantage')?.value || '',
+                    
+                    // Digital Presence
+                    websiteStatus: document.getElementById('websiteStatus')?.value || '',
+                    socialPresence: document.getElementById('socialPresence')?.value || '',
+                    seoRanking: document.getElementById('seoRanking')?.value || '',
+                    traffic: document.getElementById('traffic')?.value || '',
+                    
+                    // Marketing Performance
+                    marketingBudget: parseFloat(document.getElementById('marketingBudget')?.value) || 0,
+                    leadsPerMonth: document.getElementById('leadsPerMonth')?.value || '',
+                    conversionRate: parseFloat(document.getElementById('conversionRate')?.value) || 0,
+                    costPerLead: parseFloat(document.getElementById('costPerLead')?.value) || 0,
+                    
+                    // Sales System
+                    salesProcess: document.querySelector('input[name="salesProcess"]:checked')?.value || '',
+                    followup: document.querySelector('input[name="followup"]:checked')?.value || '',
+                    crm: document.getElementById('crm')?.value || '',
+                    referralProgram: document.getElementById('referralProgram')?.value || '',
+                    
+                    // Goals & Vision
+                    primaryGoal: document.querySelector('input[name="primaryGoal"]:checked')?.value || '',
+                    revenueGoal: parseFloat(document.getElementById('revenueGoal')?.value) || 0,
+                    brandVision: document.getElementById('brandVision')?.value || '',
+                    
+                    // User Info
+                    fullName: document.getElementById('fullName')?.value || '',
+                    email: document.getElementById('accountEmail')?.value || '',
+                    phone: document.getElementById('phone')?.value || '',
+                    password: document.getElementById('accountPassword')?.value || ''
                 };
                 
                 return this.formData;
@@ -3724,8 +3862,8 @@
                     projectedCustomers: Math.round((this.formData.monthlyRevenue / 50000) * 3),
                     marketVisibility: 85,
                     brandAuthority: 92,
-                    projectedLeads: Math.round(this.formData.leadsPerMonth * (1 + leadIncrease/100)),
-                    currentLeads: this.formData.leadsPerMonth
+                    projectedLeads: Math.round(this.getLeadsNumber() * (1 + leadIncrease/100)),
+                    currentLeads: this.getLeadsNumber()
                 };
 
                 // Store user data for starter package
@@ -3741,6 +3879,34 @@
                 };
 
                 return this.results;
+            }
+
+            async saveToDatabase() {
+                try {
+                    // Save brand audit data
+                    const auditResponse = await saveBrandAudit(this.formData);
+                    
+                    if (!auditResponse || !auditResponse.success) {
+                        throw new Error('Failed to save brand audit');
+                    }
+                    
+                    // Save prediction
+                    const predictionResponse = await savePrediction(auditResponse.userId, {
+                        growthPercentage: this.results.growthScore,
+                        projectedRevenue: this.results.projectedRevenue,
+                        projectedCustomers: this.results.projectedCustomers,
+                        projectedROI: this.results.profitGrowth
+                    });
+                    
+                    if (!predictionResponse || !predictionResponse.success) {
+                        throw new Error('Failed to save prediction');
+                    }
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Failed to save to database:', error);
+                    throw error;
+                }
             }
 
             renderResults() {
@@ -4005,6 +4171,9 @@
                 predictor.collectFormData();
                 predictor.generatePredictions();
                 
+                // Save to database
+                await predictor.saveToDatabase();
+                
                 document.getElementById('predictor').style.display = 'none';
                 document.getElementById('resultsDashboard').style.display = 'block';
                 
@@ -4013,7 +4182,7 @@
                 document.getElementById('resultsDashboard').scrollIntoView({ behavior: 'smooth' });
                 
                 showLoading(false);
-                showNotification('Your growth report is ready!', 'success');
+                showNotification('Your growth report is ready! Data saved successfully.', 'success');
             } catch (error) {
                 showLoading(false);
                 showNotification('Error: ' + (error.message || 'Unknown error'), 'error');
