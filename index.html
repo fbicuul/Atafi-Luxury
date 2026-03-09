@@ -3368,6 +3368,7 @@
                     if (response && response.success) {
                         resolve(response);
                     } else {
+                        console.error('API Error Response:', response);
                         reject(response || { error: 'Unknown error' });
                     }
                 };
@@ -3605,9 +3606,15 @@
                 showNotification('Update retrieved successfully!', 'success');
                 
             } catch (error) {
-                showTerminalMessage('> Error: Failed to retrieve updates. Please try again.');
+                console.error('Update error details:', error);
+                let errorMessage = '> Error: Failed to retrieve updates. ';
+                if (error.error) {
+                    errorMessage += error.error;
+                } else if (error.message) {
+                    errorMessage += error.message;
+                }
+                showTerminalMessage(errorMessage);
                 showNotification('Failed to retrieve updates', 'error');
-                console.error('Update error:', error);
             }
             
             showLoading(false);
@@ -3805,6 +3812,13 @@
             }
 
             collectFormData() {
+                // Get leads per month value properly
+                const leadsSelect = document.getElementById('leadsPerMonth');
+                let leadsValue = '50-200';
+                if (leadsSelect && leadsSelect.value) {
+                    leadsValue = leadsSelect.value;
+                }
+                
                 this.formData = {
                     // Business Foundation
                     businessName: document.getElementById('businessName')?.value || '',
@@ -3837,7 +3851,7 @@
                     
                     // Marketing Performance
                     marketingBudget: parseFloat(document.getElementById('marketingBudget')?.value) || 0,
-                    leadsPerMonth: document.getElementById('leadsPerMonth')?.value || '',
+                    leadsPerMonth: leadsValue,
                     conversionRate: parseFloat(document.getElementById('conversionRate')?.value) || 0,
                     costPerLead: parseFloat(document.getElementById('costPerLead')?.value) || 0,
                     
@@ -3902,6 +3916,7 @@
                 this.collectFormData();
                 const growthScore = this.calculateGrowthScore();
                 const leadIncrease = this.calculateLeadIncrease();
+                const leadsNumber = this.getLeadsNumber();
                 
                 this.results = {
                     growthScore: growthScore,
@@ -3915,8 +3930,8 @@
                     projectedCustomers: Math.round((this.formData.monthlyRevenue / 50000) * 3),
                     marketVisibility: 85,
                     brandAuthority: 92,
-                    projectedLeads: Math.round(this.getLeadsNumber() * (1 + leadIncrease/100)),
-                    currentLeads: this.getLeadsNumber()
+                    projectedLeads: Math.round(leadsNumber * (1 + leadIncrease/100)),
+                    currentLeads: leadsNumber
                 };
 
                 // Store user data for starter package
@@ -3939,6 +3954,15 @@
                     // Validate required fields
                     if (!this.formData.email) {
                         throw new Error('Email is required');
+                    }
+                    
+                    if (!this.formData.fullName) {
+                        throw new Error('Full name is required');
+                    }
+                    
+                    // If password is empty, generate a random one
+                    if (!this.formData.password) {
+                        this.formData.password = 'temp_' + Math.random().toString(36).substr(2, 9);
                     }
                     
                     // Save brand audit data
