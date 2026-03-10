@@ -2973,7 +2973,7 @@
                     </div>
                 </div>
 
-                <!-- STEP 8: CREATE ACCOUNT & GENERATE REPORT (FIXED) -->
+                <!-- STEP 8: CREATE ACCOUNT & GENERATE REPORT -->
                 <div class="form-step" id="step8">
                     <h2 class="step-title">🔐 Create Your Account</h2>
                     <p class="step-description">Enter your details to save your report and receive updates</p>
@@ -3328,6 +3328,7 @@
 
     <script>
         // ==================== CONFIGURATION ====================
+        // Use the new working Apps Script URL
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQ2KMrTS52gCOR7gIVa8YDCb9MyTFg4YbAQm-HvrX-rH2oOLGhZQJRsfT22VnYalPH/exec';
         const FLUTTERWAVE_PUBLIC_KEY = 'FLWPUBK-2139829c2de5b6071f89e39b59e9d9ca-X';
         const FLUTTERWAVE_SUBACCOUNT_ID = 'RS_89D720D484AF8296626AC1C84E2B0044';
@@ -3352,16 +3353,20 @@
             monthlyRevenue: 0
         };
 
-        // ==================== JSONP HELPER FUNCTION ====================
+        // ==================== FIXED JSONP HELPER FUNCTION ====================
         function jsonpRequest(action, data) {
             return new Promise((resolve, reject) => {
                 const callbackId = 'callback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
                 const script = document.createElement('script');
                 
+                // Build URL with parameters - FIXED: Properly encode the data
                 let url = APPS_SCRIPT_URL + '?action=' + action + '&callback=' + callbackId;
                 url += '&data=' + encodeURIComponent(JSON.stringify(data));
                 
+                console.log('Fetching:', url); // Debug log
+                
                 window[callbackId] = function(response) {
+                    console.log('Response received:', response); // Debug log
                     delete window[callbackId];
                     document.body.removeChild(script);
                     
@@ -3376,13 +3381,15 @@
                 script.src = url;
                 document.body.appendChild(script);
                 
+                // Increased timeout to 30 seconds
                 setTimeout(() => {
                     if (window[callbackId]) {
+                        console.error('Request timeout for action:', action);
                         delete window[callbackId];
                         document.body.removeChild(script);
                         reject({ error: 'Request timeout' });
                     }
-                }, 15000);
+                }, 30000);
             });
         }
 
@@ -3565,10 +3572,12 @@
             }
             
             showLoading(true);
+            showTerminalMessage('> Fetching your data... Please wait.');
             
             try {
                 // First, get user data
                 const userResponse = await getUserData(email);
+                console.log('User response:', userResponse); // Debug log
                 
                 let terminalMessage = '';
                 
@@ -3590,6 +3599,7 @@
                 
                 // Then get daily update
                 const updateResponse = await getDailyUpdate(email);
+                console.log('Update response:', updateResponse); // Debug log
                 
                 if (updateResponse && updateResponse.success) {
                     if (updateResponse.hasUpdate) {
@@ -3612,6 +3622,8 @@
                     errorMessage += error.error;
                 } else if (error.message) {
                     errorMessage += error.message;
+                } else {
+                    errorMessage += 'Please try again.';
                 }
                 showTerminalMessage(errorMessage);
                 showNotification('Failed to retrieve updates', 'error');
@@ -3966,6 +3978,7 @@
                     }
                     
                     // Save brand audit data
+                    console.log('Saving brand audit...', this.formData);
                     const auditResponse = await saveBrandAudit(this.formData);
                     
                     if (!auditResponse || !auditResponse.success) {
@@ -4268,6 +4281,7 @@
             }
             
             showLoading(true);
+            showNotification('Generating your report...', 'info');
             
             try {
                 await new Promise(resolve => setTimeout(resolve, 500));
