@@ -8,19 +8,8 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Chart.js - Using multiple fallback CDNs -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <!-- Fallback Chart.js -->
-    <script>
-        window.addEventListener('error', function(e) {
-            if (e.target.tagName === 'SCRIPT' && e.target.src.includes('chart.js')) {
-                console.log('Chart.js failed to load, loading fallback...');
-                const fallbackScript = document.createElement('script');
-                fallbackScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js';
-                document.head.appendChild(fallbackScript);
-            }
-        }, true);
-    </script>
     
     <style>
         * {
@@ -32,13 +21,13 @@
         :root {
             --primary: #d4af37;
             --primary-dark: #b38f2c;
+            --primary-light: #e5c55e;
             --secondary: #1a1a1a;
+            --secondary-light: #2a2a2a;
             --dark: #0a0a0f;
-            --light: #f5f5f5;
-            --success: #28a745;
-            --danger: #dc3545;
-            --warning: #ffc107;
-            --info: #17a2b8;
+            --darker: #050507;
+            --light: #f9f9f9;
+            --white: #ffffff;
             --gray-100: #f5f5f5;
             --gray-200: #e5e5e5;
             --gray-300: #d4d4d4;
@@ -48,7 +37,12 @@
             --gray-700: #404040;
             --gray-800: #262626;
             --gray-900: #171717;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
             
+            --gradient-gold: linear-gradient(135deg, #d4af37 0%, #f5e7a3 50%, #d4af37 100%);
             --gradient-premium: linear-gradient(135deg, #d4af37, #9d4edd);
             
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
@@ -60,15 +54,17 @@
             --border-radius-md: 0.5rem;
             --border-radius-lg: 1rem;
             --border-radius-xl: 1.5rem;
+            --border-radius-2xl: 2rem;
             --border-radius-full: 9999px;
             
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            --transition-base: 0.3s;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
             font-family: var(--font-sans);
-            background: #f0f2f5;
+            background: var(--gray-100);
+            color: var(--gray-800);
+            line-height: 1.6;
         }
 
         /* Login Page */
@@ -77,28 +73,50 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            background: linear-gradient(135deg, var(--dark), var(--darker));
+            padding: 20px;
         }
 
         .login-card {
-            background: white;
+            background: var(--white);
+            border-radius: var(--border-radius-2xl);
             padding: 3rem;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            overflow: hidden;
         }
 
-        .login-card h1 {
-            color: var(--primary);
-            margin-bottom: 0.5rem;
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-premium);
+        }
+
+        .login-header {
             text-align: center;
-        }
-
-        .login-card p {
-            color: #666;
             margin-bottom: 2rem;
-            text-align: center;
+        }
+
+        .login-header h1 {
+            font-size: 2rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: var(--gray-500);
+        }
+
+        .login-header i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
         }
 
         .login-form .form-group {
@@ -108,15 +126,15 @@
         .login-form label {
             display: block;
             margin-bottom: 0.5rem;
-            color: #333;
-            font-weight: 500;
+            font-weight: 600;
+            color: var(--gray-700);
         }
 
         .login-form input {
             width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-md);
             font-size: 1rem;
             transition: all 0.3s;
         }
@@ -124,124 +142,212 @@
         .login-form input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
         }
 
-        .login-btn {
+        .btn-login {
             width: 100%;
             padding: 1rem;
-            background: var(--primary);
-            color: var(--secondary);
+            background: var(--gradient-premium);
+            color: var(--white);
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
+            border-radius: var(--border-radius-md);
+            font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
-        .login-btn:hover {
-            background: var(--primary-dark);
+        .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(212,175,55,0.3);
+            box-shadow: var(--shadow-lg);
         }
 
-        /* Dashboard */
+        /* Dashboard Layout */
         .dashboard {
             display: none;
             min-height: 100vh;
+            background: var(--gray-100);
         }
 
+        .dashboard.active {
+            display: block;
+        }
+
+        /* Sidebar */
         .sidebar {
             position: fixed;
             left: 0;
             top: 0;
-            width: 260px;
-            height: 100%;
-            background: var(--secondary);
-            color: white;
-            padding: 2rem 1rem;
+            bottom: 0;
+            width: 280px;
+            background: var(--white);
+            box-shadow: var(--shadow-lg);
             overflow-y: auto;
+            z-index: 100;
         }
 
-        .sidebar-logo {
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .sidebar-header h2 {
             font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary);
-            margin-bottom: 2rem;
-            text-align: center;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #333;
+            background: var(--gradient-premium);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.25rem;
         }
 
-        .sidebar-menu {
-            list-style: none;
+        .sidebar-header p {
+            color: var(--gray-500);
+            font-size: 0.9rem;
         }
 
-        .sidebar-menu li {
-            margin-bottom: 0.5rem;
-        }
-
-        .sidebar-menu a {
+        .admin-info {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
             display: flex;
             align-items: center;
             gap: 1rem;
-            padding: 0.75rem 1rem;
-            color: #ccc;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s;
         }
 
-        .sidebar-menu a:hover,
-        .sidebar-menu a.active {
-            background: rgba(212,175,55,0.2);
+        .admin-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-premium);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .admin-details h4 {
+            color: var(--gray-800);
+            margin-bottom: 0.25rem;
+        }
+
+        .admin-details p {
+            color: var(--gray-500);
+            font-size: 0.85rem;
+        }
+
+        .nav-menu {
+            padding: 1.5rem 0;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(212, 175, 55, 0.05);
             color: var(--primary);
         }
 
-        .sidebar-menu i {
-            width: 20px;
+        .nav-item.active {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--primary);
+            border-left-color: var(--primary);
         }
 
+        .nav-item i {
+            width: 20px;
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            background: var(--danger);
+            color: var(--white);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--border-radius-full);
+            margin-left: auto;
+        }
+
+        /* Main Content */
         .main-content {
-            margin-left: 260px;
+            margin-left: 280px;
             padding: 2rem;
         }
 
         .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: var(--white);
+            border-radius: var(--border-radius-xl);
+            padding: 1rem 2rem;
             margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
         }
 
-        .page-title h2 {
-            color: var(--secondary);
+        .page-title h1 {
+            font-size: 1.8rem;
+            color: var(--gray-800);
         }
 
-        .user-info {
+        .page-title p {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+
+        .top-bar-actions {
             display: flex;
             align-items: center;
             gap: 1rem;
         }
 
-        .logout-btn {
-            padding: 0.5rem 1.5rem;
-            background: var(--danger);
-            color: white;
-            border: none;
-            border-radius: 5px;
+        .btn-refresh {
+            padding: 0.75rem 1.5rem;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--border-radius-md);
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             transition: all 0.3s;
         }
 
-        .logout-btn:hover {
-            background: #c82333;
+        .btn-refresh:hover {
+            background: var(--gray-200);
         }
 
-        /* Stats Cards */
+        .btn-logout {
+            padding: 0.75rem 1.5rem;
+            background: var(--danger);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-logout:hover {
+            background: #b02a37;
+            transform: translateY(-2px);
+        }
+
+        /* Dashboard Cards */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -250,88 +356,144 @@
         }
 
         .stat-card {
-            background: white;
+            background: var(--white);
+            border-radius: var(--border-radius-xl);
             padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+            box-shadow: var(--shadow-sm);
             transition: transform 0.3s;
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
         }
 
         .stat-icon {
-            width: 60px;
-            height: 60px;
-            background: rgba(212,175,55,0.1);
-            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            border-radius: var(--border-radius-full);
+            background: rgba(212, 175, 55, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .stat-icon i {
-            font-size: 2rem;
             color: var(--primary);
+            font-size: 1.5rem;
         }
 
-        .stat-info h3 {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 0.3rem;
-        }
-
-        .stat-info .number {
+        .stat-value {
             font-size: 2rem;
             font-weight: bold;
-            color: var(--secondary);
+            color: var(--gray-800);
+        }
+
+        .stat-label {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+
+        .stat-change {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+        }
+
+        .stat-change.negative {
+            color: var(--danger);
+        }
+
+        /* Charts Row */
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--white);
+            border-radius: var(--border-radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-header h3 {
+            color: var(--gray-800);
+            font-size: 1.2rem;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
         }
 
         /* Tables */
-        .table-container {
-            background: white;
+        .table-card {
+            background: var(--white);
+            border-radius: var(--border-radius-xl);
             padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow-sm);
             margin-bottom: 2rem;
-            overflow-x: auto;
         }
 
         .table-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             margin-bottom: 1.5rem;
         }
 
         .table-header h3 {
-            color: var(--secondary);
+            color: var(--gray-800);
+            font-size: 1.2rem;
         }
 
-        .search-box {
+        .table-actions {
             display: flex;
             gap: 0.5rem;
         }
 
-        .search-box input {
+        .btn-search {
             padding: 0.5rem 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            width: 300px;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
         }
 
-        .search-box button {
-            padding: 0.5rem 1.5rem;
+        .btn-export {
+            padding: 0.5rem 1rem;
             background: var(--primary);
-            color: var(--secondary);
+            color: var(--white);
             border: none;
-            border-radius: 5px;
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             cursor: pointer;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
         }
 
         table {
@@ -341,76 +503,110 @@
 
         th {
             text-align: left;
-            padding: 1rem 0.5rem;
-            background: #f8f9fa;
-            color: var(--secondary);
+            padding: 1rem;
+            background: var(--gray-100);
+            color: var(--gray-700);
             font-weight: 600;
+            font-size: 0.9rem;
+            border-bottom: 2px solid var(--gray-200);
         }
 
         td {
-            padding: 1rem 0.5rem;
-            border-bottom: 1px solid #e0e0e0;
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        tr:hover {
+            background: rgba(212, 175, 55, 0.02);
         }
 
         .status-badge {
             padding: 0.25rem 0.75rem;
-            border-radius: 20px;
+            border-radius: var(--border-radius-full);
             font-size: 0.85rem;
             font-weight: 500;
+            display: inline-block;
         }
 
-        .status-active {
-            background: rgba(40,167,69,0.1);
+        .status-badge.active {
+            background: rgba(40, 167, 69, 0.1);
             color: var(--success);
         }
 
-        .status-pending {
-            background: rgba(255,193,7,0.1);
+        .status-badge.pending {
+            background: rgba(255, 193, 7, 0.1);
             color: var(--warning);
         }
 
-        .status-suspended {
-            background: rgba(220,53,69,0.1);
+        .status-badge.inactive {
+            background: rgba(220, 53, 69, 0.1);
             color: var(--danger);
         }
 
-        .plan-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            background: rgba(212,175,55,0.1);
+        .status-badge.paid {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+
+        .status-badge.replied {
+            background: rgba(23, 162, 184, 0.1);
+            color: var(--info);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon:hover {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .btn-icon.reply {
+            color: var(--info);
+        }
+
+        .btn-icon.reply:hover {
+            background: var(--info);
+            color: var(--white);
+        }
+
+        .btn-icon.delete {
+            color: var(--danger);
+        }
+
+        .btn-icon.delete:hover {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-icon.view {
             color: var(--primary);
         }
 
-        .action-btn {
-            padding: 0.3rem 0.8rem;
-            margin: 0 0.2rem;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.3s;
+        .btn-icon.view:hover {
+            background: var(--primary);
+            color: var(--white);
         }
 
-        .edit-btn {
-            background: var(--info);
-            color: white;
-        }
-
-        .edit-btn:hover {
-            background: #138496;
-        }
-
-        .delete-btn {
-            background: var(--danger);
-            color: white;
-        }
-
-        .delete-btn:hover {
-            background: #c82333;
-        }
-
-        /* Modal */
+        /* Feedback Reply Modal */
         .modal {
             display: none;
             position: fixed;
@@ -418,81 +614,97 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.5);
             z-index: 1000;
             align-items: center;
             justify-content: center;
         }
 
+        .modal.active {
+            display: flex;
+        }
+
         .modal-content {
-            background: white;
+            background: var(--white);
+            border-radius: var(--border-radius-xl);
             padding: 2rem;
-            border-radius: 15px;
             max-width: 500px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 90vh;
             overflow-y: auto;
         }
 
         .modal-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             margin-bottom: 1.5rem;
         }
 
-        .modal-header h3 {
-            color: var(--secondary);
+        .modal-header h2 {
+            color: var(--gray-800);
         }
 
         .close-modal {
             font-size: 1.5rem;
             cursor: pointer;
-            color: #666;
+            color: var(--gray-500);
         }
 
         .close-modal:hover {
             color: var(--danger);
         }
 
-        .modal-form .form-group {
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .feedback-info {
+            background: var(--gray-100);
+            padding: 1rem;
+            border-radius: var(--border-radius-md);
             margin-bottom: 1rem;
         }
 
-        .modal-form label {
-            display: block;
-            margin-bottom: 0.3rem;
-            color: #333;
-            font-weight: 500;
+        .feedback-info p {
+            margin-bottom: 0.5rem;
         }
 
-        .modal-form input,
-        .modal-form select {
+        .feedback-info strong {
+            color: var(--gray-800);
+        }
+
+        .reply-form textarea {
             width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
+            padding: 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-md);
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 120px;
         }
 
-        .modal-form input:focus,
-        .modal-form select:focus {
+        .reply-form textarea:focus {
             outline: none;
             border-color: var(--primary);
         }
 
-        .save-btn {
+        .btn-submit {
             width: 100%;
             padding: 1rem;
-            background: var(--primary);
-            color: var(--secondary);
+            background: var(--gradient-premium);
+            color: var(--white);
             border: none;
-            border-radius: 5px;
+            border-radius: var(--border-radius-md);
             font-weight: bold;
             cursor: pointer;
-            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
-        /* Loading */
+        /* Loading Overlay */
         .loading-overlay {
             display: none;
             position: fixed;
@@ -500,17 +712,21 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.8);
             z-index: 2000;
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            color: white;
+            color: var(--white);
+        }
+
+        .loading-overlay.active {
+            display: flex;
         }
 
         .spinner {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border: 4px solid rgba(212,175,55,0.3);
             border-top-color: var(--primary);
             border-radius: 50%;
@@ -522,18 +738,20 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Notification */
+        /* Notification Toast */
         .notification-toast {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: white;
+            background: var(--white);
+            color: var(--gray-800);
             padding: 1rem 2rem;
-            border-radius: 5px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-xl);
+            z-index: 1500;
             border-left: 4px solid var(--primary);
+            animation: slideInRight 0.3s ease;
             display: none;
-            z-index: 3000;
         }
 
         .notification-toast.success {
@@ -544,299 +762,64 @@
             border-left-color: var(--danger);
         }
 
-        /* Analytics Cards */
-        .analytics-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+        .notification-toast.info {
+            border-left-color: var(--info);
         }
 
-        .analytics-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
-        .analytics-card h3 {
-            color: var(--secondary);
-            margin-bottom: 1rem;
+        /* Tab Content */
+        .tab-content {
+            display: none;
         }
 
-        .chart-container {
-            height: 300px;
-            position: relative;
+        .tab-content.active {
+            display: block;
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
+                transform: translateX(-100%);
+                transition: transform 0.3s;
             }
-            
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
             .main-content {
                 margin-left: 0;
             }
-            
+
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
             .stats-grid {
                 grid-template-columns: 1fr;
             }
 
-            .analytics-grid {
-                grid-template-columns: 1fr;
+            .top-bar {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Login Page -->
-    <div class="login-container" id="loginPage">
-        <div class="login-card">
-            <h1>⚡ Atafi Luxury Admin</h1>
-            <p>Enter your credentials to access the dashboard</p>
-            <form class="login-form" id="loginForm">
-                <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" id="username" required>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="password" required>
-                </div>
-                <button type="submit" class="login-btn">Login to Dashboard</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Dashboard -->
-    <div class="dashboard" id="dashboard">
-        <div class="sidebar">
-            <div class="sidebar-logo">
-                <i class="fas fa-crown"></i> Atafi Admin
-            </div>
-            <ul class="sidebar-menu">
-                <li><a href="#" class="active" onclick="showSection('overview')"><i class="fas fa-tachometer-alt"></i> Overview</a></li>
-                <li><a href="#" onclick="showSection('users')"><i class="fas fa-users"></i> Users</a></li>
-                <li><a href="#" onclick="showSection('predictions')"><i class="fas fa-chart-line"></i> Predictions</a></li>
-                <li><a href="#" onclick="showSection('payments')"><i class="fas fa-credit-card"></i> Payments</a></li>
-                <li><a href="#" onclick="showSection('analytics')"><i class="fas fa-chart-pie"></i> Analytics</a></li>
-                <li><a href="#" onclick="showSection('settings')"><i class="fas fa-cog"></i> Settings</a></li>
-            </ul>
-        </div>
-
-        <div class="main-content">
-            <div class="top-bar">
-                <div class="page-title">
-                    <h2 id="pageTitle">Overview</h2>
-                </div>
-                <div class="user-info">
-                    <span><i class="fas fa-user-shield"></i> Admin</span>
-                    <button class="logout-btn" onclick="logout()">Logout</button>
-                </div>
-            </div>
-
-            <!-- Overview Section -->
-            <div id="overviewSection">
-                <div class="stats-grid" id="statsGrid">
-                    <!-- Stats will be loaded here -->
-                </div>
-
-                <div class="analytics-grid">
-                    <div class="analytics-card">
-                        <h3>User Growth</h3>
-                        <div class="chart-container">
-                            <canvas id="userChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="analytics-card">
-                        <h3>Revenue Trend</h3>
-                        <div class="chart-container">
-                            <canvas id="revenueChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-                    <!-- Recent Users -->
-                    <div class="table-container">
-                        <h3>Recent Users</h3>
-                        <table id="recentUsersTable">
-                            <thead>
-                                <tr>
-                                    <th>Email</th>
-                                    <th>Plan</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recentUsersBody">
-                                <tr><td colspan="3">Loading...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Recent Payments -->
-                    <div class="table-container">
-                        <h3>Recent Payments</h3>
-                        <table id="recentPaymentsTable">
-                            <thead>
-                                <tr>
-                                    <th>Email</th>
-                                    <th>Amount</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recentPaymentsBody">
-                                <tr><td colspan="3">Loading...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Users Section -->
-            <div id="usersSection" style="display: none;">
-                <div class="table-container">
-                    <div class="table-header">
-                        <h3>All Users</h3>
-                        <div class="search-box">
-                            <input type="text" id="userSearch" placeholder="Search users...">
-                            <button onclick="searchUsers()"><i class="fas fa-search"></i></button>
-                        </div>
-                    </div>
-                    <table id="usersTable">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Business</th>
-                                <th>Plan</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersBody">
-                            <tr><td colspan="7">Loading...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Predictions Section -->
-            <div id="predictionsSection" style="display: none;">
-                <div class="table-container">
-                    <div class="table-header">
-                        <h3>All Predictions</h3>
-                    </div>
-                    <table id="predictionsTable">
-                        <thead>
-                            <tr>
-                                <th>Email</th>
-                                <th>Growth %</th>
-                                <th>Projected Revenue</th>
-                                <th>Customers</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody id="predictionsBody">
-                            <tr><td colspan="5">Loading...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Payments Section -->
-            <div id="paymentsSection" style="display: none;">
-                <div class="table-container">
-                    <div class="table-header">
-                        <h3>Payment History</h3>
-                    </div>
-                    <table id="paymentsTable">
-                        <thead>
-                            <tr>
-                                <th>Email</th>
-                                <th>Amount</th>
-                                <th>Reference</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="paymentsBody">
-                            <tr><td colspan="5">Loading...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Analytics Section -->
-            <div id="analyticsSection" style="display: none;">
-                <div class="analytics-grid">
-                    <div class="analytics-card">
-                        <h3>Users by Plan</h3>
-                        <div class="chart-container">
-                            <canvas id="planChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="analytics-card">
-                        <h3>Conversion Rate</h3>
-                        <div class="chart-container">
-                            <canvas id="conversionChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Settings Section -->
-            <div id="settingsSection" style="display: none;">
-                <div class="table-container">
-                    <h3>Admin Settings</h3>
-                    <p>Coming soon: Change password, notification settings, etc.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit User Modal -->
-    <div class="modal" id="editUserModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Edit User</h3>
-                <span class="close-modal" onclick="closeEditModal()">&times;</span>
-            </div>
-            <form class="modal-form" id="editUserForm">
-                <input type="hidden" id="editUserId">
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="editFullName" readonly style="background: #f5f5f5;">
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="editEmail" readonly style="background: #f5f5f5;">
-                </div>
-                <div class="form-group">
-                    <label>Plan</label>
-                    <select id="editPlan">
-                        <option value="Basic">Basic</option>
-                        <option value="Professional">Professional</option>
-                        <option value="Enterprise">Enterprise</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Status</label>
-                    <select id="editStatus">
-                        <option value="active">Active</option>
-                        <option value="pending">Pending</option>
-                        <option value="suspended">Suspended</option>
-                    </select>
-                </div>
-                <button type="submit" class="save-btn">Save Changes</button>
-            </form>
-        </div>
-    </div>
-
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
@@ -846,534 +829,535 @@
     <!-- Notification Toast -->
     <div class="notification-toast" id="notificationToast"></div>
 
+    <!-- Login Page -->
+    <div class="login-container" id="loginPage">
+        <div class="login-card">
+            <div class="login-header">
+                <i class="fas fa-crown"></i>
+                <h1>Admin Dashboard</h1>
+                <p>Atafi Luxury Business Growth Platform</p>
+            </div>
+            <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Login to Dashboard
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Atafi Luxury</h2>
+                <p>Admin Dashboard</p>
+            </div>
+            <div class="admin-info" id="adminInfo">
+                <div class="admin-avatar" id="adminAvatar">A</div>
+                <div class="admin-details">
+                    <h4 id="adminName">Admin</h4>
+                    <p id="adminRole">Super Admin</p>
+                </div>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-item active" onclick="switchTab('overview')">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Overview</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('users')">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                    <span class="badge" id="userBadge">0</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('audits')">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Brand Audits</span>
+                    <span class="badge" id="auditBadge">0</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('predictions')">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Predictions</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('feedback')">
+                    <i class="fas fa-comment"></i>
+                    <span>Feedback</span>
+                    <span class="badge" id="feedbackBadge">0</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('payments')">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Payments</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('kro')">
+                    <i class="fas fa-video"></i>
+                    <span>KRO Media</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('settings')">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1 id="pageTitle">Dashboard Overview</h1>
+                    <p id="pageSubtitle">Welcome back! Here's what's happening with your platform.</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn-refresh" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="btn-logout" onclick="handleLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Overview Tab -->
+            <div class="tab-content active" id="overviewTab">
+                <div class="stats-grid" id="overviewStats">
+                    <!-- Stats will be populated by JavaScript -->
+                </div>
+
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>User Growth</h3>
+                            <select id="userGrowthPeriod" onchange="updateUserGrowthChart()">
+                                <option value="7">Last 7 days</option>
+                                <option value="30" selected>Last 30 days</option>
+                                <option value="90">Last 90 days</option>
+                            </select>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="userGrowthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Revenue Overview</h3>
+                            <select id="revenuePeriod" onchange="updateRevenueChart()">
+                                <option value="7">Last 7 days</option>
+                                <option value="30" selected>Last 30 days</option>
+                                <option value="90">Last 90 days</option>
+                            </select>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Growth Scores Distribution</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="growthScoreChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Feedback Status</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="feedbackChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>Recent Users</h3>
+                        <button class="btn-export" onclick="exportData('users')">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="recentUsersTable">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Business</th>
+                                    <th>Plan</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentUsersBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Tab -->
+            <div class="tab-content" id="usersTab">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>All Users</h3>
+                        <div class="table-actions">
+                            <input type="text" id="userSearch" placeholder="Search users..." onkeyup="filterUsers()" style="padding: 0.5rem; border: 1px solid var(--gray-200); border-radius: var(--border-radius-md);">
+                            <button class="btn-export" onclick="exportData('users')">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Plan</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Audits Tab -->
+            <div class="tab-content" id="auditsTab">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>Brand Audits</h3>
+                        <div class="table-actions">
+                            <input type="text" id="auditSearch" placeholder="Search audits..." onkeyup="filterAudits()" style="padding: 0.5rem; border: 1px solid var(--gray-200); border-radius: var(--border-radius-md);">
+                            <button class="btn-export" onclick="exportData('audits')">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="auditsTable">
+                            <thead>
+                                <tr>
+                                    <th>Business</th>
+                                    <th>Industry</th>
+                                    <th>Revenue</th>
+                                    <th>Marketing Channels</th>
+                                    <th>Branding Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auditsBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Predictions Tab -->
+            <div class="tab-content" id="predictionsTab">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>Growth Predictions</h3>
+                        <button class="btn-export" onclick="exportData('predictions')">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="predictionsTable">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Growth Score</th>
+                                    <th>Projected Revenue</th>
+                                    <th>Projected Customers</th>
+                                    <th>ROI</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="predictionsBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback Tab -->
+            <div class="tab-content" id="feedbackTab">
+                <div class="stats-grid" id="feedbackStats">
+                    <!-- Feedback stats will be populated -->
+                </div>
+
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>User Feedback</h3>
+                        <div class="table-actions">
+                            <select id="feedbackFilter" onchange="filterFeedback()" style="padding: 0.5rem; border: 1px solid var(--gray-200); border-radius: var(--border-radius-md);">
+                                <option value="all">All Feedback</option>
+                                <option value="pending">Pending</option>
+                                <option value="replied">Replied</option>
+                            </select>
+                            <button class="btn-export" onclick="exportData('feedback')">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="feedbackTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Email</th>
+                                    <th>Type</th>
+                                    <th>Message</th>
+                                    <th>Status</th>
+                                    <th>Reply</th>
+                                    <th>Received</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feedbackBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payments Tab -->
+            <div class="tab-content" id="paymentsTab">
+                <div class="stats-grid" id="paymentStats">
+                    <!-- Payment stats will be populated -->
+                </div>
+
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>Payment History</h3>
+                        <button class="btn-export" onclick="exportData('payments')">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="paymentsTable">
+                            <thead>
+                                <tr>
+                                    <th>Payment ID</th>
+                                    <th>Email</th>
+                                    <th>Amount</th>
+                                    <th>Plan</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KRO Media Tab -->
+            <div class="tab-content" id="kroTab">
+                <div class="stats-grid" id="kroStats">
+                    <!-- KRO stats will be populated -->
+                </div>
+
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>PIN Requests</h3>
+                        <button class="btn-export" onclick="exportData('pinRequests')">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="pinRequestsTable">
+                            <thead>
+                                <tr>
+                                    <th>Request ID</th>
+                                    <th>Email</th>
+                                    <th>Package</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Requested</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pinRequestsBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>Active PINs</h3>
+                        <button class="btn-export" onclick="exportData('activePins')">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="activePinsTable">
+                            <thead>
+                                <tr>
+                                    <th>PIN</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Used</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activePinsBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-content" id="settingsTab">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>Admin Users</h3>
+                        <button class="btn-export" onclick="exportData('admins')">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="adminsTable">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminsBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>Add New Admin</h3>
+                    </div>
+                    <div style="padding: 1rem;">
+                        <form onsubmit="addNewAdmin(event)" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <input type="text" id="newUsername" placeholder="Username" required style="padding: 0.75rem; border: 2px solid var(--gray-200); border-radius: var(--border-radius-md);">
+                            <input type="password" id="newPassword" placeholder="Password" required style="padding: 0.75rem; border: 2px solid var(--gray-200); border-radius: var(--border-radius-md);">
+                            <select id="newRole" style="padding: 0.75rem; border: 2px solid var(--gray-200); border-radius: var(--border-radius-md);">
+                                <option value="admin">Admin</option>
+                                <option value="super_admin">Super Admin</option>
+                                <option value="viewer">Viewer</option>
+                            </select>
+                            <button type="submit" class="btn-submit" style="padding: 0.75rem;">
+                                <i class="fas fa-plus"></i> Add Admin
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Reply Modal -->
+    <div class="modal" id="replyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Reply to Feedback</h2>
+                <span class="close-modal" onclick="closeReplyModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="feedback-info" id="replyFeedbackInfo">
+                    <!-- Populated by JavaScript -->
+                </div>
+                <form class="reply-form" onsubmit="submitReply(event)">
+                    <textarea id="replyMessage" placeholder="Type your reply here..." required></textarea>
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-paper-plane"></i> Send Reply
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // ==================== CONFIGURATION ====================
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzkhPG5ub5XHvpVnXydgUUdJpdSHVtF04OjAyiZmDoJ85wF60RKVllrMm3O4PZKSJ1H/exec';
-        let adminLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
-        let userChart = null;
+        // Configuration
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw5UpxyhbtS3O9nU5BXCtRwb-aovaAvq809FwvWtwNTtcEuo-EWzu9DNSSZKyo8HaJo/exec';
+        
+        // Global variables
+        let currentAdmin = null;
+        let dashboardData = {
+            users: [],
+            audits: [],
+            predictions: [],
+            feedback: [],
+            payments: [],
+            pinRequests: [],
+            activePins: [],
+            admins: []
+        };
+        
+        // Chart instances
+        let userGrowthChart = null;
         let revenueChart = null;
-        let planChart = null;
-        let conversionChart = null;
-
-        // ==================== JSONP HELPER ====================
-        function jsonpRequest(action, data) {
-            return new Promise((resolve, reject) => {
-                const callbackId = 'callback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                const script = document.createElement('script');
-                
-                let url = APPS_SCRIPT_URL + '?action=' + action + '&callback=' + callbackId;
-                url += '&data=' + encodeURIComponent(JSON.stringify(data));
-                
-                window[callbackId] = function(response) {
-                    delete window[callbackId];
-                    document.body.removeChild(script);
-                    
-                    if (response && response.success) {
-                        resolve(response);
-                    } else {
-                        reject(response || { error: 'Unknown error' });
-                    }
-                };
-                
-                script.src = url;
-                document.body.appendChild(script);
-                
-                setTimeout(() => {
-                    if (window[callbackId]) {
-                        delete window[callbackId];
-                        document.body.removeChild(script);
-                        reject({ error: 'Request timeout' });
-                    }
-                }, 15000);
-            });
-        }
-
-        // ==================== API FUNCTIONS ====================
-        async function adminLogin(username, password) {
-            return jsonpRequest('admin_login', { username, password });
-        }
-
-        async function getDashboardStats() {
-            return jsonpRequest('admin_getDashboardStats', {});
-        }
-
-        async function getAllUsers() {
-            return jsonpRequest('admin_getAllUsers', {});
-        }
-
-        async function getAllPredictions() {
-            return jsonpRequest('admin_getAllPredictions', {});
-        }
-
-        async function getAllPayments() {
-            return jsonpRequest('admin_getAllPayments', {});
-        }
-
-        async function updateUser(userId, plan, status) {
-            return jsonpRequest('admin_updateUser', { userId, plan, status });
-        }
-
-        async function deleteUser(userId) {
-            return jsonpRequest('admin_deleteUser', { userId });
-        }
-
-        async function getAnalyticsData() {
-            return jsonpRequest('admin_getAnalytics', {});
-        }
-
-        // ==================== INITIALIZATION ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            if (adminLoggedIn) {
-                document.getElementById('loginPage').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                loadDashboardData();
-            }
-        });
-
-        // ==================== LOGIN ====================
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            showLoading(true);
-            
-            try {
-                const response = await adminLogin(username, password);
-                
-                if (response && response.success) {
-                    localStorage.setItem('adminLoggedIn', 'true');
-                    document.getElementById('loginPage').style.display = 'none';
-                    document.getElementById('dashboard').style.display = 'block';
-                    loadDashboardData();
-                    showNotification('Login successful!', 'success');
-                } else {
-                    showNotification(response?.error || 'Login failed', 'error');
-                }
-            } catch (error) {
-                showNotification('Login failed: ' + (error.error || error.message), 'error');
-            }
-            
-            showLoading(false);
-        });
-
-        // ==================== LOGOUT ====================
-        function logout() {
-            localStorage.removeItem('adminLoggedIn');
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('loginPage').style.display = 'flex';
-            showNotification('Logged out successfully', 'success');
-        }
-
-        // ==================== SECTION NAVIGATION ====================
-        function showSection(section) {
-            document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
-            event.target.closest('a').classList.add('active');
-            
-            document.getElementById('overviewSection').style.display = 'none';
-            document.getElementById('usersSection').style.display = 'none';
-            document.getElementById('predictionsSection').style.display = 'none';
-            document.getElementById('paymentsSection').style.display = 'none';
-            document.getElementById('analyticsSection').style.display = 'none';
-            document.getElementById('settingsSection').style.display = 'none';
-            
-            document.getElementById(section + 'Section').style.display = 'block';
-            document.getElementById('pageTitle').textContent = section.charAt(0).toUpperCase() + section.slice(1);
-            
-            if (section === 'overview') loadDashboardData();
-            if (section === 'users') loadUsers();
-            if (section === 'predictions') loadPredictions();
-            if (section === 'payments') loadPayments();
-            if (section === 'analytics') loadAnalytics();
-        }
-
-        // ==================== LOAD DASHBOARD DATA ====================
-        async function loadDashboardData() {
-            showLoading(true);
-            
-            try {
-                const response = await getDashboardStats();
-                
-                if (response && response.success) {
-                    const stats = response.stats;
-                    
-                    document.getElementById('statsGrid').innerHTML = `
-                        <div class="stat-card">
-                            <div class="stat-icon"><i class="fas fa-users"></i></div>
-                            <div class="stat-info">
-                                <h3>Total Users</h3>
-                                <div class="number">${stats.totalUsers}</div>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon"><i class="fas fa-user-check"></i></div>
-                            <div class="stat-info">
-                                <h3>Active Users</h3>
-                                <div class="number">${stats.activeUsers}</div>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
-                            <div class="stat-info">
-                                <h3>Predictions</h3>
-                                <div class="number">${stats.totalPredictions}</div>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon"><i class="fas fa-credit-card"></i></div>
-                            <div class="stat-info">
-                                <h3>Revenue</h3>
-                                <div class="number">₦${stats.totalRevenue.toLocaleString()}</div>
-                            </div>
-                        </div>
-                    `;
-                    
-                    let usersHtml = '';
-                    stats.recentUsers.forEach(user => {
-                        usersHtml += `
-                            <tr>
-                                <td>${user.email}</td>
-                                <td><span class="plan-badge">${user.plan}</span></td>
-                                <td>${new Date(user.date).toLocaleDateString()}</td>
-                            </tr>
-                        `;
-                    });
-                    document.getElementById('recentUsersBody').innerHTML = usersHtml || '<tr><td colspan="3">No recent users</td></tr>';
-                    
-                    let paymentsHtml = '';
-                    stats.recentPayments.forEach(payment => {
-                        paymentsHtml += `
-                            <tr>
-                                <td>${payment.email}</td>
-                                <td>₦${payment.amount.toLocaleString()}</td>
-                                <td>${new Date(payment.date).toLocaleDateString()}</td>
-                            </tr>
-                        `;
-                    });
-                    document.getElementById('recentPaymentsBody').innerHTML = paymentsHtml || '<tr><td colspan="3">No recent payments</td></tr>';
-                    
-                    // Create charts
-                    if (typeof Chart !== 'undefined') {
-                        createUserChart(stats.userGrowthData || [10, 20, 30, 45, 60, 85, 120, 160, 200]);
-                        createRevenueChart(stats.revenueData || [50000, 120000, 180000, 250000, 350000, 500000, 750000, 900000, 1200000]);
-                    }
-                }
-            } catch (error) {
-                showNotification('Failed to load dashboard data', 'error');
-            }
-            
-            showLoading(false);
-        }
-
-        // ==================== LOAD USERS ====================
-        async function loadUsers() {
-            showLoading(true);
-            
-            try {
-                const response = await getAllUsers();
-                
-                if (response && response.success) {
-                    let html = '';
-                    response.users.forEach(user => {
-                        const statusClass = user.status === 'active' ? 'status-active' : 
-                                           user.status === 'pending' ? 'status-pending' : 'status-suspended';
-                        
-                        html += `
-                            <tr>
-                                <td>${user.fullName || 'N/A'}</td>
-                                <td>${user.email}</td>
-                                <td>${user.phone || 'N/A'}</td>
-                                <td>${user.business?.businessName || 'N/A'}</td>
-                                <td><span class="plan-badge">${user.plan || 'Basic'}</span></td>
-                                <td><span class="status-badge ${statusClass}">${user.status || 'pending'}</span></td>
-                                <td>
-                                    <button class="action-btn edit-btn" onclick="editUser('${user.userId}', '${user.fullName}', '${user.email}', '${user.plan}', '${user.status}')">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="action-btn delete-btn" onclick="deleteUser('${user.userId}')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    document.getElementById('usersBody').innerHTML = html || '<tr><td colspan="7">No users found</td></tr>';
-                }
-            } catch (error) {
-                showNotification('Failed to load users', 'error');
-            }
-            
-            showLoading(false);
-        }
-
-        // ==================== LOAD PREDICTIONS ====================
-        async function loadPredictions() {
-            showLoading(true);
-            
-            try {
-                const response = await getAllPredictions();
-                
-                if (response && response.success) {
-                    let html = '';
-                    response.predictions.forEach(pred => {
-                        html += `
-                            <tr>
-                                <td>${pred.email}</td>
-                                <td><strong>${pred.growthPercentage}%</strong></td>
-                                <td>₦${pred.projectedRevenue.toLocaleString()}</td>
-                                <td>${pred.projectedCustomers}</td>
-                                <td>${new Date(pred.date).toLocaleDateString()}</td>
-                            </tr>
-                        `;
-                    });
-                    document.getElementById('predictionsBody').innerHTML = html || '<tr><td colspan="5">No predictions found</td></tr>';
-                }
-            } catch (error) {
-                showNotification('Failed to load predictions', 'error');
-            }
-            
-            showLoading(false);
-        }
-
-        // ==================== LOAD PAYMENTS ====================
-        async function loadPayments() {
-            showLoading(true);
-            
-            try {
-                const response = await getAllPayments();
-                
-                if (response && response.success) {
-                    let html = '';
-                    response.payments.forEach(payment => {
-                        const statusClass = payment.status === 'successful' ? 'status-active' : 'status-pending';
-                        html += `
-                            <tr>
-                                <td>${payment.email}</td>
-                                <td>₦${payment.amount.toLocaleString()}</td>
-                                <td>${payment.reference}</td>
-                                <td>${new Date(payment.date).toLocaleDateString()}</td>
-                                <td><span class="status-badge ${statusClass}">${payment.status}</span></td>
-                            </tr>
-                        `;
-                    });
-                    document.getElementById('paymentsBody').innerHTML = html || '<tr><td colspan="5">No payments found</td></tr>';
-                }
-            } catch (error) {
-                document.getElementById('paymentsBody').innerHTML = '<tr><td colspan="5">Payment history coming soon</td></tr>';
-            }
-            
-            showLoading(false);
-        }
-
-        // ==================== LOAD ANALYTICS ====================
-        async function loadAnalytics() {
-            showLoading(true);
-            
-            try {
-                const response = await getAnalyticsData();
-                
-                if (response && response.success) {
-                    if (typeof Chart !== 'undefined') {
-                        createPlanChart(response.planData || [45, 30, 25]);
-                        createConversionChart(response.conversionData || [2.5, 3.2, 4.1, 5.3, 6.8, 8.2]);
-                    }
-                }
-            } catch (error) {
-                console.error('Analytics error:', error);
-            }
-            
-            showLoading(false);
-        }
-
-        // ==================== CHART FUNCTIONS ====================
-        function createUserChart(data) {
-            const ctx = document.getElementById('userChart')?.getContext('2d');
-            if (!ctx) return;
-            
-            if (userChart) userChart.destroy();
-            
-            userChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-                    datasets: [{
-                        label: 'Users',
-                        data: data,
-                        borderColor: '#d4af37',
-                        backgroundColor: 'rgba(212,175,55,0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-        }
-
-        function createRevenueChart(data) {
-            const ctx = document.getElementById('revenueChart')?.getContext('2d');
-            if (!ctx) return;
-            
-            if (revenueChart) revenueChart.destroy();
-            
-            revenueChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-                    datasets: [{
-                        label: 'Revenue',
-                        data: data,
-                        backgroundColor: '#d4af37',
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-        }
-
-        function createPlanChart(data) {
-            const ctx = document.getElementById('planChart')?.getContext('2d');
-            if (!ctx) return;
-            
-            if (planChart) planChart.destroy();
-            
-            planChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Basic', 'Professional', 'Enterprise'],
-                    datasets: [{
-                        data: data,
-                        backgroundColor: ['#d4af37', '#9d4edd', '#1a1a1a'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom' }
-                    }
-                }
-            });
-        }
-
-        function createConversionChart(data) {
-            const ctx = document.getElementById('conversionChart')?.getContext('2d');
-            if (!ctx) return;
-            
-            if (conversionChart) conversionChart.destroy();
-            
-            conversionChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    datasets: [{
-                        label: 'Conversion Rate %',
-                        data: data,
-                        borderColor: '#28a745',
-                        backgroundColor: 'rgba(40,167,69,0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        }
-
-        // ==================== EDIT USER ====================
-        function editUser(userId, fullName, email, currentPlan, currentStatus) {
-            document.getElementById('editUserId').value = userId;
-            document.getElementById('editFullName').value = fullName;
-            document.getElementById('editEmail').value = email;
-            document.getElementById('editPlan').value = currentPlan;
-            document.getElementById('editStatus').value = currentStatus;
-            document.getElementById('editUserModal').style.display = 'flex';
-        }
-
-        function closeEditModal() {
-            document.getElementById('editUserModal').style.display = 'none';
-        }
-
-        document.getElementById('editUserForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const userId = document.getElementById('editUserId').value;
-            const plan = document.getElementById('editPlan').value;
-            const status = document.getElementById('editStatus').value;
-            
-            showLoading(true);
-            
-            try {
-                const response = await updateUser(userId, plan, status);
-                
-                if (response && response.success) {
-                    showNotification('User updated successfully', 'success');
-                    closeEditModal();
-                    loadUsers();
-                    loadDashboardData();
-                } else {
-                    showNotification(response?.error || 'Update failed', 'error');
-                }
-            } catch (error) {
-                showNotification('Update failed', 'error');
-            }
-            
-            showLoading(false);
-        });
-
-        // ==================== DELETE USER ====================
-        async function deleteUser(userId) {
-            if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-                return;
-            }
-            
-            showLoading(true);
-            
-            try {
-                const response = await deleteUser(userId);
-                
-                if (response && response.success) {
-                    showNotification('User deleted successfully', 'success');
-                    loadUsers();
-                    loadDashboardData();
-                } else {
-                    showNotification(response?.error || 'Delete failed', 'error');
-                }
-            } catch (error) {
-                showNotification('Delete failed', 'error');
-            }
-            
-            showLoading(false);
-        }
-
-        // ==================== SEARCH USERS ====================
-        function searchUsers() {
-            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
-            const rows = document.querySelectorAll('#usersBody tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        }
+        let growthScoreChart = null;
+        let feedbackChart = null;
 
         // ==================== UTILITY FUNCTIONS ====================
+        async function apiRequest(action, data = {}) {
+            const url = APPS_SCRIPT_URL + '?action=' + action + '&data=' + encodeURIComponent(JSON.stringify(data));
+            
+            try {
+                const response = await fetch(url);
+                const text = await response.text();
+                
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.error('Failed to parse JSON:', text);
+                    return { success: false, error: 'Invalid JSON response' };
+                }
+            } catch (error) {
+                console.error('API Request Failed:', error);
+                return { success: false, error: error.toString() };
+            }
+        }
+
         function showLoading(show) {
-            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+            const overlay = document.getElementById('loadingOverlay');
+            if (show) {
+                overlay.classList.add('active');
+            } else {
+                overlay.classList.remove('active');
+            }
         }
 
         function showNotification(message, type = 'info') {
@@ -1381,21 +1365,1160 @@
             toast.textContent = message;
             toast.className = 'notification-toast ' + type;
             toast.style.display = 'block';
-            
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 4000);
+            setTimeout(() => toast.style.display = 'none', 4000);
         }
 
-        // Chart.js fallback check
-        window.addEventListener('load', function() {
-            if (typeof Chart === 'undefined') {
-                console.error('Chart.js failed to load - using fallback');
-                window.Chart = function() {
-                    console.warn('Chart.js not available');
-                };
+        function formatCurrency(amount) {
+            return '₦' + Number(amount).toLocaleString();
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        }
+
+        // ==================== LOGIN FUNCTIONS ====================
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            showLoading(true);
+            
+            try {
+                const response = await apiRequest('admin_login', { username, password });
+                
+                if (response && response.success) {
+                    currentAdmin = response.admin;
+                    document.getElementById('loginPage').style.display = 'none';
+                    document.getElementById('dashboard').classList.add('active');
+                    document.getElementById('adminName').textContent = currentAdmin.username;
+                    document.getElementById('adminRole').textContent = currentAdmin.role;
+                    document.getElementById('adminAvatar').textContent = currentAdmin.username.charAt(0).toUpperCase();
+                    
+                    await loadDashboardData();
+                    showNotification('Login successful!', 'success');
+                } else {
+                    showNotification('Invalid username or password', 'error');
+                }
+            } catch (error) {
+                showNotification('Login failed: ' + error.message, 'error');
             }
-        });
+            
+            showLoading(false);
+        }
+
+        function handleLogout() {
+            currentAdmin = null;
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('loginForm').reset();
+            showNotification('Logged out successfully', 'info');
+        }
+
+        // ==================== DASHBOARD DATA LOADING ====================
+        async function loadDashboardData() {
+            showLoading(true);
+            
+            try {
+                // Load all data in parallel
+                const [
+                    usersRes,
+                    auditsRes,
+                    predictionsRes,
+                    feedbackRes,
+                    paymentsRes,
+                    pinRequestsRes,
+                    activePinsRes,
+                    adminsRes
+                ] = await Promise.all([
+                    apiRequest('admin_getAllUsers'),
+                    apiRequest('admin_getAllAudits'),
+                    apiRequest('admin_getAllPredictions'),
+                    apiRequest('atafi_getAllFeedback'),
+                    apiRequest('admin_getAllPayments'),
+                    apiRequest('getPendingRequests'),
+                    apiRequest('admin_getActivePins'),
+                    apiRequest('admin_getAllAdmins')
+                ]);
+                
+                if (usersRes.success) dashboardData.users = usersRes.users || [];
+                if (auditsRes.success) dashboardData.audits = auditsRes.audits || [];
+                if (predictionsRes.success) dashboardData.predictions = predictionsRes.predictions || [];
+                if (feedbackRes.success) dashboardData.feedback = feedbackRes.feedbacks || [];
+                if (paymentsRes.success) dashboardData.payments = paymentsRes.payments || [];
+                if (pinRequestsRes.success) dashboardData.pinRequests = pinRequestsRes.pending || [];
+                if (activePinsRes.success) dashboardData.activePins = activePinsRes.pins || [];
+                if (adminsRes.success) dashboardData.admins = adminsRes.admins || [];
+                
+                // Update badges
+                document.getElementById('userBadge').textContent = dashboardData.users.length;
+                document.getElementById('auditBadge').textContent = dashboardData.audits.length;
+                document.getElementById('feedbackBadge').textContent = dashboardData.feedback.filter(f => f.status === 'pending').length;
+                
+                // Update all tabs
+                updateOverviewTab();
+                updateUsersTab();
+                updateAuditsTab();
+                updatePredictionsTab();
+                updateFeedbackTab();
+                updatePaymentsTab();
+                updateKroTab();
+                updateSettingsTab();
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showNotification('Error loading data: ' + error.message, 'error');
+            }
+            
+            showLoading(false);
+        }
+
+        function refreshData() {
+            loadDashboardData();
+            showNotification('Data refreshed successfully', 'success');
+        }
+
+        // ==================== TAB SWITCHING ====================
+        function switchTab(tabName) {
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Update page title
+            const titles = {
+                overview: 'Dashboard Overview',
+                users: 'User Management',
+                audits: 'Brand Audits',
+                predictions: 'Growth Predictions',
+                feedback: 'Feedback Management',
+                payments: 'Payment History',
+                kro: 'KRO Media Management',
+                settings: 'Settings'
+            };
+            
+            document.getElementById('pageTitle').textContent = titles[tabName];
+            document.getElementById('pageSubtitle').textContent = 'Manage and monitor your platform data';
+        }
+
+        // ==================== OVERVIEW TAB ====================
+        function updateOverviewTab() {
+            updateOverviewStats();
+            updateRecentUsers();
+            updateUserGrowthChart();
+            updateRevenueChart();
+            updateGrowthScoreChart();
+            updateFeedbackChart();
+        }
+
+        function updateOverviewStats() {
+            const totalUsers = dashboardData.users.length;
+            const totalAudits = dashboardData.audits.length;
+            const totalPredictions = dashboardData.predictions.length;
+            const pendingFeedback = dashboardData.feedback.filter(f => f.status === 'pending').length;
+            
+            // Calculate total revenue
+            const totalRevenue = dashboardData.payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+            
+            // Calculate average growth score
+            const avgGrowthScore = dashboardData.predictions.length > 0 
+                ? Math.round(dashboardData.predictions.reduce((sum, p) => sum + (p.growthPercentage || 0), 0) / dashboardData.predictions.length)
+                : 0;
+            
+            const statsHTML = `
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div class="stat-value">${totalUsers}</div>
+                    </div>
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-change positive">+${Math.round(totalUsers * 0.1)} this month</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
+                        <div class="stat-value">${totalAudits}</div>
+                    </div>
+                    <div class="stat-label">Brand Audits</div>
+                    <div class="stat-change positive">${Math.round((totalAudits/totalUsers)*100)}% completion rate</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="stat-value">${avgGrowthScore}%</div>
+                    </div>
+                    <div class="stat-label">Avg Growth Score</div>
+                    <div class="stat-change positive">+12% vs last month</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-credit-card"></i></div>
+                        <div class="stat-value">${formatCurrency(totalRevenue)}</div>
+                    </div>
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-change positive">+${Math.round(totalRevenue * 0.15)} this month</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-comment"></i></div>
+                        <div class="stat-value">${pendingFeedback}</div>
+                    </div>
+                    <div class="stat-label">Pending Feedback</div>
+                    <div class="stat-change ${pendingFeedback > 0 ? 'negative' : 'positive'}">${pendingFeedback > 0 ? 'Needs attention' : 'All caught up'}</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-video"></i></div>
+                        <div class="stat-value">${dashboardData.pinRequests.length}</div>
+                    </div>
+                    <div class="stat-label">PIN Requests</div>
+                    <div class="stat-change">${dashboardData.pinRequests.filter(r => r.status === 'pending').length} pending</div>
+                </div>
+            `;
+            
+            document.getElementById('overviewStats').innerHTML = statsHTML;
+        }
+
+        function updateRecentUsers() {
+            const recentUsers = dashboardData.users.slice(0, 5);
+            
+            let html = '';
+            recentUsers.forEach(user => {
+                html += `
+                    <tr>
+                        <td>${user.fullName || 'N/A'}</td>
+                        <td>${user.email}</td>
+                        <td>${user.businessName || 'N/A'}</td>
+                        <td>${user.plan || 'Basic'}</td>
+                        <td><span class="status-badge ${user.status === 'active' ? 'active' : 'pending'}">${user.status || 'pending'}</span></td>
+                        <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon view" onclick="viewUser('${user.userId}')"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('recentUsersBody').innerHTML = html;
+        }
+
+        function updateUserGrowthChart() {
+            const ctx = document.getElementById('userGrowthChart').getContext('2d');
+            
+            // Generate last 30 days of data
+            const labels = [];
+            const data = [];
+            const today = new Date();
+            
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                
+                // Count users created on this date
+                const count = dashboardData.users.filter(user => {
+                    const created = new Date(user.createdAt);
+                    return created.toDateString() === date.toDateString();
+                }).length;
+                
+                data.push(count);
+            }
+            
+            if (userGrowthChart) userGrowthChart.destroy();
+            
+            userGrowthChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'New Users',
+                        data: data,
+                        borderColor: '#d4af37',
+                        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateRevenueChart() {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            
+            // Generate last 30 days of revenue data
+            const labels = [];
+            const data = [];
+            const today = new Date();
+            
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                
+                // Sum revenue from this date
+                const total = dashboardData.payments
+                    .filter(p => {
+                        const paid = new Date(p.createdAt);
+                        return paid.toDateString() === date.toDateString();
+                    })
+                    .reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+                
+                data.push(total);
+            }
+            
+            if (revenueChart) revenueChart.destroy();
+            
+            revenueChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Revenue (₦)',
+                        data: data,
+                        backgroundColor: 'rgba(212, 175, 55, 0.8)',
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateGrowthScoreChart() {
+            const ctx = document.getElementById('growthScoreChart').getContext('2d');
+            
+            // Group growth scores into ranges
+            const ranges = {
+                '0-20': 0,
+                '21-40': 0,
+                '41-60': 0,
+                '61-80': 0,
+                '81-100': 0
+            };
+            
+            dashboardData.predictions.forEach(p => {
+                const score = p.growthPercentage || 0;
+                if (score <= 20) ranges['0-20']++;
+                else if (score <= 40) ranges['21-40']++;
+                else if (score <= 60) ranges['41-60']++;
+                else if (score <= 80) ranges['61-80']++;
+                else ranges['81-100']++;
+            });
+            
+            if (growthScoreChart) growthScoreChart.destroy();
+            
+            growthScoreChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(ranges),
+                    datasets: [{
+                        data: Object.values(ranges),
+                        backgroundColor: [
+                            '#dc3545',
+                            '#ffc107',
+                            '#17a2b8',
+                            '#28a745',
+                            '#d4af37'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateFeedbackChart() {
+            const ctx = document.getElementById('feedbackChart').getContext('2d');
+            
+            const pending = dashboardData.feedback.filter(f => f.status === 'pending').length;
+            const replied = dashboardData.feedback.filter(f => f.status === 'replied').length;
+            
+            if (feedbackChart) feedbackChart.destroy();
+            
+            feedbackChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Pending', 'Replied'],
+                    datasets: [{
+                        data: [pending, replied],
+                        backgroundColor: ['#ffc107', '#28a745']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // ==================== USERS TAB ====================
+        function updateUsersTab() {
+            let html = '';
+            dashboardData.users.forEach(user => {
+                html += `
+                    <tr>
+                        <td>${user.userId || 'N/A'}</td>
+                        <td>${user.fullName || 'N/A'}</td>
+                        <td>${user.email}</td>
+                        <td>${user.phone || 'N/A'}</td>
+                        <td>${user.plan || 'Basic'}</td>
+                        <td><span class="status-badge ${user.status === 'active' ? 'active' : 'pending'}">${user.status || 'pending'}</span></td>
+                        <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon view" onclick="viewUser('${user.userId}')"><i class="fas fa-eye"></i></button>
+                                <button class="btn-icon" onclick="editUser('${user.userId}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn-icon delete" onclick="deleteUser('${user.userId}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('usersBody').innerHTML = html;
+        }
+
+        function filterUsers() {
+            const search = document.getElementById('userSearch').value.toLowerCase();
+            const filtered = dashboardData.users.filter(user => 
+                user.fullName?.toLowerCase().includes(search) ||
+                user.email?.toLowerCase().includes(search) ||
+                user.businessName?.toLowerCase().includes(search)
+            );
+            
+            let html = '';
+            filtered.forEach(user => {
+                html += `
+                    <tr>
+                        <td>${user.userId || 'N/A'}</td>
+                        <td>${user.fullName || 'N/A'}</td>
+                        <td>${user.email}</td>
+                        <td>${user.phone || 'N/A'}</td>
+                        <td>${user.plan || 'Basic'}</td>
+                        <td><span class="status-badge ${user.status === 'active' ? 'active' : 'pending'}">${user.status || 'pending'}</span></td>
+                        <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon view" onclick="viewUser('${user.userId}')"><i class="fas fa-eye"></i></button>
+                                <button class="btn-icon" onclick="editUser('${user.userId}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn-icon delete" onclick="deleteUser('${user.userId}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('usersBody').innerHTML = html;
+        }
+
+        // ==================== AUDITS TAB ====================
+        function updateAuditsTab() {
+            let html = '';
+            dashboardData.audits.forEach(audit => {
+                html += `
+                    <tr>
+                        <td>${audit.businessName || 'N/A'}</td>
+                        <td>${audit.industry || 'N/A'}</td>
+                        <td>${formatCurrency(audit.monthlyRevenue || 0)}</td>
+                        <td>${audit.marketingChannels ? JSON.parse(audit.marketingChannels).length : 0} channels</td>
+                        <td><span class="status-badge">${audit.brandingStatus || 'N/A'}</span></td>
+                        <td>${audit.createdAt ? new Date(audit.createdAt).toLocaleDateString() : 'N/A'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon view" onclick="viewAudit('${audit.userId}')"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('auditsBody').innerHTML = html;
+        }
+
+        function filterAudits() {
+            const search = document.getElementById('auditSearch').value.toLowerCase();
+            const filtered = dashboardData.audits.filter(audit => 
+                audit.businessName?.toLowerCase().includes(search) ||
+                audit.industry?.toLowerCase().includes(search)
+            );
+            
+            let html = '';
+            filtered.forEach(audit => {
+                html += `
+                    <tr>
+                        <td>${audit.businessName || 'N/A'}</td>
+                        <td>${audit.industry || 'N/A'}</td>
+                        <td>${formatCurrency(audit.monthlyRevenue || 0)}</td>
+                        <td>${audit.marketingChannels ? JSON.parse(audit.marketingChannels).length : 0} channels</td>
+                        <td><span class="status-badge">${audit.brandingStatus || 'N/A'}</span></td>
+                        <td>${audit.createdAt ? new Date(audit.createdAt).toLocaleDateString() : 'N/A'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon view" onclick="viewAudit('${audit.userId}')"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('auditsBody').innerHTML = html;
+        }
+
+        // ==================== PREDICTIONS TAB ====================
+        function updatePredictionsTab() {
+            let html = '';
+            dashboardData.predictions.forEach(pred => {
+                const user = dashboardData.users.find(u => u.userId === pred.userId);
+                html += `
+                    <tr>
+                        <td>${user?.fullName || user?.email || 'N/A'}</td>
+                        <td><strong>${pred.growthPercentage || 0}%</strong></td>
+                        <td>${formatCurrency(pred.projectedRevenue || 0)}</td>
+                        <td>${pred.projectedCustomers || 0}</td>
+                        <td>${pred.projectedROI || 0}%</td>
+                        <td>${pred.predictionDate ? new Date(pred.predictionDate).toLocaleDateString() : 'N/A'}</td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('predictionsBody').innerHTML = html;
+        }
+
+        // ==================== FEEDBACK TAB ====================
+        function updateFeedbackTab() {
+            updateFeedbackStats();
+            renderFeedbackTable();
+        }
+
+        function updateFeedbackStats() {
+            const total = dashboardData.feedback.length;
+            const pending = dashboardData.feedback.filter(f => f.status === 'pending').length;
+            const replied = dashboardData.feedback.filter(f => f.status === 'replied').length;
+            
+            const statsHTML = `
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-comment"></i></div>
+                        <div class="stat-value">${total}</div>
+                    </div>
+                    <div class="stat-label">Total Feedback</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                        <div class="stat-value">${pending}</div>
+                    </div>
+                    <div class="stat-label">Pending Reply</div>
+                    <div class="stat-change ${pending > 0 ? 'negative' : 'positive'}">${pending > 0 ? 'Needs attention' : 'All caught up'}</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-value">${replied}</div>
+                    </div>
+                    <div class="stat-label">Replied</div>
+                    <div class="stat-change positive">${Math.round((replied/total)*100) || 0}% response rate</div>
+                </div>
+            `;
+            
+            document.getElementById('feedbackStats').innerHTML = statsHTML;
+        }
+
+        function renderFeedbackTable() {
+            let html = '';
+            dashboardData.feedback.forEach(fb => {
+                html += `
+                    <tr>
+                        <td>${fb.feedbackId || 'N/A'}</td>
+                        <td>${fb.email}</td>
+                        <td><span class="status-badge">${fb.type || 'general'}</span></td>
+                        <td>${fb.message.substring(0, 50)}${fb.message.length > 50 ? '...' : ''}</td>
+                        <td><span class="status-badge ${fb.status === 'pending' ? 'pending' : 'replied'}">${fb.status || 'pending'}</span></td>
+                        <td>${fb.adminReply ? fb.adminReply.substring(0, 30) + '...' : 'No reply yet'}</td>
+                        <td>${fb.createdAt ? new Date(fb.createdAt).toLocaleDateString() : 'N/A'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon view" onclick="viewFeedback('${fb.feedbackId}')"><i class="fas fa-eye"></i></button>
+                                ${fb.status === 'pending' ? 
+                                    `<button class="btn-icon reply" onclick="openReplyModal('${fb.feedbackId}')"><i class="fas fa-reply"></i></button>` : 
+                                    ''}
+                                <button class="btn-icon delete" onclick="deleteFeedback('${fb.feedbackId}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('feedbackBody').innerHTML = html;
+        }
+
+        function filterFeedback() {
+            const filter = document.getElementById('feedbackFilter').value;
+            const filtered = filter === 'all' 
+                ? dashboardData.feedback 
+                : dashboardData.feedback.filter(f => f.status === filter);
+            
+            let html = '';
+            filtered.forEach(fb => {
+                html += `
+                    <tr>
+                        <td>${fb.feedbackId || 'N/A'}</td>
+                        <td>${fb.email}</td>
+                        <td><span class="status-badge">${fb.type || 'general'}</span></td>
+                        <td>${fb.message.substring(0, 50)}${fb.message.length > 50 ? '...' : ''}</td>
+                        <td><span class="status-badge ${fb.status === 'pending' ? 'pending' : 'replied'}">${fb.status || 'pending'}</span></td>
+                        <td>${fb.adminReply ? fb.adminReply.substring(0, 30) + '...' : 'No reply yet'}</td>
+                        <td>${fb.createdAt ? new Date(fb.createdAt).toLocaleDateString() : 'N/A'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon view" onclick="viewFeedback('${fb.feedbackId}')"><i class="fas fa-eye"></i></button>
+                                ${fb.status === 'pending' ? 
+                                    `<button class="btn-icon reply" onclick="openReplyModal('${fb.feedbackId}')"><i class="fas fa-reply"></i></button>` : 
+                                    ''}
+                                <button class="btn-icon delete" onclick="deleteFeedback('${fb.feedbackId}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('feedbackBody').innerHTML = html;
+        }
+
+        // ==================== FEEDBACK REPLY MODAL ====================
+        let currentFeedbackId = null;
+
+        function openReplyModal(feedbackId) {
+            currentFeedbackId = feedbackId;
+            const feedback = dashboardData.feedback.find(f => f.feedbackId === feedbackId);
+            
+            if (feedback) {
+                const infoHTML = `
+                    <p><strong>From:</strong> ${feedback.email}</p>
+                    <p><strong>Type:</strong> ${feedback.type}</p>
+                    <p><strong>Message:</strong> ${feedback.message}</p>
+                    <p><strong>Received:</strong> ${new Date(feedback.createdAt).toLocaleString()}</p>
+                `;
+                document.getElementById('replyFeedbackInfo').innerHTML = infoHTML;
+                document.getElementById('replyMessage').value = '';
+                document.getElementById('replyModal').classList.add('active');
+            }
+        }
+
+        function closeReplyModal() {
+            document.getElementById('replyModal').classList.remove('active');
+            currentFeedbackId = null;
+        }
+
+        async function submitReply(event) {
+            event.preventDefault();
+            
+            const reply = document.getElementById('replyMessage').value;
+            
+            if (!reply) {
+                showNotification('Please enter a reply', 'error');
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                const response = await apiRequest('atafi_replyToFeedback', {
+                    feedbackId: currentFeedbackId,
+                    reply: reply,
+                    adminEmail: currentAdmin.email || currentAdmin.username
+                });
+                
+                if (response && response.success) {
+                    showNotification('Reply sent successfully!', 'success');
+                    closeReplyModal();
+                    await loadDashboardData();
+                } else {
+                    showNotification('Failed to send reply', 'error');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            }
+            
+            showLoading(false);
+        }
+
+        // ==================== PAYMENTS TAB ====================
+        function updatePaymentsTab() {
+            updatePaymentStats();
+            
+            let html = '';
+            dashboardData.payments.forEach(payment => {
+                html += `
+                    <tr>
+                        <td>${payment.paymentId || 'N/A'}</td>
+                        <td>${payment.email}</td>
+                        <td>${formatCurrency(payment.amount || 0)}</td>
+                        <td>${payment.plan || 'Basic'}</td>
+                        <td><span class="status-badge ${payment.status === 'paid' ? 'paid' : 'pending'}">${payment.status || 'pending'}</span></td>
+                        <td>${payment.createdAt ? new Date(payment.createdAt).toLocaleDateString() : 'N/A'}</td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('paymentsBody').innerHTML = html;
+        }
+
+        function updatePaymentStats() {
+            const total = dashboardData.payments.length;
+            const paid = dashboardData.payments.filter(p => p.status === 'paid').length;
+            const pending = dashboardData.payments.filter(p => p.status === 'pending').length;
+            const totalRevenue = dashboardData.payments
+                .filter(p => p.status === 'paid')
+                .reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+            
+            const statsHTML = `
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-credit-card"></i></div>
+                        <div class="stat-value">${total}</div>
+                    </div>
+                    <div class="stat-label">Total Transactions</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-value">${paid}</div>
+                    </div>
+                    <div class="stat-label">Successful Payments</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                        <div class="stat-value">${pending}</div>
+                    </div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-money-bill"></i></div>
+                        <div class="stat-value">${formatCurrency(totalRevenue)}</div>
+                    </div>
+                    <div class="stat-label">Total Revenue</div>
+                </div>
+            `;
+            
+            document.getElementById('paymentStats').innerHTML = statsHTML;
+        }
+
+        // ==================== KRO MEDIA TAB ====================
+        function updateKroTab() {
+            updateKroStats();
+            renderPinRequests();
+            renderActivePins();
+        }
+
+        function updateKroStats() {
+            const totalRequests = dashboardData.pinRequests.length;
+            const pendingRequests = dashboardData.pinRequests.filter(r => r.status === 'pending').length;
+            const paidRequests = dashboardData.pinRequests.filter(r => r.status === 'paid').length;
+            const totalPins = dashboardData.activePins.length;
+            const usedPins = dashboardData.activePins.filter(p => p.status === 'used').length;
+            
+            const statsHTML = `
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-file-invoice"></i></div>
+                        <div class="stat-value">${totalRequests}</div>
+                    </div>
+                    <div class="stat-label">Total PIN Requests</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                        <div class="stat-value">${pendingRequests}</div>
+                    </div>
+                    <div class="stat-label">Pending Requests</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-value">${paidRequests}</div>
+                    </div>
+                    <div class="stat-label">Paid Requests</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-key"></i></div>
+                        <div class="stat-value">${totalPins}</div>
+                    </div>
+                    <div class="stat-label">Total PINs Generated</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-check"></i></div>
+                        <div class="stat-value">${usedPins}</div>
+                    </div>
+                    <div class="stat-label">PINs Used</div>
+                </div>
+            `;
+            
+            document.getElementById('kroStats').innerHTML = statsHTML;
+        }
+
+        function renderPinRequests() {
+            let html = '';
+            dashboardData.pinRequests.forEach(req => {
+                html += `
+                    <tr>
+                        <td>${req.requestId || 'N/A'}</td>
+                        <td>${req.email}</td>
+                        <td>${req.package} PINs</td>
+                        <td>${req.amount || 'N/A'}</td>
+                        <td><span class="status-badge ${req.status === 'paid' ? 'paid' : 'pending'}">${req.status || 'pending'}</span></td>
+                        <td>${req.requestedAt ? new Date(req.requestedAt).toLocaleDateString() : 'N/A'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                ${req.status === 'pending' ? 
+                                    `<button class="btn-icon" onclick="markAsPaid('${req.requestId}')"><i class="fas fa-check"></i></button>` : 
+                                    ''}
+                                <button class="btn-icon" onclick="generatePins('${req.requestId}')"><i class="fas fa-key"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('pinRequestsBody').innerHTML = html;
+        }
+
+        function renderActivePins() {
+            let html = '';
+            dashboardData.activePins.forEach(pin => {
+                html += `
+                    <tr>
+                        <td><strong>${pin.pin}</strong></td>
+                        <td>${pin.email}</td>
+                        <td><span class="status-badge ${pin.status === 'active' ? 'active' : 'inactive'}">${pin.status || 'active'}</span></td>
+                        <td>${pin.createdAt ? new Date(pin.createdAt).toLocaleDateString() : 'N/A'}</td>
+                        <td>${pin.usedAt ? new Date(pin.usedAt).toLocaleDateString() : 'Not used'}</td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('activePinsBody').innerHTML = html;
+        }
+
+        // ==================== SETTINGS TAB ====================
+        function updateSettingsTab() {
+            let html = '';
+            dashboardData.admins.forEach(admin => {
+                html += `
+                    <tr>
+                        <td>${admin.username}</td>
+                        <td><span class="status-badge">${admin.role || 'admin'}</span></td>
+                        <td>${admin.createdAt ? new Date(admin.createdAt).toLocaleDateString() : 'N/A'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon" onclick="editAdmin('${admin.username}')"><i class="fas fa-edit"></i></button>
+                                ${admin.username !== currentAdmin?.username ? 
+                                    `<button class="btn-icon delete" onclick="deleteAdmin('${admin.username}')"><i class="fas fa-trash"></i></button>` : 
+                                    ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('adminsBody').innerHTML = html;
+        }
+
+        async function addNewAdmin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('newUsername').value;
+            const password = document.getElementById('newPassword').value;
+            const role = document.getElementById('newRole').value;
+            
+            showLoading(true);
+            
+            try {
+                const response = await apiRequest('admin_addAdmin', {
+                    username,
+                    password,
+                    role
+                });
+                
+                if (response && response.success) {
+                    showNotification('Admin added successfully!', 'success');
+                    document.getElementById('newUsername').value = '';
+                    document.getElementById('newPassword').value = '';
+                    await loadDashboardData();
+                } else {
+                    showNotification('Failed to add admin', 'error');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            }
+            
+            showLoading(false);
+        }
+
+        // ==================== ACTION FUNCTIONS ====================
+        function viewUser(userId) {
+            const user = dashboardData.users.find(u => u.userId === userId);
+            if (user) {
+                alert(JSON.stringify(user, null, 2));
+            }
+        }
+
+        function editUser(userId) {
+            showNotification('Edit user feature coming soon!', 'info');
+        }
+
+        async function deleteUser(userId) {
+            if (!confirm('Are you sure you want to delete this user?')) return;
+            
+            showLoading(true);
+            
+            try {
+                const response = await apiRequest('admin_deleteUser', { userId });
+                
+                if (response && response.success) {
+                    showNotification('User deleted successfully', 'success');
+                    await loadDashboardData();
+                } else {
+                    showNotification('Failed to delete user', 'error');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            }
+            
+            showLoading(false);
+        }
+
+        function viewAudit(userId) {
+            const audit = dashboardData.audits.find(a => a.userId === userId);
+            if (audit) {
+                alert(JSON.stringify(audit, null, 2));
+            }
+        }
+
+        function viewFeedback(feedbackId) {
+            const feedback = dashboardData.feedback.find(f => f.feedbackId === feedbackId);
+            if (feedback) {
+                alert(JSON.stringify(feedback, null, 2));
+            }
+        }
+
+        async function deleteFeedback(feedbackId) {
+            if (!confirm('Are you sure you want to delete this feedback?')) return;
+            
+            showLoading(true);
+            
+            try {
+                const response = await apiRequest('admin_deleteFeedback', { feedbackId });
+                
+                if (response && response.success) {
+                    showNotification('Feedback deleted successfully', 'success');
+                    await loadDashboardData();
+                } else {
+                    showNotification('Failed to delete feedback', 'error');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            }
+            
+            showLoading(false);
+        }
+
+        async function markAsPaid(requestId) {
+            if (!confirm('Mark this request as paid?')) return;
+            
+            showLoading(true);
+            
+            try {
+                const response = await apiRequest('markAsPaid', {
+                    requestId,
+                    admin: currentAdmin.username,
+                    paymentRemark: 'Marked as paid via admin dashboard'
+                });
+                
+                if (response && response.success) {
+                    showNotification('Request marked as paid', 'success');
+                    await loadDashboardData();
+                } else {
+                    showNotification('Failed to mark as paid', 'error');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            }
+            
+            showLoading(false);
+        }
+
+        async function generatePins(requestId) {
+            if (!confirm('Generate PINs for this request?')) return;
+            
+            showLoading(true);
+            
+            try {
+                const request = dashboardData.pinRequests.find(r => r.requestId === requestId);
+                
+                const response = await apiRequest('generatePins', {
+                    email: request.email,
+                    package: parseInt(request.package)
+                });
+                
+                if (response && response.success) {
+                    showNotification('PINs generated successfully', 'success');
+                    await loadDashboardData();
+                } else {
+                    showNotification('Failed to generate PINs', 'error');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            }
+            
+            showLoading(false);
+        }
+
+        function editAdmin(username) {
+            showNotification('Edit admin feature coming soon!', 'info');
+        }
+
+        async function deleteAdmin(username) {
+            if (!confirm('Are you sure you want to delete this admin?')) return;
+            
+            showLoading(true);
+            
+            try {
+                const response = await apiRequest('admin_deleteAdmin', { username });
+                
+                if (response && response.success) {
+                    showNotification('Admin deleted successfully', 'success');
+                    await loadDashboardData();
+                } else {
+                    showNotification('Failed to delete admin', 'error');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            }
+            
+            showLoading(false);
+        }
+
+        // ==================== EXPORT FUNCTIONS ====================
+        function exportData(type) {
+            let data = [];
+            let filename = '';
+            
+            switch(type) {
+                case 'users':
+                    data = dashboardData.users;
+                    filename = 'atafi_users.csv';
+                    break;
+                case 'audits':
+                    data = dashboardData.audits;
+                    filename = 'atafi_audits.csv';
+                    break;
+                case 'predictions':
+                    data = dashboardData.predictions;
+                    filename = 'atafi_predictions.csv';
+                    break;
+                case 'feedback':
+                    data = dashboardData.feedback;
+                    filename = 'atafi_feedback.csv';
+                    break;
+                case 'payments':
+                    data = dashboardData.payments;
+                    filename = 'atafi_payments.csv';
+                    break;
+                case 'pinRequests':
+                    data = dashboardData.pinRequests;
+                    filename = 'kro_pin_requests.csv';
+                    break;
+                case 'activePins':
+                    data = dashboardData.activePins;
+                    filename = 'kro_active_pins.csv';
+                    break;
+                case 'admins':
+                    data = dashboardData.admins;
+                    filename = 'atafi_admins.csv';
+                    break;
+            }
+            
+            if (data.length === 0) {
+                showNotification('No data to export', 'info');
+                return;
+            }
+            
+            // Convert to CSV
+            const headers = Object.keys(data[0]);
+            const csv = [
+                headers.join(','),
+                ...data.map(row => headers.map(h => JSON.stringify(row[h] || '')).join(','))
+            ].join('\n');
+            
+            // Download
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            showNotification('Data exported successfully', 'success');
+        }
     </script>
 </body>
 </html>
