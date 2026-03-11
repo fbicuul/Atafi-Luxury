@@ -1515,6 +1515,142 @@
             margin-right: 0.5rem;
         }
 
+        /* ========== FEEDBACK MODAL STYLES ========== */
+        .feedback-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 21000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 20px;
+            cursor: pointer;
+        }
+
+        .feedback-container {
+            max-width: 600px;
+            width: 100%;
+            background: linear-gradient(135deg, var(--dark), var(--darker));
+            border-radius: var(--border-radius-2xl);
+            padding: 2.5rem;
+            position: relative;
+            border: 1px solid rgba(212,175,55,0.3);
+            box-shadow: var(--shadow-2xl);
+            max-height: 90vh;
+            overflow-y: auto;
+            cursor: default;
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(212,175,55,0.3);
+        }
+
+        .feedback-header h2 {
+            color: var(--white);
+            font-size: 2rem;
+            background: var(--gradient-premium);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feedback-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            border: 1px solid rgba(212,175,55,0.3);
+        }
+
+        .feedback-close:hover {
+            background: var(--danger);
+            transform: rotate(90deg);
+        }
+
+        .feedback-form {
+            margin-bottom: 2rem;
+        }
+
+        .feedback-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .feedback-form label {
+            display: block;
+            color: var(--gray-300);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .feedback-form input,
+        .feedback-form select,
+        .feedback-form textarea {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(212,175,55,0.3);
+            border-radius: var(--border-radius-md);
+            color: var(--white);
+            font-size: 1rem;
+            transition: all var(--transition-base);
+        }
+
+        .feedback-form input:focus,
+        .feedback-form select:focus,
+        .feedback-form textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.2);
+        }
+
+        .feedback-form input::placeholder,
+        .feedback-form textarea::placeholder {
+            color: var(--gray-600);
+        }
+
+        .feedback-form textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .btn-feedback-submit {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient-premium);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius-full);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-feedback-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
         /* ========== CHECKLIST MODAL STYLES ========== */
         .checklist-modal {
             display: none;
@@ -1910,81 +2046,6 @@
         .starter-close:hover {
             background: var(--danger);
             transform: rotate(90deg);
-        }
-
-        .profile-dashboard {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .profile-sidebar {
-            background: rgba(255,255,255,0.05);
-            border-radius: var(--border-radius-xl);
-            padding: 2rem 1.5rem;
-            border: 1px solid rgba(212,175,55,0.2);
-        }
-
-        .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: var(--gradient-premium);
-            margin: 0 auto 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: var(--white);
-            border: 3px solid var(--primary);
-        }
-
-        .profile-name {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .profile-name h3 {
-            color: var(--white);
-            font-size: 1.3rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .profile-name p {
-            color: var(--gray-400);
-            font-size: 0.9rem;
-        }
-
-        .profile-stats {
-            display: grid;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .profile-stat {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem;
-            background: rgba(255,255,255,0.03);
-            border-radius: var(--border-radius-md);
-        }
-
-        .profile-stat .label {
-            color: var(--gray-400);
-            font-size: 0.9rem;
-        }
-
-        .profile-stat .value {
-            color: var(--primary);
-            font-weight: bold;
-        }
-
-        .profile-content {
-            background: rgba(255,255,255,0.05);
-            border-radius: var(--border-radius-xl);
-            padding: 2rem;
-            border: 1px solid rgba(212,175,55,0.2);
         }
 
         /* Full-width Terminal Screen */
@@ -2412,10 +2473,6 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .profile-dashboard {
-                grid-template-columns: 1fr;
-            }
-
             .email-input-group {
                 flex-direction: column;
             }
@@ -2489,7 +2546,6 @@
             <li><a href="#home" class="active">Home</a></li>
             <li><a href="#kro-projects">KRO Projects</a></li>
             <li><a href="#predictor">Brand Predictor</a></li>
-            <li><a href="#" onclick="showSuccessStoriesModal()">Success Stories</a></li>
             <li><a href="#" onclick="showContactModal()">Contact</a></li>
             <li><a href="#" class="btn-subscribe" onclick="showSubscriptionModal(); return false;">Pricing</a></li>
         </ul>
@@ -3167,6 +3223,45 @@
         </div>
     </div>
 
+    <!-- FEEDBACK MODAL -->
+    <div class="feedback-modal" id="feedbackModal" onclick="closeModalOnOutsideClick(event, 'feedbackModal')">
+        <div class="feedback-container" onclick="event.stopPropagation()">
+            <div class="feedback-header">
+                <h2>Share Your Feedback</h2>
+                <div class="feedback-close" onclick="closeFeedbackModal()">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+
+            <div class="feedback-form">
+                <div class="form-group">
+                    <label>Your Email <span class="required">*</span></label>
+                    <input type="email" id="feedbackEmail" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Feedback Type</label>
+                    <select id="feedbackType">
+                        <option value="suggestion">Suggestion</option>
+                        <option value="bug">Bug Report</option>
+                        <option value="feature">Feature Request</option>
+                        <option value="question">Question</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Your Feedback <span class="required">*</span></label>
+                    <textarea id="feedbackMessage" placeholder="Tell us what you think..." required></textarea>
+                </div>
+                
+                <button class="btn-feedback-submit" onclick="submitFeedback()">
+                    <i class="fas fa-paper-plane"></i> Submit Feedback
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- STARTER PACKAGE MODAL -->
     <div class="starter-modal" id="starterModal" onclick="closeModalOnOutsideClick(event, 'starterModal')">
         <div class="starter-container" onclick="event.stopPropagation()">
@@ -3177,58 +3272,27 @@
                 </div>
             </div>
 
-            <div class="profile-dashboard">
-                <!-- Sidebar -->
-                <div class="profile-sidebar">
-                    <div class="profile-avatar" id="profileAvatar">
-                        <span id="avatarInitials">SB</span>
-                    </div>
-                    <div class="profile-name">
-                        <h3 id="profileBusinessName">Sarah's Boutique</h3>
-                        <p id="profileIndustry">Retail / E-commerce</p>
-                    </div>
-                    <div class="profile-stats">
-                        <div class="profile-stat">
-                            <span class="label">Growth Score</span>
-                            <span class="value" id="profileGrowthScore">78</span>
-                        </div>
-                        <div class="profile-stat">
-                            <span class="label">Monthly Revenue</span>
-                            <span class="value" id="profileRevenue">₦1,000,000</span>
-                        </div>
-                        <div class="profile-stat">
-                            <span class="label">Report Date</span>
-                            <span class="value" id="profileDate">Mar 9, 2026</span>
-                        </div>
+            <div class="terminal-section">
+                <div class="terminal-header">
+                    <h3><i class="fas fa-terminal"></i> Terminal</h3>
+                </div>
+                <div class="terminal-screen" id="terminalScreen">
+                    <div class="terminal-content" id="terminalContent">
+                        > Welcome! Enter your email and click the update button to get your update and receive today's gift<span class="cursor"></span>
                     </div>
                 </div>
+            </div>
 
-                <!-- Main Content -->
-                <div class="profile-content">
-                    <!-- Full-width Terminal Screen -->
-                    <div class="terminal-section">
-                        <div class="terminal-header">
-                            <h3><i class="fas fa-terminal"></i> Terminal</h3>
-                        </div>
-                        <div class="terminal-screen" id="terminalScreen">
-                            <div class="terminal-content" id="terminalContent">
-                                > Welcome! Enter your email and click the update button to get your update and receive today's gift<span class="cursor"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Email Input Section -->
-                    <div class="email-section">
-                        <div class="email-input-group">
-                            <input type="email" class="email-input" id="userEmail" placeholder="Enter your email for updates...">
-                            <button class="btn-email-action update" onclick="giveMeUpdate()">
-                                <i class="fas fa-bell"></i> Give Me Update
-                            </button>
-                            <button class="btn-email-action feedback" onclick="giveFeedback()">
-                                <i class="fas fa-comment"></i> Feedback
-                            </button>
-                        </div>
-                    </div>
+            <!-- Email Input Section -->
+            <div class="email-section">
+                <div class="email-input-group">
+                    <input type="email" class="email-input" id="userEmail" placeholder="Enter your email for updates...">
+                    <button class="btn-email-action update" onclick="giveMeUpdate()">
+                        <i class="fas fa-bell"></i> Give Me Update
+                    </button>
+                    <button class="btn-email-action feedback" onclick="openFeedbackModal()">
+                        <i class="fas fa-comment"></i> Feedback
+                    </button>
                 </div>
             </div>
         </div>
@@ -3329,7 +3393,7 @@
     <script>
         // ==================== CONFIGURATION ====================
         // Use your new deployed Apps Script URL
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbDGTxzWrE64PW7jaG7XxCh8pVMR2_dqD3MPeLrYMj68fxv2oeMMWQWNKw7YK1pvBD/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyyVPZNv9s3as00MNPnQ4RvqxIdnMOdXUOp7sXMQr38urHKG1AZgD_NdFTVSm1S20Zf/exec';
         const FLUTTERWAVE_PUBLIC_KEY = 'FLWPUBK-2139829c2de5b6071f89e39b59e9d9ca-X';
         const FLUTTERWAVE_SUBACCOUNT_ID = 'RS_89D720D484AF8296626AC1C84E2B0044';
         const PRICING = { BASIC: 50000, PRO: 80000, ENTERPRISE: 150000 };
@@ -3392,6 +3456,10 @@
 
         async function savePrediction(userId, predictionData) {
             return apiRequest('atafi_savePrediction', { userId, ...predictionData });
+        }
+
+        async function saveFeedback(feedbackData) {
+            return apiRequest('atafi_saveFeedback', feedbackData);
         }
 
         // ==================== VIDEO CAROUSEL FUNCTIONS ====================
@@ -3462,6 +3530,8 @@
                     closeSubscriptionModal();
                 } else if (modalId === 'starterModal') {
                     closeStarterModal();
+                } else if (modalId === 'feedbackModal') {
+                    closeFeedbackModal();
                 }
             }
         }
@@ -3486,6 +3556,75 @@
             startFlutterwavePayment(plan);
         }
 
+        // ==================== FEEDBACK MODAL FUNCTIONS ====================
+        function openFeedbackModal() {
+            document.getElementById('feedbackModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // Pre-fill email if available
+            const email = document.getElementById('userEmail').value;
+            if (email) {
+                document.getElementById('feedbackEmail').value = email;
+            }
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        async function submitFeedback() {
+            const email = document.getElementById('feedbackEmail').value;
+            const type = document.getElementById('feedbackType').value;
+            const message = document.getElementById('feedbackMessage').value;
+            
+            if (!email) {
+                showNotification('Please enter your email', 'error');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showNotification('Please enter a valid email address', 'error');
+                return;
+            }
+            
+            if (!message) {
+                showNotification('Please enter your feedback', 'error');
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                const response = await saveFeedback({
+                    email: email,
+                    type: type,
+                    message: message,
+                    timestamp: new Date().toISOString()
+                });
+                
+                if (response && response.success) {
+                    showNotification('Thank you for your feedback!', 'success');
+                    closeFeedbackModal();
+                    
+                    // Show confirmation in terminal
+                    showTerminalMessage('> ✅ Thank you for your feedback! We\'ll review it shortly.');
+                    
+                    // Clear form
+                    document.getElementById('feedbackEmail').value = '';
+                    document.getElementById('feedbackType').value = 'suggestion';
+                    document.getElementById('feedbackMessage').value = '';
+                } else {
+                    throw new Error(response?.error || 'Failed to save feedback');
+                }
+            } catch (error) {
+                console.error('Feedback error:', error);
+                showNotification('Failed to submit feedback: ' + error.message, 'error');
+            }
+            
+            showLoading(false);
+        }
+
         // ==================== STARTER PACKAGE MODAL FUNCTIONS ====================
         function showStarterPackage() {
             // Update the starter package with user data
@@ -3501,25 +3640,18 @@
 
         function updateStarterPackageData() {
             const businessName = document.getElementById('businessName')?.value || 'Your Business';
-            const industry = document.getElementById('industry')?.options[document.getElementById('industry')?.selectedIndex]?.text || 'Retail';
-            const monthlyRevenue = parseFloat(document.getElementById('monthlyRevenue')?.value) || 1000000;
-            
-            // Get initials for avatar
-            const initials = businessName.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase();
-            
-            document.getElementById('avatarInitials').textContent = initials;
-            document.getElementById('profileBusinessName').textContent = businessName;
-            document.getElementById('profileIndustry').textContent = industry;
-            document.getElementById('profileRevenue').textContent = '₦' + monthlyRevenue.toLocaleString();
             
             // Set date
             const today = new Date();
             const options = { year: 'numeric', month: 'short', day: 'numeric' };
-            document.getElementById('profileDate').textContent = today.toLocaleDateString('en-US', options);
             
             // Set audit values from the predictor if available
             if (userData.growthScore) {
-                document.getElementById('profileGrowthScore').textContent = userData.growthScore;
+                // Update terminal with user data
+                const terminalContent = document.getElementById('terminalContent');
+                if (terminalContent) {
+                    terminalContent.innerHTML = `> Welcome back, ${businessName}! Your growth score is ${userData.growthScore}. Enter your email for daily updates.<span class="cursor"></span>`;
+                }
             }
         }
 
@@ -3614,23 +3746,6 @@
             }
             
             showLoading(false);
-        }
-
-        function giveFeedback() {
-            const email = document.getElementById('userEmail').value;
-            if (!email) {
-                showTerminalMessage('> Error: Please enter your email to provide feedback');
-                showNotification('Please enter your email to provide feedback', 'error');
-                return;
-            }
-            if (!validateEmail(email)) {
-                showTerminalMessage('> Error: Invalid email format. Please check and try again.');
-                showNotification('Please enter a valid email address', 'error');
-                return;
-            }
-            
-            showTerminalMessage('> Thank you for your interest! Our team will reach out to you shortly for feedback.');
-            showNotification('Feedback feature coming soon! We\'ll contact you at ' + email, 'info');
         }
 
         function validateEmail(email) {
@@ -3771,6 +3886,10 @@
 
         function showPrivacyModal() {
             showNotification('Privacy Policy - Your data is safe with us', 'info');
+        }
+
+        function showContactModal() {
+            showNotification('Contact feature coming soon!', 'info');
         }
 
         // ==================== PREDICTOR FUNCTIONS ====================
@@ -4320,15 +4439,6 @@
         function bookStrategyCall() {
             window.open('https://calendly.com/fbicuul/atafi-luxury', '_blank');
             showNotification('Check your email for confirmation!', 'success');
-        }
-
-        // ==================== SUCCESS STORIES & CONTACT ====================
-        function showSuccessStoriesModal() {
-            showNotification('Success stories feature coming soon!', 'info');
-        }
-
-        function showContactModal() {
-            showNotification('Contact feature coming soon!', 'info');
         }
 
         // ==================== UTILITY FUNCTIONS ====================
