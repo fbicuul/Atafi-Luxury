@@ -892,14 +892,6 @@
                     <span>Feedback</span>
                     <span class="badge" id="feedbackBadge">0</span>
                 </div>
-                <div class="nav-item" onclick="switchTab('payments')">
-                    <i class="fas fa-credit-card"></i>
-                    <span>Payments</span>
-                </div>
-                <div class="nav-item" onclick="switchTab('kro')">
-                    <i class="fas fa-video"></i>
-                    <span>KRO Media</span>
-                </div>
                 <div class="nav-item" onclick="switchTab('settings')">
                     <i class="fas fa-cog"></i>
                     <span>Settings</span>
@@ -947,29 +939,15 @@
 
                     <div class="chart-card">
                         <div class="chart-header">
-                            <h3>Revenue Overview</h3>
-                            <select id="revenuePeriod" onchange="updateRevenueChart()">
-                                <option value="7">Last 7 days</option>
-                                <option value="30" selected>Last 30 days</option>
-                                <option value="90">Last 90 days</option>
-                            </select>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="revenueChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="charts-row">
-                    <div class="chart-card">
-                        <div class="chart-header">
                             <h3>Growth Scores Distribution</h3>
                         </div>
                         <div class="chart-container">
                             <canvas id="growthScoreChart"></canvas>
                         </div>
                     </div>
+                </div>
 
+                <div class="charts-row">
                     <div class="chart-card">
                         <div class="chart-header">
                             <h3>Feedback Status</h3>
@@ -1146,98 +1124,6 @@
                 </div>
             </div>
 
-            <!-- Payments Tab -->
-            <div class="tab-content" id="paymentsTab">
-                <div class="stats-grid" id="paymentStats">
-                    <!-- Payment stats will be populated -->
-                </div>
-
-                <div class="table-card">
-                    <div class="table-header">
-                        <h3>Payment History</h3>
-                        <button class="btn-export" onclick="exportData('payments')">
-                            <i class="fas fa-download"></i> Export
-                        </button>
-                    </div>
-                    <div class="table-responsive">
-                        <table id="paymentsTable">
-                            <thead>
-                                <tr>
-                                    <th>Payment ID</th>
-                                    <th>Email</th>
-                                    <th>Amount</th>
-                                    <th>Plan</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody id="paymentsBody">
-                                <!-- Populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- KRO Media Tab -->
-            <div class="tab-content" id="kroTab">
-                <div class="stats-grid" id="kroStats">
-                    <!-- KRO stats will be populated -->
-                </div>
-
-                <div class="table-card">
-                    <div class="table-header">
-                        <h3>PIN Requests</h3>
-                        <button class="btn-export" onclick="exportData('pinRequests')">
-                            <i class="fas fa-download"></i> Export
-                        </button>
-                    </div>
-                    <div class="table-responsive">
-                        <table id="pinRequestsTable">
-                            <thead>
-                                <tr>
-                                    <th>Request ID</th>
-                                    <th>Email</th>
-                                    <th>Package</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
-                                    <th>Requested</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pinRequestsBody">
-                                <!-- Populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="table-card">
-                    <div class="table-header">
-                        <h3>Active PINs</h3>
-                        <button class="btn-export" onclick="exportData('activePins')">
-                            <i class="fas fa-download"></i> Export
-                        </button>
-                    </div>
-                    <div class="table-responsive">
-                        <table id="activePinsTable">
-                            <thead>
-                                <tr>
-                                    <th>PIN</th>
-                                    <th>Email</th>
-                                    <th>Status</th>
-                                    <th>Created</th>
-                                    <th>Used</th>
-                                </tr>
-                            </thead>
-                            <tbody id="activePinsBody">
-                                <!-- Populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
             <!-- Settings Tab -->
             <div class="tab-content" id="settingsTab">
                 <div class="table-card">
@@ -1319,15 +1205,11 @@
             audits: [],
             predictions: [],
             feedback: [],
-            payments: [],
-            pinRequests: [],
-            activePins: [],
             admins: []
         };
         
         // Chart instances
         let userGrowthChart = null;
-        let revenueChart = null;
         let growthScoreChart = null;
         let feedbackChart = null;
 
@@ -1428,18 +1310,12 @@
                     auditsRes,
                     predictionsRes,
                     feedbackRes,
-                    paymentsRes,
-                    pinRequestsRes,
-                    activePinsRes,
                     adminsRes
                 ] = await Promise.all([
                     apiRequest('admin_getAllUsers'),
                     apiRequest('admin_getAllAudits'),
                     apiRequest('admin_getAllPredictions'),
                     apiRequest('atafi_getAllFeedback'),
-                    apiRequest('admin_getAllPayments'),
-                    apiRequest('getPendingRequests'),
-                    apiRequest('admin_getActivePins'),
                     apiRequest('admin_getAllAdmins')
                 ]);
                 
@@ -1447,9 +1323,6 @@
                 if (auditsRes.success) dashboardData.audits = auditsRes.audits || [];
                 if (predictionsRes.success) dashboardData.predictions = predictionsRes.predictions || [];
                 if (feedbackRes.success) dashboardData.feedback = feedbackRes.feedbacks || [];
-                if (paymentsRes.success) dashboardData.payments = paymentsRes.payments || [];
-                if (pinRequestsRes.success) dashboardData.pinRequests = pinRequestsRes.pending || [];
-                if (activePinsRes.success) dashboardData.activePins = activePinsRes.pins || [];
                 if (adminsRes.success) dashboardData.admins = adminsRes.admins || [];
                 
                 // Update badges
@@ -1463,8 +1336,6 @@
                 updateAuditsTab();
                 updatePredictionsTab();
                 updateFeedbackTab();
-                updatePaymentsTab();
-                updateKroTab();
                 updateSettingsTab();
                 
             } catch (error) {
@@ -1501,8 +1372,6 @@
                 audits: 'Brand Audits',
                 predictions: 'Growth Predictions',
                 feedback: 'Feedback Management',
-                payments: 'Payment History',
-                kro: 'KRO Media Management',
                 settings: 'Settings'
             };
             
@@ -1515,7 +1384,6 @@
             updateOverviewStats();
             updateRecentUsers();
             updateUserGrowthChart();
-            updateRevenueChart();
             updateGrowthScoreChart();
             updateFeedbackChart();
         }
@@ -1525,9 +1393,6 @@
             const totalAudits = dashboardData.audits.length;
             const totalPredictions = dashboardData.predictions.length;
             const pendingFeedback = dashboardData.feedback.filter(f => f.status === 'pending').length;
-            
-            // Calculate total revenue
-            const totalRevenue = dashboardData.payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
             
             // Calculate average growth score
             const avgGrowthScore = dashboardData.predictions.length > 0 
@@ -1550,7 +1415,7 @@
                         <div class="stat-value">${totalAudits}</div>
                     </div>
                     <div class="stat-label">Brand Audits</div>
-                    <div class="stat-change positive">${Math.round((totalAudits/totalUsers)*100)}% completion rate</div>
+                    <div class="stat-change positive">${Math.round((totalAudits/totalUsers)*100) || 0}% completion rate</div>
                 </div>
                 
                 <div class="stat-card">
@@ -1564,29 +1429,11 @@
                 
                 <div class="stat-card">
                     <div class="stat-header">
-                        <div class="stat-icon"><i class="fas fa-credit-card"></i></div>
-                        <div class="stat-value">${formatCurrency(totalRevenue)}</div>
-                    </div>
-                    <div class="stat-label">Total Revenue</div>
-                    <div class="stat-change positive">+${Math.round(totalRevenue * 0.15)} this month</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-header">
                         <div class="stat-icon"><i class="fas fa-comment"></i></div>
                         <div class="stat-value">${pendingFeedback}</div>
                     </div>
                     <div class="stat-label">Pending Feedback</div>
                     <div class="stat-change ${pendingFeedback > 0 ? 'negative' : 'positive'}">${pendingFeedback > 0 ? 'Needs attention' : 'All caught up'}</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon"><i class="fas fa-video"></i></div>
-                        <div class="stat-value">${dashboardData.pinRequests.length}</div>
-                    </div>
-                    <div class="stat-label">PIN Requests</div>
-                    <div class="stat-change">${dashboardData.pinRequests.filter(r => r.status === 'pending').length} pending</div>
                 </div>
             `;
             
@@ -1653,55 +1500,6 @@
                         backgroundColor: 'rgba(212, 175, 55, 0.1)',
                         tension: 0.4,
                         fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
-        }
-
-        function updateRevenueChart() {
-            const ctx = document.getElementById('revenueChart').getContext('2d');
-            
-            // Generate last 30 days of revenue data
-            const labels = [];
-            const data = [];
-            const today = new Date();
-            
-            for (let i = 29; i >= 0; i--) {
-                const date = new Date(today);
-                date.setDate(date.getDate() - i);
-                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-                
-                // Sum revenue from this date
-                const total = dashboardData.payments
-                    .filter(p => {
-                        const paid = new Date(p.createdAt);
-                        return paid.toDateString() === date.toDateString();
-                    })
-                    .reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
-                
-                data.push(total);
-            }
-            
-            if (revenueChart) revenueChart.destroy();
-            
-            revenueChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Revenue (₦)',
-                        data: data,
-                        backgroundColor: 'rgba(212, 175, 55, 0.8)',
-                        borderRadius: 5
                     }]
                 },
                 options: {
@@ -2089,174 +1887,6 @@
             showLoading(false);
         }
 
-        // ==================== PAYMENTS TAB ====================
-        function updatePaymentsTab() {
-            updatePaymentStats();
-            
-            let html = '';
-            dashboardData.payments.forEach(payment => {
-                html += `
-                    <tr>
-                        <td>${payment.paymentId || 'N/A'}</td>
-                        <td>${payment.email}</td>
-                        <td>${formatCurrency(payment.amount || 0)}</td>
-                        <td>${payment.plan || 'Basic'}</td>
-                        <td><span class="status-badge ${payment.status === 'paid' ? 'paid' : 'pending'}">${payment.status || 'pending'}</span></td>
-                        <td>${payment.createdAt ? new Date(payment.createdAt).toLocaleDateString() : 'N/A'}</td>
-                    </tr>
-                `;
-            });
-            
-            document.getElementById('paymentsBody').innerHTML = html;
-        }
-
-        function updatePaymentStats() {
-            const total = dashboardData.payments.length;
-            const paid = dashboardData.payments.filter(p => p.status === 'paid').length;
-            const pending = dashboardData.payments.filter(p => p.status === 'pending').length;
-            const totalRevenue = dashboardData.payments
-                .filter(p => p.status === 'paid')
-                .reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
-            
-            const statsHTML = `
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon"><i class="fas fa-credit-card"></i></div>
-                        <div class="stat-value">${total}</div>
-                    </div>
-                    <div class="stat-label">Total Transactions</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-                        <div class="stat-value">${paid}</div>
-                    </div>
-                    <div class="stat-label">Successful Payments</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
-                        <div class="stat-value">${pending}</div>
-                    </div>
-                    <div class="stat-label">Pending</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon"><i class="fas fa-money-bill"></i></div>
-                        <div class="stat-value">${formatCurrency(totalRevenue)}</div>
-                    </div>
-                    <div class="stat-label">Total Revenue</div>
-                </div>
-            `;
-            
-            document.getElementById('paymentStats').innerHTML = statsHTML;
-        }
-
-        // ==================== KRO MEDIA TAB ====================
-        function updateKroTab() {
-            updateKroStats();
-            renderPinRequests();
-            renderActivePins();
-        }
-
-        function updateKroStats() {
-            const totalRequests = dashboardData.pinRequests.length;
-            const pendingRequests = dashboardData.pinRequests.filter(r => r.status === 'pending').length;
-            const paidRequests = dashboardData.pinRequests.filter(r => r.status === 'paid').length;
-            const totalPins = dashboardData.activePins.length;
-            const usedPins = dashboardData.activePins.filter(p => p.status === 'used').length;
-            
-            const statsHTML = `
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon"><i class="fas fa-file-invoice"></i></div>
-                        <div class="stat-value">${totalRequests}</div>
-                    </div>
-                    <div class="stat-label">Total PIN Requests</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
-                        <div class="stat-value">${pendingRequests}</div>
-                    </div>
-                    <div class="stat-label">Pending Requests</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-                        <div class="stat-value">${paidRequests}</div>
-                    </div>
-                    <div class="stat-label">Paid Requests</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon"><i class="fas fa-key"></i></div>
-                        <div class="stat-value">${totalPins}</div>
-                    </div>
-                    <div class="stat-label">Total PINs Generated</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon"><i class="fas fa-check"></i></div>
-                        <div class="stat-value">${usedPins}</div>
-                    </div>
-                    <div class="stat-label">PINs Used</div>
-                </div>
-            `;
-            
-            document.getElementById('kroStats').innerHTML = statsHTML;
-        }
-
-        function renderPinRequests() {
-            let html = '';
-            dashboardData.pinRequests.forEach(req => {
-                html += `
-                    <tr>
-                        <td>${req.requestId || 'N/A'}</td>
-                        <td>${req.email}</td>
-                        <td>${req.package} PINs</td>
-                        <td>${req.amount || 'N/A'}</td>
-                        <td><span class="status-badge ${req.status === 'paid' ? 'paid' : 'pending'}">${req.status || 'pending'}</span></td>
-                        <td>${req.requestedAt ? new Date(req.requestedAt).toLocaleDateString() : 'N/A'}</td>
-                        <td>
-                            <div class="action-buttons">
-                                ${req.status === 'pending' ? 
-                                    `<button class="btn-icon" onclick="markAsPaid('${req.requestId}')"><i class="fas fa-check"></i></button>` : 
-                                    ''}
-                                <button class="btn-icon" onclick="generatePins('${req.requestId}')"><i class="fas fa-key"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            document.getElementById('pinRequestsBody').innerHTML = html;
-        }
-
-        function renderActivePins() {
-            let html = '';
-            dashboardData.activePins.forEach(pin => {
-                html += `
-                    <tr>
-                        <td><strong>${pin.pin}</strong></td>
-                        <td>${pin.email}</td>
-                        <td><span class="status-badge ${pin.status === 'active' ? 'active' : 'inactive'}">${pin.status || 'active'}</span></td>
-                        <td>${pin.createdAt ? new Date(pin.createdAt).toLocaleDateString() : 'N/A'}</td>
-                        <td>${pin.usedAt ? new Date(pin.usedAt).toLocaleDateString() : 'Not used'}</td>
-                    </tr>
-                `;
-            });
-            
-            document.getElementById('activePinsBody').innerHTML = html;
-        }
-
         // ==================== SETTINGS TAB ====================
         function updateSettingsTab() {
             let html = '';
@@ -2380,57 +2010,6 @@
             showLoading(false);
         }
 
-        async function markAsPaid(requestId) {
-            if (!confirm('Mark this request as paid?')) return;
-            
-            showLoading(true);
-            
-            try {
-                const response = await apiRequest('markAsPaid', {
-                    requestId,
-                    admin: currentAdmin.username,
-                    paymentRemark: 'Marked as paid via admin dashboard'
-                });
-                
-                if (response && response.success) {
-                    showNotification('Request marked as paid', 'success');
-                    await loadDashboardData();
-                } else {
-                    showNotification('Failed to mark as paid', 'error');
-                }
-            } catch (error) {
-                showNotification('Error: ' + error.message, 'error');
-            }
-            
-            showLoading(false);
-        }
-
-        async function generatePins(requestId) {
-            if (!confirm('Generate PINs for this request?')) return;
-            
-            showLoading(true);
-            
-            try {
-                const request = dashboardData.pinRequests.find(r => r.requestId === requestId);
-                
-                const response = await apiRequest('generatePins', {
-                    email: request.email,
-                    package: parseInt(request.package)
-                });
-                
-                if (response && response.success) {
-                    showNotification('PINs generated successfully', 'success');
-                    await loadDashboardData();
-                } else {
-                    showNotification('Failed to generate PINs', 'error');
-                }
-            } catch (error) {
-                showNotification('Error: ' + error.message, 'error');
-            }
-            
-            showLoading(false);
-        }
-
         function editAdmin(username) {
             showNotification('Edit admin feature coming soon!', 'info');
         }
@@ -2477,18 +2056,6 @@
                 case 'feedback':
                     data = dashboardData.feedback;
                     filename = 'atafi_feedback.csv';
-                    break;
-                case 'payments':
-                    data = dashboardData.payments;
-                    filename = 'atafi_payments.csv';
-                    break;
-                case 'pinRequests':
-                    data = dashboardData.pinRequests;
-                    filename = 'kro_pin_requests.csv';
-                    break;
-                case 'activePins':
-                    data = dashboardData.activePins;
-                    filename = 'kro_active_pins.csv';
                     break;
                 case 'admins':
                     data = dashboardData.admins;
