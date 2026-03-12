@@ -2021,66 +2021,46 @@
             position: relative;
         }
 
-        /* Locked card styling */
-        .checklist-card.locked .card-header,
-        .checklist-card.locked .checklist-items,
-        .checklist-card.locked .card-badge,
-        .checklist-card.locked .card-price {
+        /* Locked button styling - only the button is blurred with lock icon */
+        .checklist-card.locked .btn-checklist {
             filter: blur(2px);
             opacity: 0.7;
             pointer-events: none;
-            user-select: none;
+            position: relative;
         }
 
-        .checklist-card.locked .btn-checklist {
-            filter: blur(1px);
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        .lock-overlay {
+        .button-lock-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: var(--border-radius-xl);
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 3rem);
+            height: 45px;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
-            gap: 1rem;
-            backdrop-filter: blur(4px);
+            z-index: 20;
             cursor: pointer;
-            z-index: 10;
-            color: var(--white);
-            text-align: center;
-            padding: 1rem;
-            background: rgba(0,0,0,0.3);
+            background: transparent;
         }
 
-        .lock-overlay i {
-            font-size: 3rem;
+        .button-lock-overlay i {
+            font-size: 1.8rem;
             color: var(--primary);
             filter: drop-shadow(0 0 10px rgba(212,175,55,0.5));
+            background: rgba(0,0,0,0.5);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--primary);
         }
 
-        .lock-overlay .lock-text {
-            font-weight: 600;
-            font-size: 1.2rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .lock-overlay .lock-price {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .lock-overlay .lock-subtext {
-            font-size: 0.9rem;
-            color: var(--gray-300);
+        .button-lock-overlay i:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(212,175,55,0.8);
         }
 
         .card-badge {
@@ -3618,14 +3598,8 @@
                     </button>
                 </div>
 
-                <!-- Basic Checklist (Locked initially) -->
+                <!-- Basic Checklist (Locked) -->
                 <div class="checklist-card basic locked" id="basicChecklist">
-                    <div class="lock-overlay" onclick="handleLockedClick('BASIC')">
-                        <i class="fas fa-lock"></i>
-                        <div class="lock-text">Unlock with Basic Plan</div>
-                        <div class="lock-price">₦50,000</div>
-                        <div class="lock-subtext">One-time payment</div>
-                    </div>
                     <div class="card-badge basic">BASIC</div>
                     <div class="card-header">
                         <h3>Basic Growth</h3>
@@ -3642,16 +3616,13 @@
                     <button class="btn-checklist basic" disabled>
                         <i class="fas fa-lock"></i> View My Basic Package
                     </button>
+                    <div class="button-lock-overlay" onclick="handleLockedClick('BASIC')">
+                        <i class="fas fa-lock"></i>
+                    </div>
                 </div>
 
-                <!-- Professional Checklist (Locked initially) -->
+                <!-- Professional Checklist (Locked) -->
                 <div class="checklist-card professional locked" id="proChecklist">
-                    <div class="lock-overlay" onclick="handleLockedClick('PRO')">
-                        <i class="fas fa-lock"></i>
-                        <div class="lock-text">Unlock with Professional Plan</div>
-                        <div class="lock-price">₦80,000</div>
-                        <div class="lock-subtext">One-time payment</div>
-                    </div>
                     <div class="card-badge professional">PROFESSIONAL</div>
                     <div class="card-header">
                         <h3>Professional Growth</h3>
@@ -3669,16 +3640,13 @@
                     <button class="btn-checklist professional" disabled>
                         <i class="fas fa-lock"></i> View My Professional Package
                     </button>
+                    <div class="button-lock-overlay" onclick="handleLockedClick('PRO')">
+                        <i class="fas fa-lock"></i>
+                    </div>
                 </div>
 
-                <!-- Enterprise Checklist (Locked initially) -->
+                <!-- Enterprise Checklist (Locked) -->
                 <div class="checklist-card enterprise locked" id="enterpriseChecklist">
-                    <div class="lock-overlay" onclick="handleLockedClick('ENTERPRISE')">
-                        <i class="fas fa-lock"></i>
-                        <div class="lock-text">Unlock with Enterprise Plan</div>
-                        <div class="lock-price">₦150,000</div>
-                        <div class="lock-subtext">One-time payment</div>
-                    </div>
                     <div class="card-badge enterprise">ENTERPRISE</div>
                     <div class="card-header">
                         <h3>Enterprise Growth</h3>
@@ -3696,6 +3664,9 @@
                     <button class="btn-checklist enterprise" disabled>
                         <i class="fas fa-lock"></i> View My Enterprise Package
                     </button>
+                    <div class="button-lock-overlay" onclick="handleLockedClick('ENTERPRISE')">
+                        <i class="fas fa-lock"></i>
+                    </div>
                 </div>
             </div>
 
@@ -4189,7 +4160,7 @@
             const checklist = document.getElementById(checklistId);
             if (checklist) {
                 // Remove lock overlay
-                const lockOverlay = checklist.querySelector('.lock-overlay');
+                const lockOverlay = checklist.querySelector('.button-lock-overlay');
                 if (lockOverlay) lockOverlay.remove();
                 
                 // Remove locked class
