@@ -303,6 +303,14 @@
             letter-spacing: 1px;
         }
 
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
         .btn-start-assessment {
             background: var(--gradient-premium);
             color: var(--white);
@@ -322,6 +330,28 @@
         .btn-start-assessment:hover {
             transform: translateY(-3px);
             box-shadow: 0 15px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-get-updates {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--primary);
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: var(--border-radius-full);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-get-updates:hover {
+            background: var(--primary);
+            color: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(212, 175, 55, 0.3);
         }
 
         /* ========== KRO MEDIA PROJECTS SECTION ========== */
@@ -1515,6 +1545,215 @@
             margin-right: 0.5rem;
         }
 
+        /* ========== GET UPDATES MODAL ========== */
+        .updates-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 22000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 20px;
+            cursor: pointer;
+        }
+
+        .updates-container {
+            max-width: 1200px;
+            width: 100%;
+            background: linear-gradient(135deg, var(--dark), var(--darker));
+            border-radius: var(--border-radius-2xl);
+            padding: 3rem;
+            position: relative;
+            border: 1px solid rgba(212,175,55,0.3);
+            box-shadow: var(--shadow-2xl);
+            max-height: 90vh;
+            overflow-y: auto;
+            cursor: default;
+        }
+
+        .updates-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(212,175,55,0.3);
+        }
+
+        .updates-header h2 {
+            color: var(--white);
+            font-size: 2rem;
+            background: var(--gradient-premium);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .updates-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            border: 1px solid rgba(212,175,55,0.3);
+        }
+
+        .updates-close:hover {
+            background: var(--danger);
+            transform: rotate(90deg);
+        }
+
+        .updates-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .update-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--border-radius-xl);
+            padding: 2rem 1.5rem;
+            border: 1px solid rgba(212,175,55,0.2);
+            position: relative;
+            transition: transform var(--transition-base);
+            display: flex;
+            flex-direction: column;
+            min-height: 350px;
+        }
+
+        .update-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .update-card.free {
+            border-color: var(--success);
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.2);
+        }
+
+        .update-badge {
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: var(--gradient-premium);
+            color: var(--white);
+            padding: 0.25rem 1rem;
+            border-radius: var(--border-radius-full);
+            font-size: 0.85rem;
+            font-weight: bold;
+            z-index: 5;
+        }
+
+        .update-badge.free {
+            background: var(--success);
+        }
+
+        .update-badge.basic {
+            background: var(--secondary);
+        }
+
+        .update-badge.professional {
+            background: var(--primary);
+        }
+
+        .update-badge.enterprise {
+            background: #9d4edd;
+        }
+
+        .update-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding-top: 0.5rem;
+        }
+
+        .update-header h3 {
+            color: var(--white);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .update-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .update-price small {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        .update-items {
+            list-style: none;
+            margin-bottom: 2rem;
+            flex: 1;
+        }
+
+        .update-items li {
+            color: var(--gray-300);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .update-items li i {
+            color: var(--primary);
+            font-size: 0.9rem;
+            min-width: 20px;
+        }
+
+        .btn-update-view {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: var(--border-radius-full);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-update-view.free {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-update-view.basic {
+            background: var(--secondary);
+            color: var(--white);
+        }
+
+        .btn-update-view.professional {
+            background: var(--primary);
+            color: var(--secondary);
+        }
+
+        .btn-update-view.enterprise {
+            background: #9d4edd;
+            color: var(--white);
+        }
+
+        .btn-update-view:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
         /* ========== FEEDBACK MODAL STYLES ========== */
         .feedback-modal {
             display: none;
@@ -1524,7 +1763,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.95);
-            z-index: 22000;
+            z-index: 23000;
             align-items: center;
             justify-content: center;
             overflow-y: auto;
@@ -1776,6 +2015,72 @@
         .checklist-card.free {
             border-color: var(--success);
             box-shadow: 0 0 20px rgba(40, 167, 69, 0.2);
+        }
+
+        .checklist-card.locked {
+            position: relative;
+        }
+
+        /* Locked card styling */
+        .checklist-card.locked .card-header,
+        .checklist-card.locked .checklist-items,
+        .checklist-card.locked .card-badge,
+        .checklist-card.locked .card-price {
+            filter: blur(2px);
+            opacity: 0.7;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .checklist-card.locked .btn-checklist {
+            filter: blur(1px);
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--border-radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
+            backdrop-filter: blur(4px);
+            cursor: pointer;
+            z-index: 10;
+            color: var(--white);
+            text-align: center;
+            padding: 1rem;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .lock-overlay i {
+            font-size: 3rem;
+            color: var(--primary);
+            filter: drop-shadow(0 0 10px rgba(212,175,55,0.5));
+        }
+
+        .lock-overlay .lock-text {
+            font-weight: 600;
+            font-size: 1.2rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .lock-overlay .lock-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .lock-overlay .lock-subtext {
+            font-size: 0.9rem;
+            color: var(--gray-300);
         }
 
         .card-badge {
@@ -2453,7 +2758,7 @@
             padding: 1rem 2rem;
             border-radius: var(--border-radius-md);
             box-shadow: var(--shadow-xl);
-            z-index: 23000;
+            z-index: 24000;
             border-left: 4px solid var(--primary);
             animation: slideInRight 0.3s ease;
             display: none;
@@ -2526,6 +2831,10 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
+            .updates-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
             .email-input-group {
                 flex-direction: column;
             }
@@ -2540,6 +2849,16 @@
             .hero-stats {
                 flex-direction: column;
                 gap: 1rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn-start-assessment,
+            .btn-get-updates {
+                width: 100%;
+                justify-content: center;
             }
             
             .checkbox-grid {
@@ -2577,6 +2896,10 @@
             }
 
             .checklist-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .updates-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -2636,9 +2959,15 @@
                     <span class="stat-label">Avg. Growth</span>
                 </div>
             </div>
-            <button class="btn-start-assessment" onclick="startAssessment()">
-                <i class="fas fa-magic"></i> Start Your Free Brand Audit
-            </button>
+            
+            <div class="hero-buttons">
+                <button class="btn-start-assessment" onclick="startAssessment()">
+                    <i class="fas fa-magic"></i> Start Your Free Brand Audit
+                </button>
+                <button class="btn-get-updates" onclick="showUpdatesModal()">
+                    <i class="fas fa-bell"></i> Get Updates
+                </button>
+            </div>
         </div>
     </section>
 
@@ -3171,6 +3500,91 @@
         </div>
     </section>
 
+    <!-- GET UPDATES MODAL -->
+    <div class="updates-modal" id="updatesModal" onclick="closeModalOnOutsideClick(event, 'updatesModal')">
+        <div class="updates-container" onclick="event.stopPropagation()">
+            <div class="updates-header">
+                <h2>Choose Your Package</h2>
+                <div class="updates-close" onclick="closeUpdatesModal()">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+
+            <div class="updates-grid">
+                <!-- Free Starter -->
+                <div class="update-card free">
+                    <div class="update-badge free">FREE</div>
+                    <div class="update-header">
+                        <h3>Free Starter</h3>
+                        <div class="update-price">₦0</div>
+                    </div>
+                    <ul class="update-items">
+                        <li><i class="fas fa-check-circle"></i> Brand Audit Summary</li>
+                        <li><i class="fas fa-check-circle"></i> 5 Social Media Post Ideas</li>
+                        <li><i class="fas fa-check-circle"></i> Basic SEO Checklist</li>
+                    </ul>
+                    <button class="btn-update-view free" onclick="handleUpdatePackageClick('starter')">
+                        <i class="fas fa-eye"></i> View Package
+                    </button>
+                </div>
+
+                <!-- Basic -->
+                <div class="update-card">
+                    <div class="update-badge basic">BASIC</div>
+                    <div class="update-header">
+                        <h3>Basic Growth</h3>
+                        <div class="update-price">₦50,000 <small>/one-time</small></div>
+                    </div>
+                    <ul class="update-items">
+                        <li><i class="fas fa-check-circle"></i> Everything in Free</li>
+                        <li><i class="fas fa-check-circle"></i> Email Marketing Setup</li>
+                        <li><i class="fas fa-check-circle"></i> CRM Integration</li>
+                        <li><i class="fas fa-check-circle"></i> Lead Magnet Template</li>
+                    </ul>
+                    <button class="btn-update-view basic" onclick="handleUpdatePackageClick('basic')">
+                        <i class="fas fa-eye"></i> View Package
+                    </button>
+                </div>
+
+                <!-- Professional -->
+                <div class="update-card">
+                    <div class="update-badge professional">PROFESSIONAL</div>
+                    <div class="update-header">
+                        <h3>Professional Growth</h3>
+                        <div class="update-price">₦80,000 <small>/one-time</small></div>
+                    </div>
+                    <ul class="update-items">
+                        <li><i class="fas fa-check-circle"></i> Everything in Basic</li>
+                        <li><i class="fas fa-check-circle"></i> Email Automation Sequences</li>
+                        <li><i class="fas fa-check-circle"></i> Ad Campaign Setup Guide</li>
+                        <li><i class="fas fa-check-circle"></i> Sales Funnel Blueprint</li>
+                    </ul>
+                    <button class="btn-update-view professional" onclick="handleUpdatePackageClick('professional')">
+                        <i class="fas fa-eye"></i> View Package
+                    </button>
+                </div>
+
+                <!-- Enterprise -->
+                <div class="update-card">
+                    <div class="update-badge enterprise">ENTERPRISE</div>
+                    <div class="update-header">
+                        <h3>Enterprise Growth</h3>
+                        <div class="update-price">₦150,000 <small>/one-time</small></div>
+                    </div>
+                    <ul class="update-items">
+                        <li><i class="fas fa-check-circle"></i> Everything in Professional</li>
+                        <li><i class="fas fa-check-circle"></i> Custom Development Guide</li>
+                        <li><i class="fas fa-check-circle"></i> API Integration Setup</li>
+                        <li><i class="fas fa-check-circle"></i> Priority Support Access</li>
+                    </ul>
+                    <button class="btn-update-view enterprise" onclick="handleUpdatePackageClick('enterprise')">
+                        <i class="fas fa-eye"></i> View Package
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- CHECKLIST MODAL -->
     <div class="checklist-modal" id="checklistModal" onclick="closeModalOnOutsideClick(event, 'checklistModal')">
         <div class="checklist-container" onclick="event.stopPropagation()">
@@ -3184,7 +3598,7 @@
             </div>
 
             <div class="checklist-grid">
-                <!-- Free Checklist -->
+                <!-- Free Checklist (Always Unlocked) -->
                 <div class="checklist-card free">
                     <div class="card-badge free">FREE</div>
                     <div class="card-header">
@@ -3204,8 +3618,14 @@
                     </button>
                 </div>
 
-                <!-- Basic Checklist -->
-                <div class="checklist-card basic">
+                <!-- Basic Checklist (Locked initially) -->
+                <div class="checklist-card basic locked" id="basicChecklist">
+                    <div class="lock-overlay" onclick="handleLockedClick('BASIC')">
+                        <i class="fas fa-lock"></i>
+                        <div class="lock-text">Unlock with Basic Plan</div>
+                        <div class="lock-price">₦50,000</div>
+                        <div class="lock-subtext">One-time payment</div>
+                    </div>
                     <div class="card-badge basic">BASIC</div>
                     <div class="card-header">
                         <h3>Basic Growth</h3>
@@ -3219,13 +3639,19 @@
                         <li><i class="fas fa-check-circle"></i> Basic Analytics Dashboard</li>
                         <li><i class="fas fa-check-circle"></i> 30-Day Content Calendar</li>
                     </ul>
-                    <button class="btn-checklist basic" onclick="showTerminalWithPackage('basic')">
-                        <i class="fas fa-eye"></i> View My Basic Package
+                    <button class="btn-checklist basic" disabled>
+                        <i class="fas fa-lock"></i> View My Basic Package
                     </button>
                 </div>
 
-                <!-- Professional Checklist -->
-                <div class="checklist-card professional">
+                <!-- Professional Checklist (Locked initially) -->
+                <div class="checklist-card professional locked" id="proChecklist">
+                    <div class="lock-overlay" onclick="handleLockedClick('PRO')">
+                        <i class="fas fa-lock"></i>
+                        <div class="lock-text">Unlock with Professional Plan</div>
+                        <div class="lock-price">₦80,000</div>
+                        <div class="lock-subtext">One-time payment</div>
+                    </div>
                     <div class="card-badge professional">PROFESSIONAL</div>
                     <div class="card-header">
                         <h3>Professional Growth</h3>
@@ -3240,13 +3666,19 @@
                         <li><i class="fas fa-check-circle"></i> Sales Funnel Blueprint</li>
                         <li><i class="fas fa-check-circle"></i> Conversion Rate Optimization</li>
                     </ul>
-                    <button class="btn-checklist professional" onclick="showTerminalWithPackage('professional')">
-                        <i class="fas fa-eye"></i> View My Professional Package
+                    <button class="btn-checklist professional" disabled>
+                        <i class="fas fa-lock"></i> View My Professional Package
                     </button>
                 </div>
 
-                <!-- Enterprise Checklist -->
-                <div class="checklist-card enterprise">
+                <!-- Enterprise Checklist (Locked initially) -->
+                <div class="checklist-card enterprise locked" id="enterpriseChecklist">
+                    <div class="lock-overlay" onclick="handleLockedClick('ENTERPRISE')">
+                        <i class="fas fa-lock"></i>
+                        <div class="lock-text">Unlock with Enterprise Plan</div>
+                        <div class="lock-price">₦150,000</div>
+                        <div class="lock-subtext">One-time payment</div>
+                    </div>
                     <div class="card-badge enterprise">ENTERPRISE</div>
                     <div class="card-header">
                         <h3>Enterprise Growth</h3>
@@ -3261,8 +3693,8 @@
                         <li><i class="fas fa-check-circle"></i> Team Training Materials</li>
                         <li><i class="fas fa-check-circle"></i> Priority Support Access</li>
                     </ul>
-                    <button class="btn-checklist enterprise" onclick="showTerminalWithPackage('enterprise')">
-                        <i class="fas fa-eye"></i> View My Enterprise Package
+                    <button class="btn-checklist enterprise" disabled>
+                        <i class="fas fa-lock"></i> View My Enterprise Package
                     </button>
                 </div>
             </div>
@@ -3491,6 +3923,14 @@
             enterprise: 'https://docs.google.com/spreadsheets/d/1vcWxUpuLZ6RiyReIgyFebh8s_OltIh_tRA4BpoF1yzc/edit?usp=sharing'
         };
 
+        // Track unlocked packages (initially only starter is unlocked)
+        let unlockedPackages = {
+            starter: true,
+            basic: false,
+            professional: false,
+            enterprise: false
+        };
+
         // Current selected package
         let currentPackage = 'starter';
 
@@ -3627,12 +4067,34 @@
                 '📬 Contact Atafi Luxury\n\n' +
                 '📧 Email: fbicuul@gmail.com\n' +
                 '📱 WhatsApp: +2347035255910\n\n' +
-                'Click OK to send an email or Cancel to copy WhatsApp link';
+                'Click OK to send an email or Cancel to open WhatsApp';
             
             if (confirm(contactMessage)) {
                 window.location.href = 'mailto:fbicuul@gmail.com';
             } else {
                 window.open('https://wa.me/2347035255910', '_blank');
+            }
+        }
+
+        // ==================== GET UPDATES MODAL FUNCTIONS ====================
+        function showUpdatesModal() {
+            document.getElementById('updatesModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeUpdatesModal() {
+            document.getElementById('updatesModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function handleUpdatePackageClick(packageType) {
+            closeUpdatesModal();
+            
+            if (packageType === 'starter') {
+                showTerminalWithPackage('starter');
+            } else {
+                // For paid packages, show the checklist modal with lock overlay
+                showChecklistModal();
             }
         }
 
@@ -3683,6 +4145,8 @@
                     closeStarterModal();
                 } else if (modalId === 'feedbackModal') {
                     closeFeedbackModal();
+                } else if (modalId === 'updatesModal') {
+                    closeUpdatesModal();
                 }
             }
         }
@@ -3705,6 +4169,47 @@
 
         function handleLockedClick(plan) {
             startFlutterwavePayment(plan);
+        }
+
+        function unlockChecklist(plan) {
+            let checklistId;
+            let packageType;
+            
+            if (plan === 'BASIC') {
+                checklistId = 'basicChecklist';
+                packageType = 'basic';
+            } else if (plan === 'PRO') {
+                checklistId = 'proChecklist';
+                packageType = 'professional';
+            } else if (plan === 'ENTERPRISE') {
+                checklistId = 'enterpriseChecklist';
+                packageType = 'enterprise';
+            }
+            
+            const checklist = document.getElementById(checklistId);
+            if (checklist) {
+                // Remove lock overlay
+                const lockOverlay = checklist.querySelector('.lock-overlay');
+                if (lockOverlay) lockOverlay.remove();
+                
+                // Remove locked class
+                checklist.classList.remove('locked');
+                
+                // Enable and update the button
+                const button = checklist.querySelector('.btn-checklist');
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-eye"></i> View My ' + 
+                    (packageType === 'basic' ? 'Basic' : 
+                     packageType === 'professional' ? 'Professional' : 'Enterprise') + ' Package';
+                button.onclick = () => showTerminalWithPackage(packageType);
+                
+                // Mark as unlocked
+                unlockedPackages[packageType] = true;
+                
+                // Add success styling
+                checklist.style.borderColor = 'var(--success)';
+                checklist.style.boxShadow = '0 0 30px rgba(40, 167, 69, 0.3)';
+            }
         }
 
         // ==================== FEEDBACK MODAL FUNCTIONS ====================
@@ -3955,7 +4460,8 @@
                 },
                 callback: function(response) {
                     if (response.status === 'successful') {
-                        showNotification(`${plan} plan activated!`, 'success');
+                        unlockChecklist(plan);
+                        showNotification(`${plan} plan activated! Your checklist is now unlocked.`, 'success');
                     }
                 },
                 onclose: function() {
@@ -3964,15 +4470,19 @@
             });
         }
 
+        function selectPlan(plan) {
+            startFlutterwavePayment(plan);
+        }
+
         // ==================== LIVE ACTIVITY FUNCTIONS ====================
         function startLiveActivity() {
             const activities = [
                 { name: 'John from Lagos', action: 'just started the assessment' },
                 { name: 'Sarah from Abuja', action: 'received her growth report' },
-                { name: 'Michael from Port Harcourt', action: 'viewed the Basic package' },
+                { name: 'Michael from Port Harcourt', action: 'unlocked the Basic package' },
                 { name: 'Amara from Enugu', action: 'viewed brand preview' },
-                { name: 'David from Kano', action: 'checked Professional benefits' },
-                { name: 'Grace from Ibadan', action: 'explored Enterprise features' }
+                { name: 'David from Kano', action: 'upgraded to Professional' },
+                { name: 'Grace from Ibadan', action: 'got the Enterprise plan' }
             ];
             
             setInterval(() => {
@@ -4585,11 +5095,6 @@
                     if (timerEl) timerEl.textContent = 'EXPIRED'; 
                 }
             }, 1000);
-        }
-
-        // ==================== PAYMENT FUNCTIONS ====================
-        function selectPlan(plan) {
-            startFlutterwavePayment(plan);
         }
 
         function bookStrategyCall() {
