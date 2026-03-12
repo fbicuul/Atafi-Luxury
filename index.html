@@ -1563,11 +1563,11 @@
         }
 
         .updates-container {
-            max-width: 1200px;
+            max-width: 600px;
             width: 100%;
             background: linear-gradient(135deg, var(--dark), var(--darker));
             border-radius: var(--border-radius-2xl);
-            padding: 3rem;
+            padding: 2.5rem;
             position: relative;
             border: 1px solid rgba(212,175,55,0.3);
             box-shadow: var(--shadow-2xl);
@@ -1613,145 +1613,163 @@
             transform: rotate(90deg);
         }
 
-        .updates-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .update-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: var(--border-radius-xl);
-            padding: 2rem 1.5rem;
-            border: 1px solid rgba(212,175,55,0.2);
-            position: relative;
-            transition: transform var(--transition-base);
+        .updates-list {
             display: flex;
             flex-direction: column;
-            min-height: 350px;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
 
-        .update-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
-        }
-
-        .update-card.free {
-            border-color: var(--success);
-            box-shadow: 0 0 20px rgba(40, 167, 69, 0.2);
-        }
-
-        .update-badge {
-            position: absolute;
-            top: -10px;
-            left: 20px;
-            background: var(--gradient-premium);
-            color: var(--white);
-            padding: 0.25rem 1rem;
-            border-radius: var(--border-radius-full);
-            font-size: 0.85rem;
-            font-weight: bold;
-            z-index: 5;
-        }
-
-        .update-badge.free {
-            background: var(--success);
-        }
-
-        .update-badge.basic {
-            background: var(--secondary);
-        }
-
-        .update-badge.professional {
-            background: var(--primary);
-        }
-
-        .update-badge.enterprise {
-            background: #9d4edd;
-        }
-
-        .update-header {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            padding-top: 0.5rem;
-        }
-
-        .update-header h3 {
-            color: var(--white);
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .update-price {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        .update-price small {
-            font-size: 0.8rem;
-            color: var(--gray-500);
-        }
-
-        .update-items {
-            list-style: none;
-            margin-bottom: 2rem;
-            flex: 1;
-        }
-
-        .update-items li {
-            color: var(--gray-300);
-            margin-bottom: 0.75rem;
+        .update-list-item {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            font-size: 0.9rem;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid rgba(212,175,55,0.2);
+            transition: all var(--transition-base);
         }
 
-        .update-items li i {
+        .update-list-item:hover {
+            transform: translateX(5px);
+            border-color: var(--primary);
+            background: rgba(212,175,55,0.1);
+        }
+
+        .update-list-item.free {
+            border-color: var(--success);
+        }
+
+        .update-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .update-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .update-icon.free {
+            background: rgba(40, 167, 69, 0.2);
+            color: var(--success);
+        }
+
+        .update-icon.basic {
+            background: rgba(26, 26, 26, 0.2);
+            color: var(--secondary);
+        }
+
+        .update-icon.professional {
+            background: rgba(212, 175, 55, 0.2);
             color: var(--primary);
-            font-size: 0.9rem;
-            min-width: 20px;
         }
 
-        .btn-update-view {
-            width: 100%;
-            padding: 0.75rem;
+        .update-icon.enterprise {
+            background: rgba(157, 78, 221, 0.2);
+            color: #9d4edd;
+        }
+
+        .update-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .update-name small {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+            margin-left: 0.5rem;
+        }
+
+        .update-actions {
+            position: relative;
+            display: inline-block;
+        }
+
+        .btn-update-open {
+            padding: 0.6rem 1.5rem;
             border: none;
             border-radius: var(--border-radius-full);
             font-weight: 600;
             cursor: pointer;
             transition: all var(--transition-base);
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 0.5rem;
+            font-size: 0.95rem;
         }
 
-        .btn-update-view.free {
+        .btn-update-open.free {
             background: var(--success);
             color: var(--white);
         }
 
-        .btn-update-view.basic {
+        .btn-update-open.basic {
             background: var(--secondary);
             color: var(--white);
         }
 
-        .btn-update-view.professional {
+        .btn-update-open.professional {
             background: var(--primary);
             color: var(--secondary);
         }
 
-        .btn-update-view.enterprise {
+        .btn-update-open.enterprise {
             background: #9d4edd;
             color: var(--white);
         }
 
-        .btn-update-view:hover {
+        .btn-update-open:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-lg);
+        }
+
+        .btn-update-open.locked {
+            filter: blur(2px);
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .button-lock-overlay-small {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .button-lock-overlay-small i {
+            font-size: 1.4rem;
+            color: var(--primary);
+            filter: drop-shadow(0 0 10px rgba(212,175,55,0.5));
+            background: rgba(0,0,0,0.5);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--primary);
+        }
+
+        .button-lock-overlay-small i:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(212,175,55,0.8);
         }
 
         /* ========== FEEDBACK MODAL STYLES ========== */
@@ -2811,10 +2829,6 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .updates-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
             .email-input-group {
                 flex-direction: column;
             }
@@ -2876,10 +2890,6 @@
             }
 
             .checklist-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .updates-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -3490,76 +3500,74 @@
                 </div>
             </div>
 
-            <div class="updates-grid">
+            <div class="updates-list">
                 <!-- Free Starter -->
-                <div class="update-card free">
-                    <div class="update-badge free">FREE</div>
-                    <div class="update-header">
-                        <h3>Free Starter</h3>
-                        <div class="update-price">₦0</div>
+                <div class="update-list-item free">
+                    <div class="update-info">
+                        <div class="update-icon free">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <span class="update-name">Free Starter <small>(₦0)</small></span>
                     </div>
-                    <ul class="update-items">
-                        <li><i class="fas fa-check-circle"></i> Brand Audit Summary</li>
-                        <li><i class="fas fa-check-circle"></i> 5 Social Media Post Ideas</li>
-                        <li><i class="fas fa-check-circle"></i> Basic SEO Checklist</li>
-                    </ul>
-                    <button class="btn-update-view free" onclick="handleUpdatePackageClick('starter')">
-                        <i class="fas fa-eye"></i> View Package
-                    </button>
+                    <div class="update-actions">
+                        <button class="btn-update-open free" onclick="handleUpdatePackageClick('starter')">
+                            <i class="fas fa-terminal"></i> Open Terminal
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Basic -->
-                <div class="update-card">
-                    <div class="update-badge basic">BASIC</div>
-                    <div class="update-header">
-                        <h3>Basic Growth</h3>
-                        <div class="update-price">₦50,000 <small>/one-time</small></div>
+                <div class="update-list-item" id="basicUpdateItem">
+                    <div class="update-info">
+                        <div class="update-icon basic">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <span class="update-name">Basic Growth <small>(₦50,000)</small></span>
                     </div>
-                    <ul class="update-items">
-                        <li><i class="fas fa-check-circle"></i> Everything in Free</li>
-                        <li><i class="fas fa-check-circle"></i> Email Marketing Setup</li>
-                        <li><i class="fas fa-check-circle"></i> CRM Integration</li>
-                        <li><i class="fas fa-check-circle"></i> Lead Magnet Template</li>
-                    </ul>
-                    <button class="btn-update-view basic" onclick="handleUpdatePackageClick('basic')">
-                        <i class="fas fa-eye"></i> View Package
-                    </button>
+                    <div class="update-actions" id="basicUpdateActions">
+                        <button class="btn-update-open basic locked" id="basicUpdateButton" disabled>
+                            <i class="fas fa-terminal"></i> Open Terminal
+                        </button>
+                        <div class="button-lock-overlay-small" onclick="handleLockedClick('BASIC')">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Professional -->
-                <div class="update-card">
-                    <div class="update-badge professional">PROFESSIONAL</div>
-                    <div class="update-header">
-                        <h3>Professional Growth</h3>
-                        <div class="update-price">₦80,000 <small>/one-time</small></div>
+                <div class="update-list-item" id="proUpdateItem">
+                    <div class="update-info">
+                        <div class="update-icon professional">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <span class="update-name">Professional Growth <small>(₦80,000)</small></span>
                     </div>
-                    <ul class="update-items">
-                        <li><i class="fas fa-check-circle"></i> Everything in Basic</li>
-                        <li><i class="fas fa-check-circle"></i> Email Automation Sequences</li>
-                        <li><i class="fas fa-check-circle"></i> Ad Campaign Setup Guide</li>
-                        <li><i class="fas fa-check-circle"></i> Sales Funnel Blueprint</li>
-                    </ul>
-                    <button class="btn-update-view professional" onclick="handleUpdatePackageClick('professional')">
-                        <i class="fas fa-eye"></i> View Package
-                    </button>
+                    <div class="update-actions" id="proUpdateActions">
+                        <button class="btn-update-open professional locked" id="proUpdateButton" disabled>
+                            <i class="fas fa-terminal"></i> Open Terminal
+                        </button>
+                        <div class="button-lock-overlay-small" onclick="handleLockedClick('PRO')">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Enterprise -->
-                <div class="update-card">
-                    <div class="update-badge enterprise">ENTERPRISE</div>
-                    <div class="update-header">
-                        <h3>Enterprise Growth</h3>
-                        <div class="update-price">₦150,000 <small>/one-time</small></div>
+                <div class="update-list-item" id="enterpriseUpdateItem">
+                    <div class="update-info">
+                        <div class="update-icon enterprise">
+                            <i class="fas fa-gem"></i>
+                        </div>
+                        <span class="update-name">Enterprise Growth <small>(₦150,000)</small></span>
                     </div>
-                    <ul class="update-items">
-                        <li><i class="fas fa-check-circle"></i> Everything in Professional</li>
-                        <li><i class="fas fa-check-circle"></i> Custom Development Guide</li>
-                        <li><i class="fas fa-check-circle"></i> API Integration Setup</li>
-                        <li><i class="fas fa-check-circle"></i> Priority Support Access</li>
-                    </ul>
-                    <button class="btn-update-view enterprise" onclick="handleUpdatePackageClick('enterprise')">
-                        <i class="fas fa-eye"></i> View Package
-                    </button>
+                    <div class="update-actions" id="enterpriseUpdateActions">
+                        <button class="btn-update-open enterprise locked" id="enterpriseUpdateButton" disabled>
+                            <i class="fas fa-terminal"></i> Open Terminal
+                        </button>
+                        <div class="button-lock-overlay-small" onclick="handleLockedClick('ENTERPRISE')">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -4145,18 +4153,31 @@
         function unlockChecklist(plan) {
             let checklistId;
             let packageType;
+            let updateItemId;
+            let updateButtonId;
+            let updateActionsId;
             
             if (plan === 'BASIC') {
                 checklistId = 'basicChecklist';
                 packageType = 'basic';
+                updateItemId = 'basicUpdateItem';
+                updateButtonId = 'basicUpdateButton';
+                updateActionsId = 'basicUpdateActions';
             } else if (plan === 'PRO') {
                 checklistId = 'proChecklist';
                 packageType = 'professional';
+                updateItemId = 'proUpdateItem';
+                updateButtonId = 'proUpdateButton';
+                updateActionsId = 'proUpdateActions';
             } else if (plan === 'ENTERPRISE') {
                 checklistId = 'enterpriseChecklist';
                 packageType = 'enterprise';
+                updateItemId = 'enterpriseUpdateItem';
+                updateButtonId = 'enterpriseUpdateButton';
+                updateActionsId = 'enterpriseUpdateActions';
             }
             
+            // Unlock checklist card
             const checklist = document.getElementById(checklistId);
             if (checklist) {
                 // Remove lock overlay
@@ -4180,6 +4201,20 @@
                 // Add success styling
                 checklist.style.borderColor = 'var(--success)';
                 checklist.style.boxShadow = '0 0 30px rgba(40, 167, 69, 0.3)';
+            }
+            
+            // Unlock update modal button
+            const updateActions = document.getElementById(updateActionsId);
+            if (updateActions) {
+                // Remove lock overlay
+                const lockOverlay = updateActions.querySelector('.button-lock-overlay-small');
+                if (lockOverlay) lockOverlay.remove();
+                
+                // Enable and update the button
+                const updateButton = document.getElementById(updateButtonId);
+                updateButton.disabled = false;
+                updateButton.classList.remove('locked');
+                updateButton.onclick = () => showTerminalWithPackage(packageType);
             }
         }
 
