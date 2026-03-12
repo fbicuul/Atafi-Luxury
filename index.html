@@ -2133,10 +2133,12 @@
             display: flex;
             gap: 1rem;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .email-input {
             flex: 1;
+            min-width: 250px;
             padding: 1rem 1.5rem;
             background: rgba(255,255,255,0.05);
             border: 2px solid rgba(212,175,55,0.3);
@@ -2178,6 +2180,17 @@
             background: transparent;
             color: var(--white);
             border: 2px solid var(--primary);
+        }
+
+        .btn-email-action.benefits {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-email-action.benefits:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
 
         .btn-email-action:hover {
@@ -2360,6 +2373,97 @@
             opacity: 0.5;
         }
 
+        /* ========== FOOTER ========== */
+        .footer {
+            background: var(--darker);
+            color: var(--white);
+            padding: 3rem 5% 2rem;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: var(--gradient-premium);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .footer-links a {
+            color: var(--gray-400);
+            text-decoration: none;
+            transition: color var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-contact {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-400);
+        }
+
+        .footer-contact-item i {
+            color: var(--primary);
+        }
+
+        .footer-contact-item a {
+            color: var(--gray-400);
+            text-decoration: none;
+            transition: color var(--transition-base);
+        }
+
+        .footer-contact-item a:hover {
+            color: var(--primary);
+        }
+
+        .footer-divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            margin: 1rem 0;
+        }
+
+        .footer-copyright {
+            text-align: center;
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+
+        .footer-copyright strong {
+            color: var(--primary);
+        }
+
         /* ========== LOADING OVERLAY ========== */
         .loading-overlay {
             display: none;
@@ -2473,10 +2577,6 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .email-input {
-            width: 100%;
-            }
-
             .email-input-group {
                 flex-direction: column;
             }
@@ -2534,6 +2634,12 @@
             .checklist-container {
                 padding: 2rem 1.5rem;
             }
+
+            .footer-contact {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
         }
     </style>
 </head>
@@ -2550,7 +2656,7 @@
             <li><a href="#home" class="active">Home</a></li>
             <li><a href="#kro-projects">KRO Projects</a></li>
             <li><a href="#predictor">Brand Predictor</a></li>
-            <li><a href="#" onclick="showContactModal()">Contact</a></li>
+            <li><a href="#" onclick="showContactInfo()">Contact</a></li>
             <li><a href="#" class="btn-subscribe" onclick="showSubscriptionModal(); return false;">Pricing</a></li>
         </ul>
     </nav>
@@ -3070,7 +3176,7 @@
                         <div class="form-group full-width terms">
                             <label class="checkbox-container">
                                 <input type="checkbox" id="marketingConsent" checked>
-                                <span>I'd like to receive updates and daily gifts</span>
+                                <span>I'd like to receive updates</span>
                             </label>
                         </div>
                     </div>
@@ -3294,6 +3400,9 @@
                     <button class="btn-email-action update" onclick="giveMeUpdate()">
                         <i class="fas fa-bell"></i> Give Me Update
                     </button>
+                    <button class="btn-email-action benefits" onclick="window.open('https://drive.google.com/drive/folders/1zRFaDCJOt03nH9u6HVmQVzu5oivtQv9c?usp=sharing', '_blank')">
+                        <i class="fas fa-gift"></i> Get All Starters Benefit
+                    </button>
                     <button class="btn-email-action feedback" onclick="openFeedbackModal()">
                         <i class="fas fa-comment"></i> Feedback
                     </button>
@@ -3393,6 +3502,38 @@
 
     <!-- Notification Toast -->
     <div class="notification-toast" id="notificationToast"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">Atafi Luxury</div>
+            
+            <div class="footer-links">
+                <a href="#home"><i class="fas fa-home"></i> Home</a>
+                <a href="#kro-projects"><i class="fas fa-video"></i> KRO Projects</a>
+                <a href="#predictor"><i class="fas fa-chart-line"></i> Brand Predictor</a>
+                <a href="#" onclick="showContactInfo()"><i class="fas fa-envelope"></i> Contact</a>
+                <a href="#" onclick="showSubscriptionModal(); return false;"><i class="fas fa-crown"></i> Pricing</a>
+            </div>
+
+            <div class="footer-contact">
+                <div class="footer-contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:fbicuul@gmail.com">fbicuul@gmail.com</a>
+                </div>
+                <div class="footer-contact-item">
+                    <i class="fab fa-whatsapp"></i>
+                    <a href="https://wa.me/2347035255910" target="_blank">+234 703 525 5910</a>
+                </div>
+            </div>
+
+            <div class="footer-divider"></div>
+            
+            <div class="footer-copyright">
+                <p>Powered by <strong>KRO Media</strong> | © 2026 Atafi Luxury. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
     <script>
         // ==================== CONFIGURATION ====================
@@ -3527,6 +3668,21 @@
             dots.forEach((dot, i) => {
                 dot.className = `carousel-dot ${i === currentSlide ? 'active' : ''}`;
             });
+        }
+
+        // ==================== CONTACT FUNCTIONS ====================
+        function showContactInfo() {
+            const contactMessage = 
+                '📬 Contact Atafi Luxury\n\n' +
+                '📧 Email: fbicuul@gmail.com\n' +
+                '📱 WhatsApp: +2347035255910\n\n' +
+                'Click OK to send an email or Cancel to copy WhatsApp link';
+            
+            if (confirm(contactMessage)) {
+                window.location.href = 'mailto:fbicuul@gmail.com';
+            } else {
+                window.open('https://wa.me/2347035255910', '_blank');
+            }
         }
 
         // ==================== MODAL CLOSE ON OUTSIDE CLICK ====================
@@ -3930,10 +4086,6 @@
 
         function showPrivacyModal() {
             showNotification('Privacy Policy - Your data is safe with us', 'info');
-        }
-
-        function showContactModal() {
-            showNotification('Contact feature coming soon!', 'info');
         }
 
         // ==================== PREDICTOR FUNCTIONS ====================
