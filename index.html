@@ -1778,78 +1778,6 @@
             box-shadow: 0 0 20px rgba(40, 167, 69, 0.2);
         }
 
-        .checklist-card.basic.locked {
-            position: relative;
-            background: rgba(255,255,255,0.02);
-        }
-
-        .checklist-card.professional.locked {
-            position: relative;
-            background: rgba(255,255,255,0.02);
-        }
-
-        .checklist-card.enterprise.locked {
-            position: relative;
-            background: rgba(255,255,255,0.02);
-        }
-
-        /* Locked card content styling - visible but with blur effect */
-        .checklist-card.locked .card-header,
-        .checklist-card.locked .checklist-items,
-        .checklist-card.locked .card-badge,
-        .checklist-card.locked .card-price {
-            filter: blur(2px);
-            opacity: 0.7;
-            pointer-events: none;
-            user-select: none;
-        }
-
-        /* Lock overlay - positioned absolutely but content visible behind */
-        .lock-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.3);
-            border-radius: var(--border-radius-xl);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 1rem;
-            backdrop-filter: blur(4px);
-            cursor: pointer;
-            z-index: 10;
-            color: var(--white);
-            text-align: center;
-            padding: 1rem;
-        }
-
-        .lock-overlay i {
-            font-size: 3rem;
-            color: var(--primary);
-            filter: drop-shadow(0 0 10px rgba(212,175,55,0.5));
-        }
-
-        .lock-overlay .lock-text {
-            font-weight: 600;
-            font-size: 1.2rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .lock-overlay .lock-price {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .lock-overlay .lock-subtext {
-            font-size: 0.9rem;
-            color: var(--gray-300);
-        }
-
         .card-badge {
             position: absolute;
             top: -10px;
@@ -1865,6 +1793,18 @@
 
         .card-badge.free {
             background: var(--success);
+        }
+
+        .card-badge.basic {
+            background: var(--secondary);
+        }
+
+        .card-badge.professional {
+            background: var(--primary);
+        }
+
+        .card-badge.enterprise {
+            background: #9d4edd;
         }
 
         .card-header {
@@ -1945,8 +1885,17 @@
             background: var(--success);
         }
 
-        .btn-checklist.locked {
-            background: var(--gray-600);
+        .btn-checklist.basic {
+            background: var(--secondary);
+        }
+
+        .btn-checklist.professional {
+            background: var(--primary);
+            color: var(--secondary);
+        }
+
+        .btn-checklist.enterprise {
+            background: #9d4edd;
         }
 
         .checklist-footer {
@@ -3246,24 +3195,18 @@
                         <li><i class="fas fa-check-circle"></i> Brand Audit Summary</li>
                         <li><i class="fas fa-check-circle"></i> 5 Social Media Post Ideas</li>
                         <li><i class="fas fa-check-circle"></i> Basic SEO Checklist</li>
-                        <li><i class="fas fa-lock"></i> Email Marketing Setup</li>
-                        <li><i class="fas fa-lock"></i> CRM Integration</li>
-                        <li><i class="fas fa-lock"></i> Ad Campaign Strategy</li>
+                        <li><i class="fas fa-times-circle"></i> Email Marketing Setup</li>
+                        <li><i class="fas fa-times-circle"></i> CRM Integration</li>
+                        <li><i class="fas fa-times-circle"></i> Ad Campaign Strategy</li>
                     </ul>
-                    <button class="btn-checklist free" onclick="showStarterPackage()">
+                    <button class="btn-checklist free" onclick="showTerminalWithPackage('starter')">
                         <i class="fas fa-eye"></i> View My Starter Package
                     </button>
                 </div>
 
-                <!-- Basic Checklist (Locked) -->
-                <div class="checklist-card basic locked" id="basicChecklist">
-                    <div class="lock-overlay" onclick="handleLockedClick('BASIC')">
-                        <i class="fas fa-lock"></i>
-                        <div class="lock-text">Unlock with Basic Plan</div>
-                        <div class="lock-price">₦50,000</div>
-                        <div class="lock-subtext">One-time payment</div>
-                    </div>
-                    <div class="card-badge">BASIC</div>
+                <!-- Basic Checklist -->
+                <div class="checklist-card basic">
+                    <div class="card-badge basic">BASIC</div>
                     <div class="card-header">
                         <h3>Basic Growth</h3>
                         <div class="card-price">₦50,000 <small>/one-time</small></div>
@@ -3276,17 +3219,14 @@
                         <li><i class="fas fa-check-circle"></i> Basic Analytics Dashboard</li>
                         <li><i class="fas fa-check-circle"></i> 30-Day Content Calendar</li>
                     </ul>
+                    <button class="btn-checklist basic" onclick="showTerminalWithPackage('basic')">
+                        <i class="fas fa-eye"></i> View My Basic Package
+                    </button>
                 </div>
 
-                <!-- Professional Checklist (Locked) -->
-                <div class="checklist-card professional locked" id="proChecklist">
-                    <div class="lock-overlay" onclick="handleLockedClick('PRO')">
-                        <i class="fas fa-lock"></i>
-                        <div class="lock-text">Unlock with Professional Plan</div>
-                        <div class="lock-price">₦80,000</div>
-                        <div class="lock-subtext">One-time payment</div>
-                    </div>
-                    <div class="card-badge">PROFESSIONAL</div>
+                <!-- Professional Checklist -->
+                <div class="checklist-card professional">
+                    <div class="card-badge professional">PROFESSIONAL</div>
                     <div class="card-header">
                         <h3>Professional Growth</h3>
                         <div class="card-price">₦80,000 <small>/one-time</small></div>
@@ -3300,17 +3240,14 @@
                         <li><i class="fas fa-check-circle"></i> Sales Funnel Blueprint</li>
                         <li><i class="fas fa-check-circle"></i> Conversion Rate Optimization</li>
                     </ul>
+                    <button class="btn-checklist professional" onclick="showTerminalWithPackage('professional')">
+                        <i class="fas fa-eye"></i> View My Professional Package
+                    </button>
                 </div>
 
-                <!-- Enterprise Checklist (Locked) -->
-                <div class="checklist-card enterprise locked" id="enterpriseChecklist">
-                    <div class="lock-overlay" onclick="handleLockedClick('ENTERPRISE')">
-                        <i class="fas fa-lock"></i>
-                        <div class="lock-text">Unlock with Enterprise Plan</div>
-                        <div class="lock-price">₦150,000</div>
-                        <div class="lock-subtext">One-time payment</div>
-                    </div>
-                    <div class="card-badge">ENTERPRISE</div>
+                <!-- Enterprise Checklist -->
+                <div class="checklist-card enterprise">
+                    <div class="card-badge enterprise">ENTERPRISE</div>
                     <div class="card-header">
                         <h3>Enterprise Growth</h3>
                         <div class="card-price">₦150,000 <small>/one-time</small></div>
@@ -3324,6 +3261,9 @@
                         <li><i class="fas fa-check-circle"></i> Team Training Materials</li>
                         <li><i class="fas fa-check-circle"></i> Priority Support Access</li>
                     </ul>
+                    <button class="btn-checklist enterprise" onclick="showTerminalWithPackage('enterprise')">
+                        <i class="fas fa-eye"></i> View My Enterprise Package
+                    </button>
                 </div>
             </div>
 
@@ -3376,7 +3316,7 @@
     <div class="starter-modal" id="starterModal" onclick="closeModalOnOutsideClick(event, 'starterModal')">
         <div class="starter-container" onclick="event.stopPropagation()">
             <div class="starter-header">
-                <h2>My Starter Package</h2>
+                <h2 id="terminalHeader">My Starter Package</h2>
                 <div class="starter-close" onclick="closeStarterModal()">
                     <i class="fas fa-times"></i>
                 </div>
@@ -3400,7 +3340,7 @@
                     <button class="btn-email-action update" onclick="giveMeUpdate()">
                         <i class="fas fa-bell"></i> Give Me Update
                     </button>
-                    <button class="btn-email-action benefits" onclick="window.open('https://drive.google.com/drive/folders/1zRFaDCJOt03nH9u6HVmQVzu5oivtQv9c?usp=sharing', '_blank')">
+                    <button class="btn-email-action benefits" id="benefitsButton" onclick="openBenefitsLink()">
                         <i class="fas fa-gift"></i> Get All Starters Benefit
                     </button>
                     <button class="btn-email-action feedback" onclick="openFeedbackModal()">
@@ -3542,6 +3482,17 @@
         const FLUTTERWAVE_PUBLIC_KEY = 'FLWPUBK-2139829c2de5b6071f89e39b59e9d9ca-X';
         const FLUTTERWAVE_SUBACCOUNT_ID = 'RS_89D720D484AF8296626AC1C84E2B0044';
         const PRICING = { BASIC: 50000, PRO: 80000, ENTERPRISE: 150000 };
+
+        // Benefits links for different packages
+        const BENEFITS_LINKS = {
+            starter: 'https://drive.google.com/drive/folders/1zRFaDCJOt03nH9u6HVmQVzu5oivtQv9c?usp=sharing',
+            basic: 'https://docs.google.com/spreadsheets/d/1jxifxYNAXgck8g0r5Qfx5hvmtgTyUo91GD4jk7clAO8/edit?usp=sharing',
+            professional: 'https://docs.google.com/spreadsheets/d/1PnjqoVwhZy1KPZal2FDrkEz4VOmFolXPjPKETXXim4w/edit?usp=sharing',
+            enterprise: 'https://docs.google.com/spreadsheets/d/1vcWxUpuLZ6RiyReIgyFebh8s_OltIh_tRA4BpoF1yzc/edit?usp=sharing'
+        };
+
+        // Current selected package
+        let currentPackage = 'starter';
 
         // ==================== VIDEO CAROUSEL VARIABLES ====================
         let currentSlide = 0;
@@ -3685,6 +3636,42 @@
             }
         }
 
+        // ==================== TERMINAL PACKAGE FUNCTIONS ====================
+        function showTerminalWithPackage(packageType) {
+            currentPackage = packageType;
+            
+            // Update terminal header
+            const headerMap = {
+                starter: 'My Starter Package',
+                basic: 'My Basic Package',
+                professional: 'My Professional Package',
+                enterprise: 'My Enterprise Package'
+            };
+            
+            document.getElementById('terminalHeader').textContent = headerMap[packageType];
+            
+            // Update benefits button text and link
+            const buttonTextMap = {
+                starter: 'Get All Starters Benefit',
+                basic: 'Get All Basic Benefit',
+                professional: 'Get All Professional Benefit',
+                enterprise: 'Get All Enterprise Benefit'
+            };
+            
+            document.getElementById('benefitsButton').innerHTML = `<i class="fas fa-gift"></i> ${buttonTextMap[packageType]}`;
+            
+            // Show the terminal modal
+            document.getElementById('starterModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // Update starter package data
+            updateStarterPackageData();
+        }
+
+        function openBenefitsLink() {
+            window.open(BENEFITS_LINKS[currentPackage], '_blank');
+        }
+
         // ==================== MODAL CLOSE ON OUTSIDE CLICK ====================
         function closeModalOnOutsideClick(event, modalId) {
             if (event.target.id === modalId) {
@@ -3791,10 +3778,7 @@
 
         // ==================== STARTER PACKAGE MODAL FUNCTIONS ====================
         function showStarterPackage() {
-            // Update the starter package with user data
-            updateStarterPackageData();
-            document.getElementById('starterModal').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
+            showTerminalWithPackage('starter');
         }
 
         function closeStarterModal() {
@@ -3971,8 +3955,7 @@
                 },
                 callback: function(response) {
                     if (response.status === 'successful') {
-                        unlockChecklist(plan);
-                        showNotification(`${plan} plan activated! Your checklist is now unlocked.`, 'success');
+                        showNotification(`${plan} plan activated!`, 'success');
                     }
                 },
                 onclose: function() {
@@ -3981,38 +3964,15 @@
             });
         }
 
-        function unlockChecklist(plan) {
-            let checklistId;
-            if (plan === 'BASIC') checklistId = 'basicChecklist';
-            else if (plan === 'PRO') checklistId = 'proChecklist';
-            else if (plan === 'ENTERPRISE') checklistId = 'enterpriseChecklist';
-            
-            const checklist = document.getElementById(checklistId);
-            if (checklist) {
-                const lockOverlay = checklist.querySelector('.lock-overlay');
-                if (lockOverlay) lockOverlay.remove();
-                checklist.classList.remove('locked');
-                
-                checklist.style.borderColor = 'var(--success)';
-                checklist.style.boxShadow = '0 0 30px rgba(40, 167, 69, 0.3)';
-                
-                const unlockBtn = document.createElement('button');
-                unlockBtn.className = 'btn-checklist';
-                unlockBtn.innerHTML = '<i class="fas fa-eye"></i> View Checklist';
-                unlockBtn.onclick = () => showNotification(`Access your ${plan} checklist!`, 'success');
-                checklist.appendChild(unlockBtn);
-            }
-        }
-
         // ==================== LIVE ACTIVITY FUNCTIONS ====================
         function startLiveActivity() {
             const activities = [
                 { name: 'John from Lagos', action: 'just started the assessment' },
                 { name: 'Sarah from Abuja', action: 'received her growth report' },
-                { name: 'Michael from Port Harcourt', action: 'unlocked the Pro checklist' },
+                { name: 'Michael from Port Harcourt', action: 'viewed the Basic package' },
                 { name: 'Amara from Enugu', action: 'viewed brand preview' },
-                { name: 'David from Kano', action: 'downloaded his roadmap' },
-                { name: 'Grace from Ibadan', action: 'upgraded to Enterprise' }
+                { name: 'David from Kano', action: 'checked Professional benefits' },
+                { name: 'Grace from Ibadan', action: 'explored Enterprise features' }
             ];
             
             setInterval(() => {
